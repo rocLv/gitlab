@@ -60,7 +60,7 @@ RSpec.describe Namespace do
   end
 
   described_class::PLANS.each do |namespace_plan|
-    describe "#{namespace_plan}_plan?" do
+    describe "#{namespace_plan}_plan?", :saas do
       it_behaves_like 'plan helper', namespace_plan
     end
   end
@@ -120,12 +120,8 @@ RSpec.describe Namespace do
     end
   end
 
-  describe '#actual_plan_name' do
+  describe '#actual_plan_name', :saas do
     let(:namespace) { create(:namespace) }
-
-    before do
-      allow(Gitlab).to receive(:com?).and_return(true)
-    end
 
     subject { namespace.actual_plan_name }
 
@@ -176,7 +172,7 @@ RSpec.describe Namespace do
         end
       end
 
-      context 'plan is set' do
+      context 'plan is set', :saas do
         it 'returns namespaces with plan' do
           create(:gitlab_subscription, :bronze, namespace: namespace)
           create(:namespace_with_plan, plan: :free_plan)
@@ -186,7 +182,7 @@ RSpec.describe Namespace do
       end
     end
 
-    describe '.join_gitlab_subscription' do
+    describe '.join_gitlab_subscription', :saas do
       let!(:namespace) { create(:namespace) }
 
       subject { described_class.join_gitlab_subscription.select('gitlab_subscriptions.hosted_plan_id').first.hosted_plan_id }
@@ -206,7 +202,7 @@ RSpec.describe Namespace do
       end
     end
 
-    describe '.in_active_trial' do
+    describe '.in_active_trial', :saas do
       let_it_be(:namespaces) do
         [
           create(:namespace),
@@ -224,7 +220,7 @@ RSpec.describe Namespace do
       end
     end
 
-    describe '.not_in_active_trial' do
+    describe '.not_in_active_trial', :saas do
       let_it_be(:namespaces) do
         [
           create(:namespace),
@@ -242,7 +238,7 @@ RSpec.describe Namespace do
       end
     end
 
-    describe '.in_default_plan' do
+    describe '.in_default_plan', :saas do
       subject { described_class.in_default_plan.ids }
 
       where(:plan_name, :expect_in_default_plan) do
@@ -270,7 +266,7 @@ RSpec.describe Namespace do
       end
     end
 
-    describe '.eligible_for_trial' do
+    describe '.eligible_for_trial', :saas do
       let_it_be(:namespace) { create :namespace }
 
       subject { described_class.eligible_for_trial.first }
@@ -491,7 +487,7 @@ RSpec.describe Namespace do
         is_expected.to be_falsy
       end
 
-      context 'when feature available on the plan' do
+      context 'when feature available on the plan', :saas do
         let(:hosted_plan) { create(:ultimate_plan) }
 
         context 'when feature available for current group' do
@@ -509,7 +505,7 @@ RSpec.describe Namespace do
         end
       end
 
-      context 'when feature not available in the plan' do
+      context 'when feature not available in the plan', :saas do
         let(:feature) { :cluster_deployments }
         let(:hosted_plan) { create(:bronze_plan) }
 
@@ -520,13 +516,13 @@ RSpec.describe Namespace do
     end
   end
 
-  describe '#feature_available?' do
+  describe '#feature_available?', :saas do
     subject { group.licensed_feature_available?(feature) }
 
     it_behaves_like 'feature available'
   end
 
-  describe '#feature_available_non_trial?' do
+  describe '#feature_available_non_trial?', :saas do
     subject { group.feature_available_non_trial?(feature) }
 
     it_behaves_like 'feature available'
@@ -593,7 +589,7 @@ RSpec.describe Namespace do
         it { is_expected.to eq(default_limits) }
       end
 
-      context 'when "free" plan is defined in the system' do
+      context 'when "free" plan is defined in the system', :saas do
         let!(:free_plan) { create(:free_plan) }
 
         context 'when no limits are set' do
@@ -746,12 +742,67 @@ RSpec.describe Namespace do
   end
 
   describe '#actual_plan' do
-    context 'when namespace does not have a subscription associated' do
-      it 'generates a subscription and returns default plan' do
-        expect(namespace.actual_plan).to eq(Plan.default)
+    context 'when self managed' do
+      context 'when namespace does not have a subscription associated' do
+        it 'does not generate a subscription and returns default plan' do
+          expect(namespace.actual_plan).to eq(Plan.default)
 
-        # This should be revisited after https://gitlab.com/gitlab-org/gitlab/-/issues/214434
-        expect(namespace.gitlab_subscription).to be_present
+          expect(namespace.gitlab_subscription).to be_blank
+        end
+      end
+
+      context 'when namespace has a subscription associated' do
+        before do
+          create(:gitlab_subscription, namespace: namespace, hosted_plan: ultimate_plan, build_under_self_managed: true)
+        end
+
+        it 'returns the default plan' do
+          expect(namespace.actual_plan).to eq(default_plan)
+        end
+      end
+
+      context 'when namespace does not have a subscription associated' do
+        it 'generates a subscription and returns default plan' do
+          expect(namespace.actual_plan).to eq(Plan.default)
+          expect(namespace.gitlab_subscription).to be_blank
+        end
+
+        context 'when default plan does exist' do
+          before do
+            default_plan
+          end
+
+          it 'does not generate a subscription' do
+            expect(namespace.actual_plan).to eq(default_plan)
+            expect(namespace.gitlab_subscription).to be_blank
+          end
+        end
+
+        context 'when namespace is a subgroup with a parent' do
+          let(:group) { create(:group) }
+          let(:subgroup) { create(:group, parent: group) }
+
+          context 'when free plan does exist' do
+            before do
+              default_plan
+            end
+
+            it 'does not generates a subscription' do
+              expect(subgroup.actual_plan).to eq(default_plan)
+              expect(subgroup.gitlab_subscription).not_to be_present
+            end
+          end
+
+          context 'when namespace has a subscription associated' do
+            before do
+              create(:gitlab_subscription, namespace: namespace, hosted_plan: ultimate_plan, build_under_self_managed: true)
+            end
+
+            it 'returns the default plan' do
+              expect(subgroup.actual_plan).to eq(default_plan)
+            end
+          end
+        end
       end
     end
 
@@ -835,7 +886,7 @@ RSpec.describe Namespace do
     end
   end
 
-  describe '#paid?' do
+  describe '#paid?', :saas do
     it 'returns true for a root namespace with a paid plan' do
       create(:gitlab_subscription, :ultimate, namespace: namespace)
 
@@ -953,7 +1004,7 @@ RSpec.describe Namespace do
         ])
       end
 
-      context 'with a ultimate plan' do
+      context 'with a ultimate plan', :saas do
         before do
           create(:gitlab_subscription, namespace: group, hosted_plan: ultimate_plan)
         end
@@ -1086,7 +1137,7 @@ RSpec.describe Namespace do
         end
       end
 
-      context 'with other plans' do
+      context 'with other plans', :saas do
         %i[bronze_plan premium_plan].each do |plan|
           subject(:billed_user_ids) { group.billed_user_ids }
 
@@ -1198,7 +1249,7 @@ RSpec.describe Namespace do
         group.add_guest(create(:user))
       end
 
-      context 'with a ultimate plan' do
+      context 'with a ultimate plan', :saas do
         before do
           create(:gitlab_subscription, namespace: group, hosted_plan: ultimate_plan)
         end
@@ -1262,7 +1313,7 @@ RSpec.describe Namespace do
         end
       end
 
-      context 'with other plans' do
+      context 'with other plans', :saas do
         %i[bronze_plan premium_plan].each do |plan|
           it 'counts active guest users' do
             create(:gitlab_subscription, namespace: group, hosted_plan: send(plan))
@@ -1791,7 +1842,7 @@ RSpec.describe Namespace do
     end
   end
 
-  describe '#closest_gitlab_subscription' do
+  describe '#closest_gitlab_subscription', :saas do
     subject { group.closest_gitlab_subscription }
 
     context 'when there is a root ancestor' do
@@ -1829,7 +1880,7 @@ RSpec.describe Namespace do
         subject { namespace.closest_gitlab_subscription }
 
         context 'has a subscription' do
-          let(:namespace) { create(:namespace_with_plan) }
+          let(:namespace) { create(:namespace_with_plan, plan: :free_plan) }
 
           it { is_expected.to be_a(GitlabSubscription) }
         end
