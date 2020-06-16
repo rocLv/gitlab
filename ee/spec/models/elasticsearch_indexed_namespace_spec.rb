@@ -34,7 +34,7 @@ RSpec.describe ElasticsearchIndexedNamespace do
     end
   end
 
-  context 'with plans' do
+  context 'with plans', :saas do
     Plan::PAID_HOSTED_PLANS.each do |plan|
       plan_factory = "#{plan}_plan"
       let_it_be(plan_factory) { create(plan_factory) }

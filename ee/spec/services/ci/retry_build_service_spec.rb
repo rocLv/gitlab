@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'spec_helper'
 
-RSpec.describe Ci::RetryBuildService do
+RSpec.describe Ci::RetryBuildService, :saas do
   let_it_be(:user) { create(:user) }
 
   let(:pipeline) { create(:ci_pipeline, project: project) }

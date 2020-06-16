@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe 'groups/settings/_transfer.html.haml' do
+RSpec.describe 'groups/settings/_transfer.html.haml', :saas do
   describe 'render' do
     let(:group) { create(:group) }
 

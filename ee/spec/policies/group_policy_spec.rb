@@ -413,7 +413,7 @@ RSpec.describe GroupPolicy do
         end
       end
 
-      context 'when group_saml_group_sync is licensed' do
+      context 'when group_saml_group_sync is licensed', :saas do
         before do
           stub_group_saml_config(true)
           stub_application_setting(check_namespace_plan: true)
@@ -1420,7 +1420,7 @@ RSpec.describe GroupPolicy do
     end
   end
 
-  it_behaves_like 'model with wiki policies' do
+  it_behaves_like 'model with wiki policies', :saas do
     let_it_be_with_refind(:container) { create(:group_with_plan, plan: :premium_plan) }
     let_it_be(:user) { owner }
 

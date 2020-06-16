@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe EE::ProjectHook do
+RSpec.describe EE::ProjectHook, :saas do
   describe '#rate_limit' do
     let_it_be(:default_limits) { create(:plan_limits, :default_plan, web_hook_calls: 100) }
     let_it_be(:ultimate_limits) { create(:plan_limits, plan: create(:ultimate_plan), web_hook_calls: 500) }
