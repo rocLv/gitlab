@@ -79,10 +79,7 @@ module PreferencesHelper
   end
 
   def language_choices
-    options_for_select(
-      selectable_locales_with_translation_level.sort,
-      current_user.preferred_language
-    )
+    selectable_locales_with_translation_level.sort
   end
 
   def integration_views

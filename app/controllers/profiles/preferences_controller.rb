@@ -2,6 +2,9 @@
 
 class Profiles::PreferencesController < Profiles::ApplicationController
   before_action :user
+  before_action only: [:show] do
+    push_frontend_feature_flag(:user_time_settings)
+  end
 
   feature_category :users
 
