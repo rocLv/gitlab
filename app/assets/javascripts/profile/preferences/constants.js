@@ -18,7 +18,7 @@ export const i18n = {
   defaultSuccess: __('Preferences saved.'),
   defaultError: s__('Preferences|Failed to save preferences.'),
   localization: s__('Localization'),
-  localizationDescription: s__('Preferences|Customize language and region related settings.'),
+  localizationDescription: s__('Customize language and region related settings.'),
   learnMore: s__('Learn more'),
   language: s__('Language'),
   experimentalDescription: s__(

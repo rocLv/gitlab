@@ -9904,6 +9904,9 @@ msgstr ""
 msgid "Customize icon"
 msgstr ""
 
+msgid "Customize language and region related settings."
+msgstr ""
+
 msgid "Customize name"
 msgstr ""
 
@@ -25219,9 +25222,6 @@ msgid "Preferences|Configure how dates and times display for you."
 msgstr ""
 
 msgid "Preferences|Customize integrations with third party services."
-msgstr ""
-
-msgid "Preferences|Customize language and region related settings."
 msgstr ""
 
 msgid "Preferences|Customize the appearance of the application header and navigation sidebar."
