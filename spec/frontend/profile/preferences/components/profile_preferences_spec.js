@@ -58,10 +58,6 @@ describe('ProfilePreferences component', () => {
     );
   }
 
-  function findFlashError() {
-    return document.querySelector('.flash-container .flash-text');
-  }
-
   function findLocalizationAnchor() {
     return wrapper.find('#localization');
   }
