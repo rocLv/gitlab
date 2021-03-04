@@ -64,13 +64,14 @@ export function initIde(el, options = {}) {
         codesandboxBundlerUrl: el.dataset.codesandboxBundlerUrl,
         environmentsGuidanceAlertDismissed: !parseBoolean(el.dataset.enableEnvironmentsGuidance),
       });
+      this.initProject({ projectToString: el.dataset.project });
     },
     beforeDestroy() {
       // This helps tests do Singleton cleanups which we don't really have responsibility to know about here.
       this.$emit('destroy');
     },
     methods: {
-      ...mapActions(['setEmptyStateSvgs', 'setLinks', 'init']),
+      ...mapActions(['setEmptyStateSvgs', 'setLinks', 'init', 'initProject']),
     },
     render(createElement) {
       return createElement(rootComponent);
