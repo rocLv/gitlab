@@ -1,35 +1,40 @@
 import { escape } from 'lodash';
 import createFlash from '~/flash';
+import getIdeProject from '~/ide/queries/get_ide_project.query.graphql';
+import { query } from '~/ide/services/gql';
 import { __, sprintf } from '~/locale';
 import api from '../../../api';
 import service from '../../services';
 import * as types from '../mutation_types';
 
-export const getProjectData = ({ commit, state }, { namespace, projectId, force = false } = {}) =>
-  new Promise((resolve, reject) => {
-    if (!state.projects[`${namespace}/${projectId}`] || force) {
-      commit(types.TOGGLE_LOADING, { entry: state });
-      service
-        .getProjectData(namespace, projectId)
-        .then((res) => res.data)
-        .then((data) => {
-          commit(types.TOGGLE_LOADING, { entry: state });
-          commit(types.SET_PROJECT, { projectPath: `${namespace}/${projectId}`, project: data });
-          commit(types.SET_CURRENT_PROJECT, `${namespace}/${projectId}`);
-          resolve(data);
-        })
-        .catch(() => {
-          createFlash({
-            message: __('Error loading project data. Please try again.'),
-            fadeTransition: false,
-            addBodyClass: true,
-          });
-          reject(new Error(`Project not loaded ${namespace}/${projectId}`));
-        });
-    } else {
-      resolve(state.projects[`${namespace}/${projectId}`]);
-    }
+const fetchProjectPermissionsData = (projectPath) =>
+  query({
+    query: getIdeProject,
+    variables: { projectPath },
+  }).then(({ data }) => data.project);
+
+const errorFetchingData = () => {
+  createFlash({
+    message: __('Error loading project data. Please try again.'),
+    fadeTransition: false,
+    addBodyClass: true,
   });
+};
+
+export const initProject = ({ commit }, { projectToString = '' } = {}) => {
+  if (!projectToString) {
+    return;
+  }
+  const project = JSON.parse(projectToString);
+  const projectPath = project.path_with_namespace;
+  commit(types.SET_PROJECT, { projectPath, project });
+  commit(types.SET_CURRENT_PROJECT, projectPath);
+  fetchProjectPermissionsData(projectPath)
+    .then((permissions) => {
+      commit(types.UPDATE_PROJECT, { projectPath, props: permissions });
+    })
+    .catch(() => errorFetchingData());
+};
 
 export const refreshLastCommitData = ({ commit }, { projectId, branchId } = {}) =>
   service
@@ -133,17 +138,18 @@ export const loadBranch = ({ dispatch, getters, state }, { projectId, branchId }
     branchId,
   })
     .then(() => {
-      dispatch('getMergeRequestsForBranch', {
-        projectId,
-        branchId,
-      });
-
       const branch = getters.findBranch(projectId, branchId);
 
       return dispatch('getFiles', {
         projectId,
         branchId,
         ref: branch.commit.id,
+      });
+    })
+    .then(() => {
+      dispatch('getMergeRequestsForBranch', {
+        projectId,
+        branchId,
       });
     })
     .catch((err) => {
