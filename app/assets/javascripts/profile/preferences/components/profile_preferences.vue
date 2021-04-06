@@ -139,10 +139,7 @@ export default {
       </p>
     </div>
     <div class="col-lg-8">
-      <gl-form-group>
-        <label class="gl-font-weight-bold" for="user_preferred_language">
-          {{ $options.i18n.language }}
-        </label>
+      <gl-form-group :label="$options.i18n.language" label-for="user_preferred_language">
         <div class="gl-relative">
           <select
             id="user_preferred_language"
@@ -159,20 +156,13 @@ export default {
               {{ optionName }}
             </option>
           </select>
-          <gl-icon
-            name="chevron-down"
-            data-hidden="true"
-            class="gl-absolute gl-top-4 gl-right-3 gl-text-gray-200"
-          />
+          <gl-icon name="chevron-down" class="gl-absolute gl-top-4 gl-right-3 gl-text-gray-200" />
         </div>
         <gl-form-text>
           {{ $options.i18n.experimentalDescription }}
         </gl-form-text>
       </gl-form-group>
-      <gl-form-group>
-        <label class="gl-font-weight-bold" for="user_first_day_of_week">
-          {{ $options.i18n.firstDayOfTheWeek }}
-        </label>
+      <gl-form-group :label="$options.i18n.firstDayOfTheWeek" label-for="user_first_day_of_week">
         <div class="gl-relative">
           <select
             id="user_first_day_of_week"
@@ -189,11 +179,7 @@ export default {
               {{ optionName }}
             </option>
           </select>
-          <gl-icon
-            name="chevron-down"
-            data-hidden="true"
-            class="gl-absolute gl-top-4 gl-right-3 gl-text-gray-200"
-          />
+          <gl-icon name="chevron-down" class="gl-absolute gl-top-4 gl-right-3 gl-text-gray-200" />
         </div>
       </gl-form-group>
     </div>
@@ -240,21 +226,23 @@ export default {
           {{ $options.i18n.relativeTimeHelpText }}
         </gl-form-text>
       </gl-form-group>
-      <gl-form-group v-if="glFeatures.userTimeSettings" class="gl-form-checkbox form-check">
-        <input name="user[time_format_in_24h]" type="hidden" value="0" />
-        <input
-          id="user_time_format_in_24h"
-          v-model="selectedTimeFormatIn24h"
-          data-testid="user-time-format-option"
-          class="form-check-input"
-          name="user[time_format_in_24h]"
-          type="checkbox"
-          value="1"
-        />
-        <label class="form-check-label" for="user_time_format_in_24h">
-          {{ $options.i18n.timeFormatLabel }}
-        </label>
-      </gl-form-group>
+      <template v-if="glFeatures.userTimeSettings">
+        <gl-form-group class="gl-form-checkbox form-check">
+          <input name="user[time_format_in_24h]" type="hidden" value="0" />
+          <input
+            id="user_time_format_in_24h"
+            v-model="selectedTimeFormatIn24h"
+            data-testid="user-time-format-option"
+            class="form-check-input"
+            name="user[time_format_in_24h]"
+            type="checkbox"
+            value="1"
+          />
+          <label class="form-check-label" for="user_time_format_in_24h">
+            {{ $options.i18n.timeFormatLabel }}
+          </label>
+        </gl-form-group>
+      </template>
     </div>
 
     <div v-if="integrationViews.length" class="col-sm-12">
