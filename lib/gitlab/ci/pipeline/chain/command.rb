@@ -12,7 +12,7 @@ module Gitlab
           :seeds_block, :variables_attributes, :push_options,
           :chat_data, :allow_mirror_update, :bridge, :content, :dry_run,
           # These attributes are set by Chains during processing:
-          :config_content, :yaml_processor_result, :workflow_rules_result, :pipeline_seed
+          :config_content, :yaml_processor_result, :workflow_rules_result, :pipeline_seed, :package_push
         ) do
           include Gitlab::Utils::StrongMemoize
 
@@ -51,6 +51,8 @@ module Gitlab
 
           def sha
             strong_memoize(:sha) do
+              break package_push.sha if package_push
+
               project.commit(origin_sha || origin_ref).try(:id)
             end
           end
