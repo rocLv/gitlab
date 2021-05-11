@@ -212,6 +212,7 @@ module API
       mount ::API::ResourceMilestoneEvents
       mount ::API::ResourceStateEvents
       mount ::API::NotificationSettings
+      mount ::API::PackagePushes
       mount ::API::ProjectPackages
       mount ::API::GroupPackages
       mount ::API::PackageFiles
