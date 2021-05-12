@@ -171,9 +171,6 @@ export default {
       const regex = new RegExp(`(${terms})`, 'gi');
       return name.replace(regex, '<b>$1</b>');
     },
-    saveProjectsToCache(projects) {
-      projects.forEach((project) => this.$set(this.projectsCache, project.id, project));
-    },
   },
   i18n: {
     enterMoreCharactersToSearch: __('Enter at least three characters to search'),
