@@ -58,10 +58,10 @@ RSpec.describe 'Group issues page' do
       let(:user2) { user_outside_group }
 
       it 'filters by only group users' do
-        filtered_search.set('assignee:=')
+        select_tokens 'Assignee', '=', submit: false
 
-        expect(find('#js-dropdown-assignee .filter-dropdown')).to have_content(user.name)
-        expect(find('#js-dropdown-assignee .filter-dropdown')).not_to have_content(user2.name)
+        expect_suggestion(user.name)
+        expect_no_suggestion(user2.name)
       end
     end
   end
@@ -119,14 +119,10 @@ RSpec.describe 'Group issues page' do
       end
 
       it 'shows projects only with issues feature enabled', :js do
-        within '.empty-state' do
-          click_button 'Toggle project select'
-        end
+        click_button 'Toggle project select'
 
-        page.within('.select2-results') do
-          expect(page).to have_content(project.full_name)
-          expect(page).not_to have_content(project_with_issues_disabled.full_name)
-        end
+        expect(page).to have_button project.full_name
+        expect(page).not_to have_button project_with_issues_disabled.full_name
       end
     end
   end
@@ -159,7 +155,7 @@ RSpec.describe 'Group issues page' do
     it 'each issue item has a user-can-drag css applied' do
       visit issues_group_path(group, sort: 'relative_position')
 
-      expect(page).to have_selector('.issue.user-can-drag', count: 3)
+      expect(page).to have_selector('.issue.gl-cursor-grab', count: 3)
     end
 
     it 'issues should be draggable and persist order' do
@@ -223,14 +219,8 @@ RSpec.describe 'Group issues page' do
     end
 
     it 'shows the pagination' do
-      expect(page).to have_link 'Prev'
-      expect(page).to have_link 'Next'
-    end
-
-    it 'first pagination item is active' do
-      page.within('.gl-pagination') do
-        expect(find('li.active')).to have_content('1')
-      end
+      expect(page).to have_button 'Prev', disabled: true
+      expect(page).to have_button 'Next'
     end
   end
 end

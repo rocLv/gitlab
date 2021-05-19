@@ -54,15 +54,21 @@ RSpec.describe 'Labels Hierarchy', :js do
   shared_examples 'filtering by ancestor labels for projects' do |board = false|
     it 'filters by ancestor labels' do
       [grandparent_group_label, parent_group_label, project_label_1].each do |label|
-        select_label_on_dropdown(label.title)
-
-        wait_for_requests
-
         if board
+          select_label_on_dropdown(label.title)
+
           expect(page).to have_selector('.board-card-title') do |card|
             expect(card).to have_selector('a', text: labeled_issue.title)
           end
         else
+          within '[data-testid="filtered-search-input"]' do
+            click_empty_filtered_search_bar
+            click_on 'Label'
+            click_on '= is'
+            click_on label.title
+            send_keys :enter
+          end
+
           expect_issues_list_count(1)
           expect(page).to have_selector('.issue-title', text: labeled_issue.title)
         end
@@ -70,7 +76,11 @@ RSpec.describe 'Labels Hierarchy', :js do
     end
 
     it 'does not filter by descendant group labels' do
-      filtered_search.set("label=")
+      if board
+        filtered_search.set("label=")
+      else
+        select_tokens 'Label', '=', submit: false
+      end
 
       wait_for_requests
 
@@ -93,11 +103,9 @@ RSpec.describe 'Labels Hierarchy', :js do
 
     it 'filters by ancestors and current group labels' do
       [grandparent_group_label, parent_group_label].each do |label|
-        select_label_on_dropdown(label.title)
-
-        wait_for_requests
-
         if board
+          select_label_on_dropdown(label.title)
+
           expect(page).to have_selector('.board-card-title') do |card|
             expect(card).to have_selector('a', text: labeled_issue.title)
           end
@@ -106,6 +114,14 @@ RSpec.describe 'Labels Hierarchy', :js do
             expect(card).to have_selector('a', text: labeled_issue_2.title)
           end
         else
+          within '[data-testid="filtered-search-input"]' do
+            click_empty_filtered_search_bar
+            click_on 'Label'
+            click_on '= is'
+            click_on label.title
+            send_keys :enter
+          end
+
           expect_issues_list_count(3)
           expect(page).to have_selector('.issue-title', text: labeled_issue.title)
           expect(page).to have_selector('.issue-title', text: labeled_issue_2.title)
@@ -115,11 +131,9 @@ RSpec.describe 'Labels Hierarchy', :js do
     end
 
     it 'filters by descendant group labels' do
-      wait_for_requests
-
-      select_label_on_dropdown(group_label_3.title)
-
       if board
+        select_label_on_dropdown(group_label_3.title)
+
         expect(page).to have_selector('.board-card-title') do |card|
           expect(card).not_to have_selector('a', text: labeled_issue_2.title)
         end
@@ -128,17 +142,27 @@ RSpec.describe 'Labels Hierarchy', :js do
           expect(card).to have_selector('a', text: labeled_issue_3.title)
         end
       else
+        select_tokens 'Label', '=', group_label_3.title
+
         expect_issues_list_count(1)
         expect(page).to have_selector('.issue-title', text: labeled_issue_3.title)
       end
     end
 
     it 'does not filter by descendant group project labels' do
-      filtered_search.set("label=")
+      if board
+        filtered_search.set("label=")
 
-      wait_for_requests
+        wait_for_requests
 
-      expect(page).not_to have_selector('.btn-link', text: project_label_3.title)
+        expect(page).not_to have_selector('.btn-link', text: project_label_3.title)
+      else
+        select_tokens 'Label', '=', submit: false
+
+        wait_for_requests
+
+        expect(page).not_to have_link project_label_3.title
+      end
     end
   end
 
@@ -224,10 +248,10 @@ RSpec.describe 'Labels Hierarchy', :js do
         visit project_issues_path(project_1)
       end
 
-      it_behaves_like 'filtering by ancestor labels for projects'
+      it_behaves_like 'filtering by ancestor labels for projects', false, true
 
       it 'does not filter by descendant group labels' do
-        filtered_search.set("label=")
+        select_tokens 'Label', '=', submit: false
 
         wait_for_requests
 

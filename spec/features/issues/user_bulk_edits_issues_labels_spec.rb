@@ -12,8 +12,8 @@ RSpec.describe 'Issues > Labels bulk assignment' do
   let!(:issue1)   { create(:issue, project: project, title: "Issue 1", labels: [frontend]) }
   let!(:issue2)   { create(:issue, project: project, title: "Issue 2") }
 
-  let(:issue_1_selector) { "#issue_#{issue1.id}" }
-  let(:issue_2_selector) { "#issue_#{issue2.id}" }
+  let(:issue_1_selector) { "#issuable_#{issue1.id}" }
+  let(:issue_2_selector) { "#issuable_#{issue2.id}" }
 
   context 'as an allowed user', :js do
     before do

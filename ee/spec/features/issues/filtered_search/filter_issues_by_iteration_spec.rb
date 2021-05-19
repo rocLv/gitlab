@@ -19,7 +19,7 @@ RSpec.describe 'Filter issues by iteration', :js do
   let_it_be(:iteration_2_issue) { create(:issue, project: project, iteration: iteration_2) }
   let_it_be(:no_iteration_issue) { create(:issue, project: project) }
 
-  shared_examples 'filters by iteration' do
+  shared_examples 'filters by iteration' do |board = false|
     context 'when iterations are not available' do
       before do
         stub_licensed_features(iterations: false)
@@ -28,9 +28,15 @@ RSpec.describe 'Filter issues by iteration', :js do
       end
 
       it 'does not show the iteration filter option' do
-        find('.filtered-search').set('iter')
+        if board
+          find('.filtered-search').set('iter')
 
-        expect(find('#js-dropdown-hint')).not_to have_selector('.filter-dropdown .filter-dropdown-item', text: 'Iteration')
+          expect(find('#js-dropdown-hint')).not_to have_selector('.filter-dropdown .filter-dropdown-item', text: 'Iteration')
+        else
+          click_empty_filtered_search_bar
+
+          expect_no_suggestion('Iteration')
+        end
       end
     end
 
@@ -67,7 +73,11 @@ RSpec.describe 'Filter issues by iteration', :js do
 
       context 'when passing specific iteration by title' do
         before do
-          input_filtered_search("iteration:=\"#{iteration_1.title}\"")
+          if board
+            input_filtered_search("iteration:=\"#{iteration_1.title}\"")
+          else
+            select_tokens 'Iteration', '=', iteration_1.title
+          end
         end
 
         it_behaves_like 'filters issues by iteration'
@@ -75,7 +85,11 @@ RSpec.describe 'Filter issues by iteration', :js do
 
       context 'when passing Current iteration' do
         before do
-          input_filtered_search("iteration:=Current", extra_space: false)
+          if board
+            input_filtered_search("iteration:=Current", extra_space: false)
+          else
+            select_tokens 'Iteration', '=', 'Current'
+          end
         end
 
         it_behaves_like 'filters issues by iteration'
@@ -85,14 +99,18 @@ RSpec.describe 'Filter issues by iteration', :js do
         before do
           visit page_path
 
-          page.within('.filtered-search-wrapper') do
-            find('.filtered-search').set('iter')
-            click_button('Iteration')
+          if board
+            page.within('.filtered-search-wrapper') do
+              find('.filtered-search').set('iter')
+              click_button('Iteration')
 
-            find('.btn-helptext', text: 'is not').click
-            click_button(iteration_title)
+              find('.btn-helptext', text: 'is not').click
+              click_button(iteration_title)
 
-            find('.filtered-search').send_keys(:enter)
+              find('.filtered-search').send_keys(:enter)
+            end
+          else
+            select_tokens 'Iteration', '!=', iteration_title
           end
         end
 
@@ -181,7 +199,7 @@ RSpec.describe 'Filter issues by iteration', :js do
     let(:page_path) { project_board_path(project, board) }
     let(:issue_title_selector) { '.board-card .board-card-title' }
 
-    it_behaves_like 'filters by iteration'
+    it_behaves_like 'filters by iteration', true
   end
 
   context 'group board' do
@@ -200,6 +218,6 @@ RSpec.describe 'Filter issues by iteration', :js do
       sign_in user
     end
 
-    it_behaves_like 'filters by iteration'
+    it_behaves_like 'filters by iteration', true
   end
 end

@@ -11,6 +11,7 @@ RSpec.describe 'User views issues page', :js do
 
   before do
     stub_feature_flags(vue_issuables_list: false)
+    stub_licensed_features(blocked_issues: true, issuable_health_status: true, issue_weights: true)
     sign_in(user)
     visit project_issues_path(project)
   end

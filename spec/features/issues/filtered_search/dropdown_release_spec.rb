@@ -11,9 +11,6 @@ RSpec.describe 'Dropdown release', :js do
   let_it_be(:crazy_release) { create(:release, tag: '☺!/"#%&\'{}+,-.<>;=@]_`{|}🚀', project: project) }
   let_it_be(:issue) { create(:issue, project: project) }
 
-  let(:filtered_search) { find('.filtered-search') }
-  let(:filter_dropdown) { find('#js-dropdown-release .filter-dropdown') }
-
   before do
     project.add_maintainer(user)
     sign_in(user)
@@ -22,12 +19,11 @@ RSpec.describe 'Dropdown release', :js do
   end
 
   describe 'behavior' do
-    before do
-      filtered_search.set('release:=')
-    end
-
     it 'loads all the releases when opened' do
-      expect_filtered_search_dropdown_results(filter_dropdown, 2)
+      select_tokens 'Release', '=', submit: false
+
+      # Expect None, Any, v1.0, !/\"#%&'{}+,-.<>;=@]_`{|}
+      expect_filtered_search_suggestion_count(4)
     end
   end
 end
