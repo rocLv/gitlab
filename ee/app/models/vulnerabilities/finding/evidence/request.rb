@@ -26,6 +26,8 @@ module Vulnerabilities
                  inverse_of: :request,
                  foreign_key: 'vulnerability_finding_evidence_request_id'
 
+        accepts_nested_attributes_for :headers
+
         validates :method, length: { maximum: 32 }
         validates :url, length: { maximum: 2048 }
         validates_with AnyFieldValidator, fields: DATA_FIELDS

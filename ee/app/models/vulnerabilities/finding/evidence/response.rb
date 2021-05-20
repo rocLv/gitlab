@@ -24,6 +24,8 @@ module Vulnerabilities
                  inverse_of: :response,
                  foreign_key: 'vulnerability_finding_evidence_response_id'
 
+        accepts_nested_attributes_for :headers
+
         validates :reason_phrase, length: { maximum: 2048 }, presence: true
       end
     end
