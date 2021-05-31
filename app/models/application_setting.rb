@@ -199,6 +199,9 @@ class ApplicationSetting < ApplicationRecord
   validates :container_expiration_policies_enable_historic_entries,
             inclusion: { in: [true, false], message: _('must be a boolean value') }
 
+  validates :unscoped_issue_list_api,
+            inclusion: { in: [true, false], message: _('must be a boolean value') }
+
   validates :container_registry_token_expire_delay,
             presence: true,
             numericality: { only_integer: true, greater_than: 0 }

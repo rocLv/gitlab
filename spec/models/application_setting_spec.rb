@@ -5,7 +5,9 @@ require 'spec_helper'
 RSpec.describe ApplicationSetting do
   using RSpec::Parameterized::TableSyntax
 
-  subject(:setting) { described_class.create_from_defaults }
+  let_it_be(:default_setting, refind: true) { described_class.create_from_defaults }
+
+  subject(:setting) { default_setting }
 
   it { include(CacheableAttributes) }
   it { include(ApplicationSettingImplementation) }
@@ -37,6 +39,10 @@ RSpec.describe ApplicationSetting do
     it { is_expected.to allow_value(true).for(:container_expiration_policies_enable_historic_entries) }
     it { is_expected.to allow_value(false).for(:container_expiration_policies_enable_historic_entries) }
     it { is_expected.not_to allow_value(nil).for(:container_expiration_policies_enable_historic_entries) }
+
+    it { is_expected.to allow_value(true).for(:unscoped_issue_list_api) }
+    it { is_expected.to allow_value(false).for(:unscoped_issue_list_api) }
+    it { is_expected.not_to allow_value(nil).for(:unscoped_issue_list_api) }
 
     it { is_expected.to allow_value("myemail@gitlab.com").for(:lets_encrypt_notification_email) }
     it { is_expected.to allow_value(nil).for(:lets_encrypt_notification_email) }

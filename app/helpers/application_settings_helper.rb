@@ -330,6 +330,7 @@ module ApplicationSettingsHelper
       :unique_ips_limit_enabled,
       :unique_ips_limit_per_user,
       :unique_ips_limit_time_window,
+      :unscoped_issue_list_api,
       :usage_ping_enabled,
       :user_default_external,
       :user_show_add_ssh_key_message,

@@ -104,6 +104,7 @@ module API
                        desc: 'Return issues for the given scope: `created_by_me`, `assigned_to_me` or `all`'
     end
     get '/issues_statistics' do
+      validate_list_scope!
       authenticate! unless params[:scope] == 'all'
 
       present issues_statistics, with: Grape::Presenters::Presenter
@@ -121,6 +122,7 @@ module API
                                 desc: 'Return issues from non archived projects'
       end
       get do
+        validate_list_scope!
         authenticate! unless params[:scope] == 'all'
         issues = paginate(find_issues)
 

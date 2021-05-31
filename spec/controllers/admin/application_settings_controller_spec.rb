@@ -239,6 +239,14 @@ RSpec.describe Admin::ApplicationSettingsController, :do_not_mock_admin_mode_set
       end
     end
 
+    describe 'API Settings' do
+      it 'updates unscoped_issue_list_api' do
+        expect do
+          put :update, params: { application_setting: { unscoped_issue_list_api: false } }
+        end.to change { ApplicationSetting.current.unscoped_issue_list_api }.from(true).to(false)
+      end
+    end
+
     describe 'EKS integration' do
       let(:application_setting) { ApplicationSetting.current }
       let(:settings_params) do

@@ -72,6 +72,28 @@ module API
           }
         }
       end
+
+      def issues_list_scope_all_at_least_one_of
+        [
+          :author_username,
+          :author_id,
+          :assignee_username,
+          :assignee_id,
+          :milestone,
+          :labels
+        ]
+      end
+
+      def validate_list_scope!
+        return unless params[:scope] == 'all' && !Gitlab::CurrentSettings.current_application_settings.unscoped_issue_list_api?
+
+        unless params.slice(*issues_list_scope_all_at_least_one_of).any?(&:present?)
+          unprocessable_entity!(
+            'scope=all is only available when used in conjuction with at least one of: ' \
+            "[#{issues_list_scope_all_at_least_one_of.join(', ')}]"
+          )
+        end
+      end
     end
   end
 end

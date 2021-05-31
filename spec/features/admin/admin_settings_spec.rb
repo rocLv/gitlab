@@ -105,6 +105,16 @@ RSpec.describe 'Admin updates settings' do
         expect(page).to have_content "Application settings saved successfully"
       end
 
+      it 'changes API settings' do
+        page.within('.as-api-settings') do
+          uncheck 'Allow unscoped issue lists via API'
+          click_button 'Save changes'
+        end
+
+        expect(current_settings.unscoped_issue_list_api).to be_falsey
+        expect(page).to have_content "Application settings saved successfully"
+      end
+
       it 'change Maximum import size' do
         page.within('.as-account-limit') do
           fill_in 'Maximum import size (MB)', with: 15

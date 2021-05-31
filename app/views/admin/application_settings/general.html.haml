@@ -24,6 +24,17 @@
   .settings-content
     = render 'account_and_limit'
 
+%section.settings.as-api-settings.no-animate#js-api-settings{ class: ('expanded' if expanded_by_default?), data: { qa_selector: 'api_settings_content' } }
+  .settings-header
+    %h4
+      = _('API settings')
+    %button.btn.gl-button.btn-default.js-settings-toggle{ type: 'button' }
+      = expanded_by_default? ? _('Collapse') : _('Expand')
+    %p
+      = _('Set API configurations')
+  .settings-content
+    = render 'api_settings'
+
 %section.settings.as-diff-limits.no-animate#js-merge-request-settings{ class: ('expanded' if expanded_by_default?) }
   .settings-header
     %h4

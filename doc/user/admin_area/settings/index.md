@@ -21,6 +21,7 @@ Access the default page for Admin Area settings by navigating to **Admin Area > 
 | ------ | ----------- |
 | [Visibility and access controls](visibility_and_access_controls.md) | Set default and restrict visibility levels. Configure import sources and Git access protocol. |
 | [Account and limit](account_and_limit_settings.md) | Set projects and maximum size limits, session duration, user options, and check feature availability for namespace plan. |
+| [API settings](api_settings.md) | Change GitLab API settings |
 | [Diff limits](../diff_limits.md) | Diff content limits. |
 | [Sign-up restrictions](sign_up_restrictions.md) | Configure the way a user creates a new account. |
 | [Sign in restrictions](sign_in_restrictions.md) | Set requirements for a user to sign in. Enable mandatory two-factor authentication. |

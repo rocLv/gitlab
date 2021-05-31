@@ -91,7 +91,8 @@ Example response:
   "floc_enabled": false,
   "external_pipeline_validation_service_timeout": null,
   "external_pipeline_validation_service_token": null,
-  "external_pipeline_validation_service_url": null
+  "external_pipeline_validation_service_url": null,
+  "unscoped_issue_list_api": true
 }
 ```
 
@@ -190,7 +191,8 @@ Example response:
   "admin_mode": false,
   "external_pipeline_validation_service_timeout": null,
   "external_pipeline_validation_service_token": null,
-  "external_pipeline_validation_service_url": null
+  "external_pipeline_validation_service_url": null,
+  "unscoped_issue_list_api": true
 }
 ```
 
@@ -408,6 +410,7 @@ listed in the descriptions of the relevant settings.
 | `unique_ips_limit_enabled`               | boolean          | no                                   | (**If enabled, requires:** `unique_ips_limit_per_user` and `unique_ips_limit_time_window`) Limit sign in from multiple IPs. |
 | `unique_ips_limit_per_user`              | integer          | required by: `unique_ips_limit_enabled` | Maximum number of IPs per user. |
 | `unique_ips_limit_time_window`           | integer          | required by: `unique_ips_limit_enabled` | How many seconds an IP is counted towards the limit. |
+| `unscoped_issue_list_api`                | boolean          | no                                   | Allow users to disable unscoped issue lists and statistics via API when using the `scope=all` option. Setting this to `false` causes requests to fail when `scope=all` is provided without additional filtering. ([Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/330519) in GitLab 14.0.)|
 | `usage_ping_enabled`                     | boolean          | no                                   | Every week GitLab reports license usage back to GitLab, Inc. |
 | `user_default_external`                  | boolean          | no                                   | Newly registered users are external by default. |
 | `user_default_internal_regex`            | string           | no                                   | Specify an e-mail address regex pattern to identify default internal users. |

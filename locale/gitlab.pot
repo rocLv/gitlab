@@ -1519,6 +1519,9 @@ msgstr ""
 msgid "API key"
 msgstr ""
 
+msgid "API settings"
+msgstr ""
+
 msgid "API?"
 msgstr ""
 
@@ -3304,6 +3307,9 @@ msgid "Allow this key to push to this repository"
 msgstr ""
 
 msgid "Allow this secondary node to replicate content on Object Storage"
+msgstr ""
+
+msgid "Allow unscoped issue lists via API"
 msgstr ""
 
 msgid "Allow users to dismiss the broadcast message"
@@ -29781,6 +29787,9 @@ msgid "Session duration (minutes)"
 msgstr ""
 
 msgid "Set %{epic_ref} as the parent epic."
+msgstr ""
+
+msgid "Set API configurations"
 msgstr ""
 
 msgid "Set a default description template to be used for new issues. %{link_start}What are description templates?%{link_end}"

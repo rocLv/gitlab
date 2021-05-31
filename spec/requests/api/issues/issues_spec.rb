@@ -89,6 +89,34 @@ RSpec.describe API::Issues do
     end
   end
 
+  shared_examples 'requires minimum filters for scope all' do |path|
+    context 'when application setting unscoped_issue_list_api is true' do
+      it 'works for scope all without additional filters' do
+        get api(path, current_user), params: { scope: 'all' }
+
+        expect(response).to have_gitlab_http_status(:ok)
+      end
+    end
+
+    context 'when application setting unscoped_issue_list_api is false' do
+      before do
+        stub_application_setting(unscoped_issue_list_api: false)
+      end
+
+      it 'fails for scope all without additional filters' do
+        get api(path, current_user), params: { scope: 'all' }
+
+        expect(response).to have_gitlab_http_status(:unprocessable_entity)
+      end
+
+      it 'works for scope all when additional filters are provided' do
+        get api(path, current_user), params: { scope: 'all', author_username: user.username }
+
+        expect(response).to have_gitlab_http_status(:ok)
+      end
+    end
+  end
+
   describe 'GET /issues/:id' do
     context 'when unauthorized' do
       it 'returns unauthorized' do
@@ -132,6 +160,10 @@ RSpec.describe API::Issues do
 
   describe 'GET /issues' do
     context 'when unauthenticated' do
+      it_behaves_like 'requires minimum filters for scope all', '/issues' do
+        let(:current_user) { nil }
+      end
+
       it 'returns an array of all issues' do
         get api('/issues'), params: { scope: 'all' }
 
@@ -177,6 +209,10 @@ RSpec.describe API::Issues do
       end
 
       context 'issues_statistics' do
+        it_behaves_like 'requires minimum filters for scope all', '/issues_statistics' do
+          let(:current_user) { nil }
+        end
+
         it 'returns authentication error without any scope' do
           get api('/issues_statistics')
 
@@ -261,6 +297,10 @@ RSpec.describe API::Issues do
     end
 
     context 'when authenticated' do
+      it_behaves_like 'requires minimum filters for scope all', '/issues' do
+        let(:current_user) { user }
+      end
+
       it 'returns an array of issues' do
         get api('/issues', user)
 
@@ -793,6 +833,10 @@ RSpec.describe API::Issues do
       end
 
       context 'issues_statistics' do
+        it_behaves_like 'requires minimum filters for scope all', '/issues_statistics' do
+          let(:current_user) { user }
+        end
+
         context 'no state is treated as all state' do
           let(:params) { {} }
           let(:counts) { { all: 2, closed: 1, opened: 1 } }

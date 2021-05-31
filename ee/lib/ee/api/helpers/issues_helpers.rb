@@ -5,6 +5,7 @@ module EE
     module Helpers
       module IssuesHelpers
         extend ActiveSupport::Concern
+        extend ::Gitlab::Utils::Override
 
         prepended do
           params :optional_issue_params_ee do
@@ -34,6 +35,11 @@ module EE
                      desc: 'Return issues which are assigned to the iteration with the given title'
             mutually_exclusive :iteration_id, :iteration_title
           end
+        end
+
+        override :issues_list_scope_all_at_least_one_of
+        def issues_list_scope_all_at_least_one_of
+          [*super, :iteration_id, :iteration_title, :epic_id]
         end
 
         class_methods do
