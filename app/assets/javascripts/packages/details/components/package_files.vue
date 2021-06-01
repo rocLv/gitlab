@@ -7,6 +7,7 @@ import FileSha from '~/packages/details/components/file_sha.vue';
 import Tracking from '~/tracking';
 import FileIcon from '~/vue_shared/components/file_icon.vue';
 import TimeAgoTooltip from '~/vue_shared/components/time_ago_tooltip.vue';
+import CiIcon from '../../../vue_shared/components/ci_icon.vue';
 
 export default {
   name: 'PackageFiles',
@@ -20,6 +21,7 @@ export default {
     FileIcon,
     TimeAgoTooltip,
     FileSha,
+    CiIcon,
   },
   mixins: [Tracking.mixin()],
   props: {
@@ -44,6 +46,9 @@ export default {
     },
     showCommitColumn() {
       return this.filesTableRows.some((row) => Boolean(row.pipeline?.id));
+    },
+    showPipelineColumn() {
+      return this.filesTableRows.some((row) => Boolean(row.package_pipeline_detailed_status?.details_path));
     },
     filesTableHeaderFields() {
       return [
@@ -72,6 +77,11 @@ export default {
           class: 'gl-text-right',
           tdClass: 'gl-w-4',
         },
+          key: 'pipeline',
+          label: '',
+          class: 'gl-text-right',
+          hide: !this.showPipelineColumn,
+        }
       ].filter((c) => !c.hide);
     },
   },
@@ -119,6 +129,7 @@ export default {
           />
           <span>{{ item.file_name }}</span>
         </gl-link>
+
       </template>
 
       <template #cell(commit)="{ item }">
@@ -158,6 +169,22 @@ export default {
           />
           <file-sha v-if="item.file_md5" data-testid="md5" title="MD5" :sha="item.file_md5" />
           <file-sha v-if="item.file_sha1" data-testid="sha-1" title="SHA-1" :sha="item.file_sha1" />
+      </template>
+
+      <template #cell(pipeline)="{ item }">
+        <div v-if="item.package_pipeline_detailed_status" class="ci-status-link">
+          <gl-link
+            v-gl-tooltip.left
+            :href="item.package_pipeline_detailed_status.details_path"
+            :title="statusTitle"
+            class="js-commit-pipeline"
+          >
+           <ci-icon
+             :status="item.package_pipeline_detailed_status"
+             :size="16"
+             :aria-label="statusTitle"
+           />
+          </gl-link>
         </div>
       </template>
     </gl-table>

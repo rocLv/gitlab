@@ -19,10 +19,9 @@ module PackagesHelper
     expose_url(package_registry_project_path)
   end
 
-  def package_from_presenter(package)
+  def package_from_presenter(package, user)
     presenter = ::Packages::Detail::PackagePresenter.new(package)
-
-    presenter.detail_view.to_json
+    presenter.detail_view(user).to_json
   end
 
   def pypi_registry_url(project_id)
@@ -64,9 +63,9 @@ module PackagesHelper
     project.container_repositories.exists?
   end
 
-  def package_details_data(project, package, use_presenter = false)
+  def package_details_data(project, package, current_user, use_presenter = false)
     {
-      package: use_presenter ? package_from_presenter(package) : nil,
+      package: use_presenter ? package_from_presenter(package, current_user) : nil,
       package_id: package.id,
       can_delete: can?(current_user, :destroy_package, project).to_s,
       svg_path: image_path('illustrations/no-packages.svg'),
