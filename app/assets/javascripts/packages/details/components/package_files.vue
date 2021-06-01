@@ -48,7 +48,9 @@ export default {
       return this.filesTableRows.some((row) => Boolean(row.pipeline?.id));
     },
     showPipelineColumn() {
-      return this.filesTableRows.some((row) => Boolean(row.package_pipeline_detailed_status?.details_path));
+      return this.filesTableRows.some((row) =>
+        Boolean(row.package_pipeline_detailed_status?.details_path),
+      );
     },
     filesTableHeaderFields() {
       return [
@@ -81,7 +83,7 @@ export default {
           label: '',
           class: 'gl-text-right',
           hide: !this.showPipelineColumn,
-        }
+        },
       ].filter((c) => !c.hide);
     },
   },
@@ -129,7 +131,6 @@ export default {
           />
           <span>{{ item.file_name }}</span>
         </gl-link>
-
       </template>
 
       <template #cell(commit)="{ item }">
@@ -179,11 +180,11 @@ export default {
             :title="statusTitle"
             class="js-commit-pipeline"
           >
-           <ci-icon
-             :status="item.package_pipeline_detailed_status"
-             :size="16"
-             :aria-label="statusTitle"
-           />
+            <ci-icon
+              :status="item.package_pipeline_detailed_status"
+              :size="16"
+              :aria-label="statusTitle"
+            />
           </gl-link>
         </div>
       </template>
