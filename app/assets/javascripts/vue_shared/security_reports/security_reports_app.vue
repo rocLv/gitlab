@@ -1,29 +1,22 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import createFlash from '~/flash';
 import { s__ } from '~/locale';
 import ReportSection from '~/reports/components/report_section.vue';
 import { ERROR, SLOT_SUCCESS, SLOT_LOADING, SLOT_ERROR } from '~/reports/constants';
 import glFeatureFlagsMixin from '~/vue_shared/mixins/gl_feature_flags_mixin';
+import MergeRequestArtifactDownload from '~/vue_shared/security_reports/components/artifact_downloads/merge_request_artifact_download.vue';
 import HelpIcon from './components/help_icon.vue';
-import SecurityReportDownloadDropdown from './components/security_report_download_dropdown.vue';
 import SecuritySummary from './components/security_summary.vue';
-import {
-  REPORT_TYPE_SAST,
-  REPORT_TYPE_SECRET_DETECTION,
-  reportTypeToSecurityReportTypeEnum,
-} from './constants';
-import securityReportMergeRequestDownloadPathsQuery from './queries/security_report_merge_request_download_paths.query.graphql';
+import { REPORT_TYPE_SAST, REPORT_TYPE_SECRET_DETECTION } from './constants';
 import store from './store';
 import { MODULE_SAST, MODULE_SECRET_DETECTION } from './store/constants';
-import { extractSecurityReportArtifactsFromMergeRequest } from './utils';
 
 export default {
   store,
   components: {
     ReportSection,
     HelpIcon,
-    SecurityReportDownloadDropdown,
+    MergeRequestArtifactDownload,
     SecuritySummary,
   },
   mixins: [glFeatureFlagsMixin()],
@@ -84,36 +77,6 @@ export default {
       status: ERROR,
     };
   },
-  apollo: {
-    reportArtifacts: {
-      query: securityReportMergeRequestDownloadPathsQuery,
-      variables() {
-        return {
-          projectPath: this.targetProjectFullPath,
-          iid: String(this.mrIid),
-          reportTypes: this.$options.reportTypes.map(
-            (reportType) => reportTypeToSecurityReportTypeEnum[reportType],
-          ),
-        };
-      },
-      update(data) {
-        return extractSecurityReportArtifactsFromMergeRequest(this.$options.reportTypes, data);
-      },
-      error(error) {
-        this.showError(error);
-      },
-      result({ loading }) {
-        if (loading) {
-          return;
-        }
-
-        // Query has completed, so populate the availableSecurityReports.
-        this.onCheckingAvailableSecurityReports(
-          this.reportArtifacts.map(({ reportType }) => reportType),
-        );
-      },
-    },
-  },
   computed: {
     ...mapGetters(['groupedSummaryText', 'summaryStatus']),
     hasSecurityReports() {
@@ -124,9 +87,6 @@ export default {
     },
     hasSecretDetectionReports() {
       return this.availableSecurityReports.includes(REPORT_TYPE_SECRET_DETECTION);
-    },
-    isLoadingReportArtifacts() {
-      return this.$apollo.queries.reportArtifacts.loading;
     },
   },
   methods: {
@@ -156,15 +116,8 @@ export default {
       }
     },
     onCheckingAvailableSecurityReports(availableSecurityReports) {
-      this.availableSecurityReports = availableSecurityReports;
+      this.availableSecurityReports = availableSecurityReports.map(({ reportType }) => reportType);
       this.fetchCounts();
-    },
-    showError(error) {
-      createFlash({
-        message: this.$options.i18n.apiError,
-        captureError: true,
-        error,
-      });
     },
   },
   reportTypes: [REPORT_TYPE_SAST, REPORT_TYPE_SECRET_DETECTION],
@@ -198,9 +151,11 @@ export default {
     </template>
 
     <template #action-buttons>
-      <security-report-download-dropdown
-        :artifacts="reportArtifacts"
-        :loading="isLoadingReportArtifacts"
+      <merge-request-artifact-download
+        :report-types="$options.reportTypes"
+        :target-project-full-path="targetProjectFullPath"
+        :mr-iid="mrIid"
+        @result="onCheckingAvailableSecurityReports"
       />
     </template>
   </report-section>
@@ -225,9 +180,11 @@ export default {
     </template>
 
     <template #action-buttons>
-      <security-report-download-dropdown
-        :artifacts="reportArtifacts"
-        :loading="isLoadingReportArtifacts"
+      <merge-request-artifact-download
+        :report-types="$options.reportTypes"
+        :target-project-full-path="targetProjectFullPath"
+        :mr-iid="mrIid"
+        @result="onCheckingAvailableSecurityReports"
       />
     </template>
   </report-section>

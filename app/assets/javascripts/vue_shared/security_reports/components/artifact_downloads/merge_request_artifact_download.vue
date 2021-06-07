@@ -47,6 +47,13 @@ export default {
       update(data) {
         return extractSecurityReportArtifactsFromMergeRequest(this.reportTypes, data);
       },
+      result({ loading }) {
+        if (loading) {
+          return;
+        }
+
+        this.$emit('result', this.reportArtifacts);
+      },
       error(error) {
         this.showError(error);
       },
