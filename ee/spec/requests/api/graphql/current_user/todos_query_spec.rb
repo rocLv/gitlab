@@ -6,7 +6,10 @@ RSpec.describe 'getting project information' do
   include GraphqlHelpers
 
   let_it_be(:current_user) { create(:user) }
-  let_it_be(:epic_todo) { create(:todo, user: current_user, target: create(:epic)) }
+  let_it_be(:group) { create(:group) }
+  let_it_be(:epic) { create(:epic, group: group) }
+  let_it_be(:epic_todo) { create(:todo, user: current_user, target: epic) }
+
   let(:fields) do
     <<~QUERY
     nodes {
@@ -21,7 +24,13 @@ RSpec.describe 'getting project information' do
 
   subject { graphql_data.dig('currentUser', 'todos', 'nodes') }
 
+  before_all do
+    group.add_developer(current_user)
+  end
+
   before do
+    stub_licensed_features(epics: true)
+
     post_graphql(query, current_user: current_user)
   end
 
