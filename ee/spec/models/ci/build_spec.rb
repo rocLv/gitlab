@@ -212,7 +212,7 @@ RSpec.describe Ci::Build do
     subject { job.collect_security_reports!(security_reports) }
 
     before do
-      stub_licensed_features(sast: true, dependency_scanning: true, container_scanning: true, dast: true)
+      stub_licensed_features(sast: true, dependency_scanning: true, container_scanning: true, running_container_scanning: true, dast: true)
     end
 
     context 'when build has a security report' do
@@ -236,6 +236,7 @@ RSpec.describe Ci::Build do
         let!(:sast_artifact) { create(:ee_ci_job_artifact, :sast, job: job, project: job.project) }
         let!(:ds_artifact) { create(:ee_ci_job_artifact, :dependency_scanning, job: job, project: job.project) }
         let!(:cs_artifact) { create(:ee_ci_job_artifact, :container_scanning, job: job, project: job.project) }
+        let!(:rcs_artifact) { create(:ee_ci_job_artifact, :running_container_scanning, job: job, project: job.project) }
         let!(:dast_artifact) { create(:ee_ci_job_artifact, :dast, job: job, project: job.project) }
 
         it 'parses blobs and adds the results to the reports' do
@@ -244,6 +245,7 @@ RSpec.describe Ci::Build do
           expect(security_reports.get_report('sast', sast_artifact).findings.size).to eq(5)
           expect(security_reports.get_report('dependency_scanning', ds_artifact).findings.size).to eq(4)
           expect(security_reports.get_report('container_scanning', cs_artifact).findings.size).to eq(8)
+          expect(security_reports.get_report('running_container_scanning', rcs_artifact).findings.size).to eq(2)
           expect(security_reports.get_report('dast', dast_artifact).findings.size).to eq(20)
         end
       end

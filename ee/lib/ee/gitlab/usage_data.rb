@@ -16,6 +16,9 @@ module EE
         container_scanning: {
           name: :container_scanning_jobs
         },
+        running_container_scanning: {
+          name: :running_container_scanning_jobs
+        },
         dast: {
           name: :dast_jobs
         },
@@ -353,7 +356,7 @@ module EE
         end
 
         # Currently too complicated and to get reliable counts for these stats:
-        # container_scanning_jobs, dast_jobs, dependency_scanning_jobs, license_management_jobs, sast_jobs, secret_detection_jobs, coverage_fuzzing_jobs
+        # container_scanning_jobs, dast_jobs, dependency_scanning_jobs, license_management_jobs, sast_jobs, secret_detection_jobs, coverage_fuzzing_jobs, running_container_scanning_jobs
         # Once https://gitlab.com/gitlab-org/gitlab/merge_requests/17568 is merged, this might be doable
         override :usage_activity_by_stage_secure
         def usage_activity_by_stage_secure(time_period)
