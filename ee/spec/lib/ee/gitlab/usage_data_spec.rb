@@ -21,6 +21,7 @@ RSpec.describe Gitlab::UsageData do
       projects.last.creator.block # to get at least one non-active User
 
       pipeline = create(:ci_pipeline, project: projects[0])
+      create(:ci_build, name: 'running_container_scanning', pipeline: pipeline)
       create(:ci_build, name: 'container_scanning', pipeline: pipeline)
       create(:ci_build, name: 'dast', pipeline: pipeline)
       create(:ci_build, name: 'dependency_scanning', pipeline: pipeline)
@@ -111,6 +112,7 @@ RSpec.describe Gitlab::UsageData do
         projects_jira_issuelist_active
         projects_mirrored_with_pipelines_enabled
         projects_reporting_ci_cd_back_to_github
+        running_container_scanning_jobs
         sast_jobs
         secret_detection_jobs
         status_page_incident_publishes
@@ -134,6 +136,7 @@ RSpec.describe Gitlab::UsageData do
 
     it 'gathers security products usage data' do
       expect(count_data[:container_scanning_jobs]).to eq(1)
+      expect(count_data[:running_container_scanning_jobs]).to eq(1)
       expect(count_data[:dast_jobs]).to eq(1)
       expect(count_data[:dependency_scanning_jobs]).to eq(1)
       expect(count_data[:license_management_jobs]).to eq(2)
@@ -540,6 +543,7 @@ RSpec.describe Gitlab::UsageData do
         create(:ci_build, name: 'dast', user: user)
         create(:ci_build, name: 'dependency_scanning', user: user)
         create(:ci_build, name: 'license_management', user: user)
+        create(:ci_build, name: 'running_container_scanning', user: user)
         create(:ci_build, name: 'sast', user: user)
         create(:ci_build, name: 'secret_detection', user: user)
       end
@@ -563,6 +567,8 @@ RSpec.describe Gitlab::UsageData do
         dependency_scanning_scans: 0,
         container_scanning_pipeline: be_within(error_rate).percent_of(0),
         container_scanning_scans: 0,
+        running_container_scanning_pipeline: be_within(error_rate).percent_of(0),
+        running_container_scanning_scans: 0,
         dast_pipeline: be_within(error_rate).percent_of(0),
         dast_scans: 0,
         secret_detection_pipeline: be_within(error_rate).percent_of(0),
@@ -582,11 +588,13 @@ RSpec.describe Gitlab::UsageData do
         ds_bundler_build = create(:ci_build, name: 'bundler-audit', user: user, commit_id: ds_build.pipeline.id, status: 'success')
         secret_detection_build = create(:ci_build, name: 'secret', user: user, commit_id: ds_build.pipeline.id, status: 'success')
         cs_build = create(:ci_build, name: 'container-scanning', user: user, status: 'success')
+        rcs_build = create(:ci_build, name: 'running-container-scanning', user: user, status: 'success')
         sast_build = create(:ci_build, name: 'sast', user: user, status: 'success', retried: true)
         create(:security_scan, build: ds_build, scan_type: 'dependency_scanning' )
         create(:security_scan, build: ds_bundler_build, scan_type: 'dependency_scanning')
         create(:security_scan, build: secret_detection_build, scan_type: 'secret_detection')
         create(:security_scan, build: cs_build, scan_type: 'container_scanning')
+        create(:security_scan, build: rcs_build, scan_type: 'running_container_scanning')
         create(:security_scan, build: sast_build, scan_type: 'sast')
         create(:security_scan, build: ds_bundler_audit_build, scan_type: 'dependency_scanning')
       end
@@ -594,6 +602,7 @@ RSpec.describe Gitlab::UsageData do
       expect(described_class.usage_activity_by_stage_secure({})).to include(
         user_preferences_group_overview_security_dashboard: 3,
         user_container_scanning_jobs: 1,
+        user_running_container_scanning_jobs: 1,
         user_dast_jobs: 1,
         user_dependency_scanning_jobs: 1,
         user_license_management_jobs: 1,
@@ -603,6 +612,7 @@ RSpec.describe Gitlab::UsageData do
         sast_scans: 0,
         dependency_scanning_scans: 4,
         container_scanning_scans: 2,
+        running_container_scanning_scans: 2,
         dast_scans: 0,
         secret_detection_scans: 2,
         coverage_fuzzing_scans: 0
@@ -613,6 +623,7 @@ RSpec.describe Gitlab::UsageData do
         user_api_fuzzing_jobs: 1,
         user_api_fuzzing_dnd_jobs: 1,
         user_container_scanning_jobs: 1,
+        user_running_container_scanning_jobs: 1,
         user_coverage_fuzzing_jobs: 1,
         user_dast_jobs: 1,
         user_dependency_scanning_jobs: 1,
@@ -622,6 +633,7 @@ RSpec.describe Gitlab::UsageData do
         sast_pipeline: be_within(error_rate).percent_of(0),
         dependency_scanning_pipeline: be_within(error_rate).percent_of(1),
         container_scanning_pipeline: be_within(error_rate).percent_of(1),
+        running_container_scanning_pipeline: be_within(error_rate).percent_of(1),
         dast_pipeline: be_within(error_rate).percent_of(0),
         secret_detection_pipeline: be_within(error_rate).percent_of(1),
         coverage_fuzzing_pipeline: be_within(error_rate).percent_of(0),
@@ -630,6 +642,7 @@ RSpec.describe Gitlab::UsageData do
         sast_scans: 0,
         dependency_scanning_scans: 2,
         container_scanning_scans: 1,
+        running_container_scanning_scans: 1,
         dast_scans: 0,
         secret_detection_scans: 1,
         coverage_fuzzing_scans: 0,
@@ -649,6 +662,7 @@ RSpec.describe Gitlab::UsageData do
         user_api_fuzzing_jobs: 1,
         user_api_fuzzing_dnd_jobs: 1,
         user_container_scanning_jobs: 1,
+        user_running_container_scanning_jobs: 1,
         user_coverage_fuzzing_jobs: 1,
         user_dast_jobs: 3,
         user_dependency_scanning_jobs: 1,
@@ -661,6 +675,8 @@ RSpec.describe Gitlab::UsageData do
         dependency_scanning_scans: 0,
         container_scanning_pipeline: be_within(error_rate).percent_of(0),
         container_scanning_scans: 0,
+        running_container_scanning_pipeline: be_within(error_rate).percent_of(0),
+        running_container_scanning_scans: 0,
         dast_pipeline: be_within(error_rate).percent_of(0),
         dast_scans: 0,
         secret_detection_pipeline: be_within(error_rate).percent_of(0),
@@ -683,6 +699,7 @@ RSpec.describe Gitlab::UsageData do
         user_api_fuzzing_jobs: 1,
         user_api_fuzzing_dnd_jobs: 1,
         user_container_scanning_jobs: 1,
+        user_running_container_scanning_jobs: 1,
         user_coverage_fuzzing_jobs: 1,
         user_dast_jobs: 1,
         user_dependency_scanning_jobs: 1,
@@ -695,6 +712,8 @@ RSpec.describe Gitlab::UsageData do
         dependency_scanning_scans: 0,
         container_scanning_pipeline: be_within(error_rate).percent_of(0),
         container_scanning_scans: 0,
+        running_container_scanning_pipeline: be_within(error_rate).percent_of(0),
+        running_container_scanning_scans: 0,
         dast_pipeline: be_within(error_rate).percent_of(0),
         dast_scans: 0,
         secret_detection_pipeline: be_within(error_rate).percent_of(0),
@@ -722,6 +741,7 @@ RSpec.describe Gitlab::UsageData do
         user_api_fuzzing_jobs: -1,
         user_api_fuzzing_dnd_jobs: -1,
         user_container_scanning_jobs: -1,
+        user_running_container_scanning_jobs: -1,
         user_coverage_fuzzing_jobs: -1,
         user_dast_jobs: -1,
         user_dependency_scanning_jobs: -1,
@@ -734,6 +754,8 @@ RSpec.describe Gitlab::UsageData do
         dependency_scanning_scans: -1,
         container_scanning_pipeline: -1,
         container_scanning_scans: -1,
+        running_container_scanning_pipeline: -1,
+        running_container_scanning_scans: -1,
         dast_pipeline: -1,
         dast_scans: -1,
         secret_detection_pipeline: -1,
@@ -752,6 +774,7 @@ RSpec.describe Gitlab::UsageData do
         create(:ee_ci_build, :dast, :running, user: user2)
         create(:ee_ci_build, :dast, :success, user: user3)
         create(:ee_ci_build, :container_scanning, :success, user: user3)
+        create(:ee_ci_build, :running_container_scanning, :success, user: user3)
         create(:ee_ci_build, :coverage_fuzzing, :success, user: user)
         create(:ee_ci_build, :dependency_scanning, :success, user: user)
         create(:ee_ci_build, :dependency_scanning, :failed, user: user2)
@@ -765,6 +788,7 @@ RSpec.describe Gitlab::UsageData do
       expect(described_class.usage_activity_by_stage_secure(described_class.monthly_time_range_db_params)).to include(
         user_api_fuzzing_scans: be_within(error_rate).percent_of(1),
         user_container_scanning_scans: be_within(error_rate).percent_of(1),
+        user_running_container_scanning_scans: be_within(error_rate).percent_of(1),
         user_coverage_fuzzing_scans: be_within(error_rate).percent_of(1),
         user_dast_scans: be_within(error_rate).percent_of(1),
         user_dependency_scanning_scans: be_within(error_rate).percent_of(1),
