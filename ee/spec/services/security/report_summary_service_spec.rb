@@ -25,6 +25,11 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
   let_it_be(:report_cs) { create(:ci_reports_security_report, type: :container_scanning) }
   let_it_be(:scan_cs) { create(:security_scan, scan_type: :container_scanning, build: build_cs) }
 
+  let_it_be(:build_rcs) { create(:ci_build, :success, name: 'running_container_scanning', pipeline: pipeline) }
+  let_it_be(:artifact_rcs) { create(:ee_ci_job_artifact, :running_container_scanning, job: build_rcs) }
+  let_it_be(:report_rcs) { create(:ci_reports_security_report, type: :running_container_scanning) }
+  let_it_be(:scan_rcs) { create(:security_scan, scan_type: :running_container_scanning, build: build_rcs) }
+
   before(:all) do
     ds_content = File.read(artifact_ds.file.path)
     Gitlab::Ci::Parsers::Security::DependencyScanning.parse!(ds_content, report_ds)
@@ -42,7 +47,11 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
     Gitlab::Ci::Parsers::Security::ContainerScanning.parse!(cs_content, report_cs)
     report_cs.merge!(report_cs)
 
-    { artifact_cs => report_cs, artifact_dast => report_dast, artifact_ds => report_ds, artifact_sast => report_sast }.each do |artifact, report|
+    rcs_content = File.read(artifact_rcs.file.path)
+    Gitlab::Ci::Parsers::Security::ContainerScanning.parse!(rcs_content, report_rcs)
+    report_rcs.merge!(report_rcs)
+
+    { artifact_cs => report_cs, artifact_dast => report_dast, artifact_ds => report_ds, artifact_sast => report_sast, artifact_rcs => report_cs }.each do |artifact, report|
       report.findings.each do |finding|
         create(:security_finding,
               severity: finding.severity,
@@ -55,7 +64,7 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
   end
 
   before do
-    stub_licensed_features(sast: true, dependency_scanning: true, container_scanning: true, dast: true)
+    stub_licensed_features(sast: true, dependency_scanning: true, container_scanning: true, running_container_scanning: true, dast: true)
   end
 
   let(:result) do
@@ -69,14 +78,16 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
     let(:selection_information) do
       {
         dast: [:scanned_resources_count, :vulnerabilities_count],
-        container_scanning: [:vulnerabilities_count]
+        container_scanning: [:vulnerabilities_count],
+        running_container_scanning: [:vulnerabilities_count]
       }
     end
 
     it 'returns only the request fields' do
       expect(result).to eq({
         dast: { scanned_resources_count: 26, vulnerabilities_count: 20 },
-        container_scanning: { vulnerabilities_count: 8 }
+        container_scanning: { vulnerabilities_count: 8 },
+        running_container_scanning: { vulnerabilities_count: 2 }
       })
     end
   end
@@ -103,7 +114,8 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
     let(:selection_information) do
       {
         dast: [:vulnerabilities_count],
-        container_scanning: [:vulnerabilities_count]
+        container_scanning: [:vulnerabilities_count],
+        running_container_scanning: [:vulnerabilities_count]
       }
     end
 
@@ -128,6 +140,7 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
         dast: [:scanned_resources_count, :vulnerabilities_count, :scanned_resources, :scanned_resources_csv_path],
         sast: [:scanned_resources_count, :vulnerabilities_count],
         container_scanning: [:scanned_resources_count, :vulnerabilities_count],
+        running_container_scanning: [:scanned_resources_count, :vulnerabilities_count],
         dependency_scanning: [:scanned_resources_count, :vulnerabilities_count]
       }
     end
@@ -137,6 +150,7 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
                                 dast: a_hash_including(scanned_resources_count: 26),
                                 sast: a_hash_including(scanned_resources_count: 0),
                                 container_scanning: a_hash_including(scanned_resources_count: 0),
+                                running_container_scanning: a_hash_including(scanned_resources_count: 0),
                                 dependency_scanning: a_hash_including(scanned_resources_count: 0)
                               ))
     end
@@ -146,6 +160,7 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
                                 dast: a_hash_including(vulnerabilities_count: 20),
                                 sast: a_hash_including(vulnerabilities_count: 5),
                                 container_scanning: a_hash_including(vulnerabilities_count: 8),
+                                running_container_scanning: a_hash_including(vulnerabilities_count: 2),
                                 dependency_scanning: a_hash_including(vulnerabilities_count: 4)
                               ))
     end
@@ -193,6 +208,7 @@ RSpec.describe Security::ReportSummaryService, '#execute' do
       expect(result[:dast]).not_to be_nil
       expect(result[:sast]).to be_nil
       expect(result[:container_scanning]).to be_nil
+      expect(result[:running_container_scanning]).to be_nil
       expect(result[:dependency_scanning]).to be_nil
     end
   end
