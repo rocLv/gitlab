@@ -17294,6 +17294,19 @@ Status: `data_available`
 
 Tiers: `ultimate`
 
+### `usage_activity_by_stage.secure.running_container_scanning_scans`
+
+Counts running container scanning jobs
+
+[YAML definition](https://gitlab.com/gitlab-org/gitlab/-/blob/master/ee/config/metrics/counts_all/20210618124854_running_container_scanning_scans.yml)
+
+Group: `group::container security`
+
+Status: `data_available`
+
+Tiers: `ultimate`
+
+
 ### `usage_activity_by_stage.secure.coverage_fuzzing_scans`
 
 Counts fuzzing jobs
@@ -19267,6 +19280,30 @@ Tiers: `ultimate`
 Missing description
 
 [YAML definition](https://gitlab.com/gitlab-org/gitlab/-/blob/master/config/metrics/counts_28d/20210216183830_container_scanning_scans.yml)
+
+Group: ``
+
+Status: `data_available`
+
+Tiers: `free`
+
+### `usage_activity_by_stage_monthly.secure.running_container_scanning_pipeline`
+
+Pipelines containing a Running Container Scanning job
+
+[YAML definition](https://gitlab.com/gitlab-org/gitlab/-/blob/master/ee/config/metrics/counts_28d/20210618125224_running_container_scanning_pipeline.yml)
+
+Group: `group::container security`
+
+Status: `data_available`
+
+Tiers: `ultimate`
+
+### `usage_activity_by_stage_monthly.secure.running_container_scanning_scans`
+
+Missing description
+
+[YAML definition](https://gitlab.com/gitlab-org/gitlab/-/blob/master/config/metrics/counts_28d/20210618124854_running_container_scanning_scans.yml)
 
 Group: ``
 
