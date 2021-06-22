@@ -61,6 +61,8 @@ RSpec.describe Project do
     it { is_expected.to have_many(:incident_management_oncall_schedules).class_name('IncidentManagement::OncallSchedule') }
     it { is_expected.to have_many(:incident_management_oncall_rotations).through(:incident_management_oncall_schedules).source(:rotations) }
 
+    include_examples 'ci_cd_settings delegation'
+
     describe '#jira_vulnerabilities_integration_enabled?' do
       context 'when project lacks a jira_service relation' do
         it 'returns false' do

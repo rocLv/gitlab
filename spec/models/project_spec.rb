@@ -636,11 +636,8 @@ RSpec.describe Project, factory_default: :keep do
     it { is_expected.to delegate_method(:root_ancestor).to(:namespace).with_arguments(allow_nil: true) }
     it { is_expected.to delegate_method(:last_pipeline).to(:commit).with_arguments(allow_nil: true) }
     it { is_expected.to delegate_method(:allow_editing_commit_messages?).to(:project_setting) }
-    it { is_expected.to delegate_method(:default_git_depth).to(:ci_cd_settings).with_prefix(:ci).allow_nil }
-    it { is_expected.to delegate_method(:forward_deployment_enabled).to(:ci_cd_settings).with_prefix(:ci).allow_nil }
-    it { is_expected.to delegate_method(:group_runners_enabled).to(:ci_cd_settings).allow_nil }
-    it { is_expected.to delegate_method(:keep_latest_artifact).to(:ci_cd_settings).allow_nil }
-    it { is_expected.to delegate_method(:restrict_user_defined_variables).to(:ci_cd_settings).allow_nil }
+
+    include_examples 'ci_cd_settings delegation'
   end
 
   describe 'reference methods' do
