@@ -798,6 +798,30 @@ module EE
       available_features[feature]
     end
 
+    def merge_pipelines_enabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.merge_pipelines_enabled?
+    end
+
+    def merge_pipelines_were_disabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.merge_pipelines_were_disabled?
+    end
+
+    def merge_trains_enabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.merge_trains_enabled?
+    end
+
+    def auto_rollback_enabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.auto_rollback_enabled?
+    end
+
     private
 
     def group_hooks
@@ -844,30 +868,6 @@ module EE
     # Return the group's setting for delayed deletion, false for user namespace projects
     def group_deletion_mode_configured?
       group && group.namespace_settings.delayed_project_removal?
-    end
-
-    def merge_pipelines_enabled?
-      return false unless ci_cd_settings
-
-      ci_cd_settings.merge_pipelines_enabled?
-    end
-
-    def merge_pipelines_were_disabled?
-      return false unless ci_cd_settings
-
-      ci_cd_settings.merge_pipelines_were_disabled?
-    end
-
-    def merge_trains_enabled?
-      return false unless ci_cd_settings
-
-      ci_cd_settings.merge_trains_enabled?
-    end
-
-    def auto_rollback_enabled?
-      return false unless ci_cd_settings
-
-      ci_cd_settings.auto_rollback_enabled?
     end
   end
 end
