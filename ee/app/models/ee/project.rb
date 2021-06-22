@@ -198,10 +198,10 @@ module EE
 
       delegate :ci_minutes_quota, to: :shared_runners_limit_namespace
 
-      delegate :merge_pipelines_enabled, :merge_pipelines_enabled=, :merge_pipelines_enabled?, :merge_pipelines_were_disabled?, to: :ci_cd_settings
-      delegate :merge_trains_enabled, :merge_trains_enabled=, :merge_trains_enabled?, to: :ci_cd_settings
+      delegate :merge_pipelines_enabled, :merge_pipelines_enabled=, to: :ci_cd_settings, allow_nil: true
+      delegate :merge_trains_enabled, :merge_trains_enabled=, to: :ci_cd_settings, allow_nil: true
 
-      delegate :auto_rollback_enabled, :auto_rollback_enabled=, :auto_rollback_enabled?, to: :ci_cd_settings
+      delegate :auto_rollback_enabled, :auto_rollback_enabled=, to: :ci_cd_settings, allow_nil: true
       delegate :closest_gitlab_subscription, to: :namespace
 
       delegate :requirements_access_level, to: :project_feature, allow_nil: true
@@ -844,6 +844,30 @@ module EE
     # Return the group's setting for delayed deletion, false for user namespace projects
     def group_deletion_mode_configured?
       group && group.namespace_settings.delayed_project_removal?
+    end
+
+    def merge_pipelines_enabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.merge_pipelines_enabled?
+    end
+
+    def merge_pipelines_were_disabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.merge_pipelines_were_disabled?
+    end
+
+    def merge_trains_enabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.merge_trains_enabled?
+    end
+
+    def auto_rollback_enabled?
+      return false unless ci_cd_settings
+
+      ci_cd_settings.auto_rollback_enabled?
     end
   end
 end
