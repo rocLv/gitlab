@@ -2,11 +2,15 @@
 import { GlIcon, GlLoadingIcon, GlSprintf } from '@gitlab/ui';
 import Cookies from 'js-cookie';
 import { mapActions, mapState, mapGetters } from 'vuex';
+import ValueStreamFilters from 'ee/analytics/cycle_analytics/components/value_stream_filters.vue';
 import PathNavigation from '~/cycle_analytics/components/path_navigation.vue';
 import StageTable from '~/cycle_analytics/components/stage_table.vue';
 import { __ } from '~/locale';
 
 const OVERVIEW_DIALOG_COOKIE = 'cycle_analytics_help_dismissed';
+
+// dateFormat(createdAfter, dateFormats.isoDate)
+// const today = new Date();
 
 export default {
   name: 'CycleAnalytics',
@@ -16,6 +20,7 @@ export default {
     GlSprintf,
     PathNavigation,
     StageTable,
+    ValueStreamFilters,
   },
   props: {
     noDataSvgPath: {
@@ -44,6 +49,9 @@ export default {
       'summary',
       'startDate',
       'permissions',
+      'createdBefore',
+      'createdAfter',
+      'currentGroup',
     ]),
     ...mapGetters(['pathNavigationData']),
     displayStageEvents() {
@@ -84,7 +92,7 @@ export default {
       'setDateRange',
     ]),
     handleDateSelect(startDate) {
-      this.setDateRange({ startDate });
+      this.setDateRange(startDate);
     },
     onSelectStage(stage) {
       this.setSelectedStage(stage);
@@ -101,11 +109,19 @@ export default {
   dayRangeOptions: [7, 30, 90],
   i18n: {
     dropdownText: __('Last %{days} days'),
+    pageTitle: __('Value Stream Analytics'),
+    recentActivity: __('Recent Project Activity'),
   },
 };
 </script>
 <template>
   <div class="cycle-analytics">
+    <h3>{{ $options.i18n.pageTitle }}</h3>
+    <!--
+      We wont have access to the stage counts in the path navigation until we move to a default value stream
+      For now we can use the `withStageCounts` flag to ensure we don't display empty stage counts
+      Related issue: https://gitlab.com/gitlab-org/gitlab/-/issues/326705
+    -->
     <path-navigation
       v-if="selectedStageReady"
       class="js-path-navigation gl-w-full gl-pb-2"
@@ -117,13 +133,14 @@ export default {
     />
     <gl-loading-icon v-if="isLoading" size="lg" />
     <div v-else class="wrapper">
-      <!--
-        We wont have access to the stage counts until we move to a default value stream
-        For now we can use the `withStageCounts` flag to ensure we don't display empty stage counts
-        Related issue: https://gitlab.com/gitlab-org/gitlab/-/issues/326705
-      -->
+      <value-stream-filters
+        :has-project-filter="false"
+        :has-date-range-filter="false"
+        :group-id="currentGroup.id"
+        :group-path="currentGroup.path"
+      />
       <div class="card" data-testid="vsa-stage-overview-metrics">
-        <div class="card-header">{{ __('Recent Project Activity') }}</div>
+        <div class="card-header">{{ $options.i18n.recentActivity }}</div>
         <div class="d-flex justify-content-between">
           <div v-for="item in summary" :key="item.title" class="gl-flex-grow-1 gl-text-center">
             <h3 class="header">{{ item.value }}</h3>
