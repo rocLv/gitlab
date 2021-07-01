@@ -13857,9 +13857,10 @@ ALTER SEQUENCE incident_management_escalation_policies_id_seq OWNED BY incident_
 CREATE TABLE incident_management_escalation_rules (
     id bigint NOT NULL,
     policy_id bigint NOT NULL,
-    oncall_schedule_id bigint NOT NULL,
+    oncall_schedule_id bigint,
     status smallint NOT NULL,
-    elapsed_time_seconds integer NOT NULL
+    elapsed_time_seconds integer NOT NULL,
+    user_id integer
 );
 
 CREATE SEQUENCE incident_management_escalation_rules_id_seq
@@ -24135,6 +24136,8 @@ CREATE INDEX index_on_snapshots_segment_id_end_time ON analytics_devops_adoption
 
 CREATE INDEX index_on_snapshots_segment_id_recorded_at ON analytics_devops_adoption_snapshots USING btree (segment_id, recorded_at);
 
+CREATE INDEX index_on_user_escalation_rule ON incident_management_escalation_rules USING btree (user_id);
+
 CREATE INDEX index_on_users_lower_email ON users USING btree (lower((email)::text));
 
 CREATE INDEX index_on_users_lower_username ON users USING btree (lower((username)::text));
@@ -25586,6 +25589,9 @@ ALTER TABLE ONLY epics
 
 ALTER TABLE ONLY clusters_applications_runners
     ADD CONSTRAINT fk_02de2ded36 FOREIGN KEY (runner_id) REFERENCES ci_runners(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY incident_management_escalation_rules
+    ADD CONSTRAINT fk_0314ee86eb FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY design_management_designs_versions
     ADD CONSTRAINT fk_03c671965c FOREIGN KEY (design_id) REFERENCES design_management_designs(id) ON DELETE CASCADE;
