@@ -114,6 +114,7 @@ RSpec.describe 'getting Incident Management escalation policies' do
                 'id' => last_policy_rule.to_global_id.to_s,
                 'elapsedTimeSeconds' => last_policy_rule.elapsed_time_seconds,
                 'status' => last_policy_rule.status.upcase,
+                'user' => nil,
                 'oncallSchedule' => {
                   'iid' => last_policy_rule.oncall_schedule.iid.to_s,
                   'name' => last_policy_rule.oncall_schedule.name,

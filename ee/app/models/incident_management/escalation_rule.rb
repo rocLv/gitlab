@@ -13,16 +13,24 @@ module IncidentManagement
     enum status: AlertManagement::Alert::STATUSES.slice(:acknowledged, :resolved)
 
     validates :status, presence: true
-    validates :oncall_schedule, presence: true
     validates :elapsed_time_seconds,
               presence: true,
               numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 24.hours }
 
     validates :policy_id, uniqueness: { scope: [:oncall_schedule_id, :status, :elapsed_time_seconds], message: _('must have a unique schedule, status, and elapsed time') }
 
+    validate :schedule_or_rule
     validate :rules_count_not_exceeded, on: :create, if: :policy
 
     private
+
+    def schedule_or_rule
+      if oncall_schedule && user
+        errors.add(:base, "cannot have both oncall schedule and user")
+      elsif oncall_schedule.blank? && user.blank?
+        errors.add(:base, "must have either oncall schedule or user")
+      end
+    end
 
     def rules_count_not_exceeded
       # We need to add to the count if we aren't creating the rules at the same time as the policy.

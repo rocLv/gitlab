@@ -6,6 +6,7 @@ RSpec.describe Mutations::IncidentManagement::EscalationPolicy::Create do
   let_it_be(:current_user) { create(:user) }
   let_it_be(:project) { create(:project) }
   let_it_be(:oncall_schedule) { create(:incident_management_oncall_schedule, project: project) }
+  let_it_be(:user_for_rule) { create(:user) }
 
   let(:args) do
     {
@@ -75,6 +76,39 @@ RSpec.describe Mutations::IncidentManagement::EscalationPolicy::Create do
             have_attributes(oncall_schedule_id: oncall_schedule.id, elapsed_time_seconds: 300, status: 'acknowledged'),
             have_attributes(oncall_schedule_id: oncall_schedule.id, elapsed_time_seconds: 600, status: 'resolved')
           ])
+        end
+
+        context 'rule has a user' do
+          before do
+            args[:rules][1] = {
+              username: user_for_rule.username,
+              elapsed_time_seconds: 600,
+              status: ::IncidentManagement::EscalationRule.statuses[:resolved]
+            }
+          end
+
+          it_behaves_like 'returns a GraphQL error', 'A user has insufficient permissions to access the project'
+
+          context 'user has permission' do
+            before do
+              project.add_reporter(user_for_rule)
+            end
+
+            it 'returns the escalation policy with no errors' do
+              expect(resolve).to match(
+                escalation_policy: ::IncidentManagement::EscalationPolicy.last!,
+                errors: be_empty
+              )
+
+              rules = resolve[:escalation_policy].rules
+
+              expect(rules.size).to eq(2)
+              expect(rules).to match_array([
+                have_attributes(oncall_schedule_id: oncall_schedule.id, elapsed_time_seconds: 300, status: 'acknowledged'),
+                have_attributes(user_id: user_for_rule.id, elapsed_time_seconds: 600, status: 'resolved')
+              ])
+            end
+          end
         end
 
         context 'rules are missing' do

@@ -1507,6 +1507,9 @@ msgstr ""
 msgid "A title is required"
 msgstr ""
 
+msgid "A user has insufficient permissions to access the project"
+msgstr ""
+
 msgid "A user with write access to the source branch selected this option"
 msgstr ""
 
