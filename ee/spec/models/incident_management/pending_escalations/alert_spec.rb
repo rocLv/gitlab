@@ -16,9 +16,10 @@ RSpec.describe IncidentManagement::PendingEscalations::Alert do
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:oncall_schedule) }
+    it { is_expected.to belong_to(:oncall_schedule).optional }
+    it { is_expected.to belong_to(:user).optional }
     it { is_expected.to belong_to(:alert) }
-    it { is_expected.to belong_to(:rule) }
+    it { is_expected.to belong_to(:rule).optional }
   end
 
   describe 'scopes' do

@@ -15,7 +15,8 @@ module IncidentManagement
 
       partitioned_by :process_at, strategy: :monthly
 
-      belongs_to :oncall_schedule, class_name: 'OncallSchedule', foreign_key: 'schedule_id'
+      belongs_to :oncall_schedule, class_name: 'OncallSchedule', foreign_key: 'schedule_id', optional: true
+      belongs_to :user, optional: true
       belongs_to :alert, class_name: 'AlertManagement::Alert', foreign_key: 'alert_id', inverse_of: :pending_escalations
       belongs_to :rule, class_name: 'EscalationRule', foreign_key: 'rule_id', optional: true
 
@@ -29,6 +30,10 @@ module IncidentManagement
 
       delegate :project, to: :alert
       delegate :policy, to: :rule, allow_nil: true
+
+      def notifies_schedule?
+        schedule_id.present?
+      end
     end
   end
 end

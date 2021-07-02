@@ -194,11 +194,12 @@ CREATE TABLE incident_management_pending_alert_escalations (
     id bigint NOT NULL,
     rule_id bigint,
     alert_id bigint NOT NULL,
-    schedule_id bigint NOT NULL,
+    schedule_id bigint,
     process_at timestamp with time zone NOT NULL,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    status smallint NOT NULL
+    status smallint NOT NULL,
+    user_id integer
 )
 PARTITION BY RANGE (process_at);
 
@@ -24138,6 +24139,8 @@ CREATE INDEX index_on_snapshots_segment_id_recorded_at ON analytics_devops_adopt
 
 CREATE INDEX index_on_user_escalation_rule ON incident_management_escalation_rules USING btree (user_id);
 
+CREATE INDEX index_on_user_pending_escalations_alert ON ONLY incident_management_pending_alert_escalations USING btree (user_id);
+
 CREATE INDEX index_on_users_lower_email ON users USING btree (lower((email)::text));
 
 CREATE INDEX index_on_users_lower_username ON users USING btree (lower((username)::text));
@@ -27881,6 +27884,9 @@ ALTER TABLE ONLY incident_management_oncall_shifts
 
 ALTER TABLE ONLY design_user_mentions
     ADD CONSTRAINT fk_rails_f7075a53c1 FOREIGN KEY (design_id) REFERENCES design_management_designs(id) ON DELETE CASCADE;
+
+ALTER TABLE incident_management_pending_alert_escalations
+    ADD CONSTRAINT fk_rails_f7b8994709 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY internal_ids
     ADD CONSTRAINT fk_rails_f7d46b66c6 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
