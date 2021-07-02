@@ -40,6 +40,7 @@ module IncidentManagement
         IncidentManagement::PendingEscalations::Alert.create!(
           target: target,
           rule: rule,
+          user_id: rule.user_id,
           schedule_id: rule.oncall_schedule_id,
           status: rule.status,
           process_at: rule.elapsed_time_seconds.seconds.after(process_time)

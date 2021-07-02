@@ -51,10 +51,27 @@ RSpec.describe IncidentManagement::PendingEscalations::ProcessService do
 
       it 'creates a system note' do
         expect(SystemNoteService)
-          .to receive(:notify_via_escalation).with(alert, project, [a_kind_of(User)], escalation_policy, schedule_1)
+          .to receive(:notify_via_escalation).with(alert, project, users, escalation_policy, schedule_1)
           .and_call_original
 
         expect { execute }.to change(Note, :count).by(1)
+      end
+
+      context 'escalation rule uses a user' do
+        let(:escalation_rule) { build(:incident_management_escalation_rule, :with_user) }
+        let(:escalation) { create(:incident_management_pending_alert_escalation, rule: escalation_rule, oncall_schedule: nil, user: escalation_rule.user, target: target, status: IncidentManagement::EscalationRule.statuses[:acknowledged], process_at: process_at) }
+        let(:users) { [escalation_rule.user] }
+
+        it_behaves_like 'sends on-call notification'
+        it_behaves_like 'deletes the escalation'
+
+        it 'creates a system note' do
+          expect(SystemNoteService)
+            .to receive(:notify_via_escalation).with(alert, project, users, escalation_policy, nil)
+            .and_call_original
+
+          expect { execute }.to change(Note, :count).by(1)
+        end
       end
 
       context 'feature flag is off' do

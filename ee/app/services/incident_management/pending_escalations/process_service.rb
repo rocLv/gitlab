@@ -45,11 +45,15 @@ module IncidentManagement
         NotificationService
           .new
           .async
-          .notify_oncall_users_of_alert(oncall_notification_recipients, target)
+          .notify_oncall_users_of_alert(oncall_recipients, target)
+      end
+
+      def oncall_recipients
+        escalation.notifies_schedule? ? oncall_notification_recipients : [escalation.user]
       end
 
       def create_system_notes
-        SystemNoteService.notify_via_escalation(target, project, oncall_notification_recipients, escalation.policy, oncall_schedule)
+        SystemNoteService.notify_via_escalation(target, project, oncall_recipients, escalation.policy, oncall_schedule)
       end
 
       def oncall_notification_recipients
