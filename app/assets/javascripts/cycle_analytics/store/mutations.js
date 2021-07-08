@@ -1,21 +1,10 @@
-import dateFormat from 'dateformat';
-import { dateFormats } from '~/analytics/shared/constants';
 import { convertObjectPropsToCamelCase } from '~/lib/utils/common_utils';
 import { DEFAULT_DAYS_TO_DISPLAY } from '../constants';
 import { decorateData, formatMedianValues, calculateFormattedDayInPast } from '../utils';
 import * as types from './mutation_types';
 
-const today = new Date();
-
-const calculateFormattedDayInPast = (daysInPast) => {
-  return {
-    now: dateFormat(today, dateFormats.isoDate),
-    past: dateFormat(getDateInPast(today, daysInPast), dateFormats.isoDate),
-  };
-};
-
 export default {
-  [types.INITIALIZE_VSA](state, { projectId, endpoints, currentGroup, projectId, features }) {
+  [types.INITIALIZE_VSA](state, { projectId, endpoints, currentGroup, features }) {
     state.id = projectId;
     state.endpoints = endpoints;
     state.currentGroup = currentGroup;
