@@ -37,6 +37,16 @@ input[type='checkbox']:hover {
     0 0 0 1px lighten($dropdown-input-focus-shadow, 20%);
 }
 
+.header-search {
+  width: 320px;
+
+  input,
+  svg {
+    transition: border-color ease-in-out $default-transition-duration,
+    background-color ease-in-out $default-transition-duration;
+  }
+}
+
 .search {
   margin: 0 8px;
 
@@ -300,6 +310,15 @@ input[type='checkbox']:hover {
     // This is larger than the container so width: 100% doesn't work.
     width: 400px !important;
   }
+}
+
+.header-search-dropdown-menu {
+  max-height: $dropdown-max-height;
+  top: $header-height;
+}
+
+.header-search-dropdown-content {
+  max-height: $dropdown-max-height - $dropdown-fade-mask-height;
 }
 
 // Disable webkit input icons, link to solution: https://stackoverflow.com/questions/9421551/how-do-i-remove-all-default-webkit-search-field-styling
