@@ -1,6 +1,6 @@
 <script>
 import { GlDropdownDivider } from '@gitlab/ui';
-import { xor, remove } from 'lodash';
+import { xor } from 'lodash';
 import { activityOptions } from 'ee/security_dashboard/helpers';
 import FilterBody from './filter_body.vue';
 import FilterItem from './filter_item.vue';
@@ -14,47 +14,35 @@ export default {
   computed: {
     filterObject() {
       // This is the object used to update the GraphQL query.
-      if (this.isNoOptionsSelected) {
-        return {
-          hasIssues: undefined,
-          hasResolution: undefined,
-        };
-      }
-
       return {
-        hasIssues: this.isSelected(WITH_ISSUES),
-        hasResolution: this.isSelected(NO_LONGER_DETECTED),
+        hasIssues: this.hasSelectedOptions ? this.isSelected(WITH_ISSUES) : undefined,
+        hasResolution: this.hasSelectedOptions ? this.isSelected(NO_LONGER_DETECTED) : undefined,
       };
-    },
-    multiselectOptions() {
-      return [WITH_ISSUES, NO_LONGER_DETECTED];
     },
   },
   methods: {
-    toggleOption(option) {
-      if (option === NO_ACTIVITY) {
-        this.selectedOptions = this.selectedSet.has(NO_ACTIVITY) ? [] : [NO_ACTIVITY];
+    toggleOption({ id }) {
+      if (id === NO_ACTIVITY.id) {
+        // The No Activity option is exclusive, it can only be selected by itself or not selected.
+        this.selectedIds = this.isSelected(NO_ACTIVITY) ? [] : [NO_ACTIVITY.id];
       } else {
-        remove(this.selectedOptions, NO_ACTIVITY);
+        const ids = this.selectedIds.filter((selectedId) => selectedId !== NO_ACTIVITY.id);
         // Toggle the option's existence in the array.
-        this.selectedOptions = xor(this.selectedOptions, [option]);
+        this.selectedIds = xor(ids, [id]);
       }
 
       this.updateQuerystring();
     },
   },
   NO_ACTIVITY,
+  multiselectOptions: [WITH_ISSUES, NO_LONGER_DETECTED],
 };
 </script>
 
 <template>
-  <filter-body
-    :name="filter.name"
-    :selected-options="selectedOptionsOrAll"
-    :show-search-box="false"
-  >
+  <filter-body :name="filter.name" :selected-options="selectedOptions">
     <filter-item
-      :is-checked="isNoOptionsSelected"
+      :is-checked="!hasSelectedOptions"
       :text="filter.allOption.name"
       :data-testid="`option:${filter.allOption.name}`"
       @click="deselectAllOptions"
@@ -67,7 +55,7 @@ export default {
     />
     <gl-dropdown-divider />
     <filter-item
-      v-for="option in multiselectOptions"
+      v-for="option in $options.multiselectOptions"
       :key="option.name"
       :is-checked="isSelected(option)"
       :text="option.name"

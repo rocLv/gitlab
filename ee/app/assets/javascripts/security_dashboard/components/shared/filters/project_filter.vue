@@ -5,7 +5,7 @@ import {
   GlLoadingIcon,
   GlSafeHtmlDirective as SafeHtml,
 } from '@gitlab/ui';
-import { escapeRegExp, has, xorBy } from 'lodash';
+import { escapeRegExp, has } from 'lodash';
 import { DASHBOARD_TYPES } from 'ee/security_dashboard/store/constants';
 import createFlash from '~/flash';
 import { convertToGraphQLIds } from '~/graphql_shared/utils';
@@ -43,14 +43,11 @@ export default {
       // Return the projects that exist.
       return Object.values(this.projectsCache).filter(Boolean);
     },
-    selectedSet() {
-      return new Set(this.selectedOptions.map((x) => x.id));
-    },
     selectableProjects() {
       // When searching, we want the "select in place" behavior when a dropdown item is clicked, so
       // we show all the projects. If not, we want the "move the selected item to the top" behavior,
       // so we show only unselected projects:
-      return this.isSearching ? this.projects : this.projects.filter((x) => !this.isSelected(x.id));
+      return this.isSearching ? this.projects : this.projects.filter((x) => !this.isSelected(x));
     },
     isLoadingProjects() {
       return this.$apollo.queries.projects.loading;
@@ -65,16 +62,16 @@ export default {
       return this.searchTerm.length > 0;
     },
     showSelectedProjectsSection() {
-      return this.selectedOptions?.length && !this.isSearching;
+      return this.hasSelectedOptions && !this.isSearching;
     },
     showAllOption() {
       return !this.isLoadingProjects && !this.isSearching && !this.isMaxProjectsSelected;
     },
     isMaxProjectsSelected() {
-      return this.selectedOptions?.length >= SELECTED_PROJECTS_MAX_COUNT;
+      return this.selectedIds.length >= SELECTED_PROJECTS_MAX_COUNT;
     },
     uncachedIds() {
-      const ids = this.querystringIds.includes(this.filter.allOption.id) ? [] : this.querystringIds;
+      const ids = this.querystringIds.includes(this.allId) ? [] : this.querystringIds;
       return ids.filter((id) => !has(this.projectsCache, id));
     },
     query() {
@@ -106,8 +103,8 @@ export default {
 
         const projects = mapProjects(data[this.dashboardType].projects.nodes);
         this.saveProjectsToCache(projects);
-        // Now that we have the project for each uncached ID, set the selected options.
-        this.selectedOptions = this.querystringOptions;
+        // Now that we have the project for each uncached ID, set the IDs again from the querystring.
+        this.selectedIds = this.querystringIds;
       },
       error() {
         createFlash({ message: PROJECT_LOADING_ERROR_MESSAGE });
@@ -148,13 +145,8 @@ export default {
       if (this.uncachedIds.length) {
         this.emitFilterChanged({ [this.filter.id]: this.querystringIds });
       } else {
-        this.selectedOptions = this.querystringOptions;
+        this.selectedIds = this.querystringIds;
       }
-    },
-    toggleOption(option) {
-      // Toggle the option's existence in the array.
-      this.selectedOptions = xorBy(this.selectedOptions, [option], (x) => x.id);
-      this.updateQuerystring();
     },
     setDropdownOpened() {
       this.hasDropdownBeenOpened = true;
@@ -171,6 +163,9 @@ export default {
       const regex = new RegExp(`(${terms})`, 'gi');
       return name.replace(regex, '<b>$1</b>');
     },
+    saveProjectsToCache(projects) {
+      projects.forEach((project) => this.$set(this.projectsCache, project.id, project));
+    },
   },
   i18n: {
     enterMoreCharactersToSearch: __('Enter at least three characters to search'),
@@ -184,7 +179,7 @@ export default {
   <filter-body
     v-model.trim="searchTerm"
     :name="filter.name"
-    :selected-options="selectedOptionsOrAll"
+    :selected-options="selectedOptions"
     :show-search-box="true"
     :loading="isLoadingProjectsById"
     @dropdown-show="setDropdownOpened"
@@ -203,7 +198,7 @@ export default {
 
     <filter-item
       v-if="showAllOption"
-      :is-checked="isNoOptionsSelected"
+      :is-checked="!hasSelectedOptions"
       :text="filter.allOption.name"
       data-testid="allOption"
       @click="deselectAllOptions"
@@ -223,7 +218,7 @@ export default {
       <filter-item
         v-for="project in selectableProjects"
         :key="project.id"
-        :is-checked="isSelected(project.id)"
+        :is-checked="isSelected(project)"
         :text="project.name"
         @click="toggleOption(project)"
       >

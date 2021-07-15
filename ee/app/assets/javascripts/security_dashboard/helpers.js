@@ -14,15 +14,12 @@ const parseOptions = (obj) =>
 export const mapProjects = (projects = []) =>
   projects.map((p) => ({ id: getIdFromGraphQLId(p.id).toString(), name: p.name }));
 
-const stateOptions = parseOptions(VULNERABILITY_STATES);
-const defaultStateOptions = stateOptions.filter((x) => ['DETECTED', 'CONFIRMED'].includes(x.id));
-
 export const stateFilter = {
   name: s__('SecurityReports|Status'),
   id: 'state',
-  options: stateOptions,
+  options: parseOptions(VULNERABILITY_STATES),
   allOption: BASE_FILTERS.state,
-  defaultOptions: defaultStateOptions,
+  defaultIds: ['DETECTED', 'CONFIRMED'],
 };
 
 export const severityFilter = {
@@ -30,7 +27,7 @@ export const severityFilter = {
   id: 'severity',
   options: parseOptions(SEVERITY_LEVELS),
   allOption: BASE_FILTERS.severity,
-  defaultOptions: [],
+  defaultIds: [],
 };
 
 export const createScannerOption = (vendor, reportType) => {
@@ -52,7 +49,7 @@ export const simpleScannerFilter = {
   id: 'reportType',
   options: parseOptions(REPORT_TYPES),
   allOption: BASE_FILTERS.report_type,
-  defaultOptions: [],
+  defaultIds: [],
 };
 
 // This is used on the project-level report. It's used by the scanner filter that shows a list of
@@ -62,7 +59,7 @@ export const vendorScannerFilter = {
   id: 'scanner',
   options: Object.keys(REPORT_TYPES).map((x) => createScannerOption(DEFAULT_SCANNER, x)),
   allOption: BASE_FILTERS.report_type,
-  defaultOptions: [],
+  defaultIds: [],
 };
 
 export const activityOptions = {
@@ -76,7 +73,7 @@ export const activityFilter = {
   id: 'activity',
   options: Object.values(activityOptions),
   allOption: BASE_FILTERS.activity,
-  defaultOptions: [],
+  defaultIds: [],
 };
 
 export const getProjectFilter = (projects) => {
@@ -85,7 +82,7 @@ export const getProjectFilter = (projects) => {
     id: 'projectId',
     options: mapProjects(projects),
     allOption: BASE_FILTERS.project_id,
-    defaultOptions: [],
+    defaultIds: [],
   };
 };
 

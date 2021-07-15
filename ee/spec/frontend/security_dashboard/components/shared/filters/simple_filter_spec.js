@@ -14,8 +14,9 @@ const filter = {
   name: 'filter',
   options: generateOptions(12),
   allOption: { id: 'allOptionId' },
-  defaultOptions: [],
+  defaultIds: [],
 };
+
 const optionsAt = (indexes) => filter.options.filter((x) => indexes.includes(x.index));
 const optionIdsAt = (indexes) => optionsAt(indexes).map((x) => x.id);
 
@@ -47,20 +48,13 @@ describe('Simple Filter component', () => {
   };
 
   const expectSelectedItems = (indexes) => {
-    const checkedIndexes = dropdownItems().wrappers.map((item) => isChecked(item));
-    const expectedIndexes = Array.from({ length: checkedIndexes.length }).map((_, index) =>
-      indexes.includes(index),
-    );
+    const checkedItems = dropdownItems().wrappers.filter((item) => isChecked(item));
+    const checkedNames = checkedItems.map((item) => item.props('text'));
 
-    expect(checkedIndexes).toEqual(expectedIndexes);
-  };
+    const expectedOptions = optionsAt(indexes);
+    const expectedNames = expectedOptions.map(({ name }) => name);
 
-  const expectAllOptionSelected = () => {
-    expect(isChecked(allOptionItem())).toBe(true);
-    const checkedIndexes = dropdownItems().wrappers.map((item) => isChecked(item));
-    const expectedIndexes = new Array(checkedIndexes.length).fill(false);
-
-    expect(checkedIndexes).toEqual(expectedIndexes);
+    expect(checkedNames).toEqual(expectedNames);
   };
 
   afterEach(() => {
@@ -80,27 +74,27 @@ describe('Simple Filter component', () => {
 
     it('initially selects the default options', () => {
       const ids = [2, 5, 7];
-      createWrapper({ defaultOptions: optionsAt(ids) });
+      createWrapper({ defaultIds: optionIdsAt(ids) });
 
       expectSelectedItems(ids);
     });
 
-    it('initially selects the All option if there are no default options', () => {
+    it('initially selects nothing if there are no default options', () => {
       createWrapper();
 
-      expectAllOptionSelected();
+      expectSelectedItems([]);
     });
   });
 
   describe('selecting options', () => {
     beforeEach(() => {
-      createWrapper({ defaultOptions: optionsAt([1, 2, 3]) });
+      createWrapper({ defaultIds: optionIdsAt([1, 2, 3]) });
     });
 
     it('de-selects every option and selects the All option when all option is clicked', async () => {
       const clickAndCheck = async () => {
         await clickAllOptionItem();
-        expectAllOptionSelected();
+        expectSelectedItems([]);
       };
 
       // Click the all option 3 times. We're checking that it doesn't toggle.
@@ -110,7 +104,7 @@ describe('Simple Filter component', () => {
     });
 
     it(`toggles an option's selection when it it repeatedly clicked`, async () => {
-      const item = dropdownItems().at(5);
+      const item = dropdownItemAt(5);
       let checkedState = isChecked(item);
 
       const clickAndCheck = async () => {
@@ -134,7 +128,7 @@ describe('Simple Filter component', () => {
     it('selects the All option when last selected option is unselected', async () => {
       await [1, 2, 3].forEach(clickItemAt);
 
-      expectAllOptionSelected();
+      expectSelectedItems([]);
     });
 
     it('emits filter-changed event with default options when created', async () => {
@@ -204,7 +198,7 @@ describe('Simple Filter component', () => {
 
       it('selects default options if querystring only has invalid items', async () => {
         updateQuerystring(['some', 'invalid', 'ids']);
-        createWrapper({ defaultOptions: optionsAt([4, 5, 8]) });
+        createWrapper({ defaultIds: optionIdsAt([4, 5, 8]) });
 
         expectSelectedItems([4, 5, 8]);
       });
@@ -213,7 +207,7 @@ describe('Simple Filter component', () => {
         updateQuerystring(['some', 'invalid', 'ids']);
         createWrapper();
 
-        expectAllOptionSelected();
+        expectSelectedItems([]);
       });
     });
 
@@ -227,7 +221,7 @@ describe('Simple Filter component', () => {
       });
 
       it('select default options when querystring is blank', async () => {
-        createWrapper({ defaultOptions: optionsAt([2, 5, 8]) });
+        createWrapper({ defaultIds: optionIdsAt([2, 5, 8]) });
 
         await clickItemAt(3);
         expectSelectedItems([2, 3, 5, 8]);
@@ -243,22 +237,22 @@ describe('Simple Filter component', () => {
         expectSelectedItems([3]);
 
         await updateQuerystring([]);
-        expectAllOptionSelected();
+        expectSelectedItems([]);
       });
 
       it('selects All option when querystring has all option ID', async () => {
-        createWrapper({ defaultOptions: optionsAt([2, 4, 8]) });
+        createWrapper({ defaultIds: optionIdsAt([2, 4, 8]) });
         expectSelectedItems([2, 4, 8]);
 
         await updateQuerystring([filter.allOption.id]);
-        expectAllOptionSelected();
+        expectSelectedItems([]);
       });
 
       it('selects All option if querystring has all option ID as well as other IDs', async () => {
-        createWrapper({ defaultOptions: optionsAt([5, 6, 9]) });
+        createWrapper({ defaultIds: optionIdsAt([5, 6, 9]) });
         await updateQuerystring([filter.allOption.id, ...optionIdsAt([1, 2])]);
 
-        expectAllOptionSelected();
+        expectSelectedItems([]);
       });
 
       it('selects only valid items when querystring has valid and invalid IDs', async () => {
@@ -270,7 +264,7 @@ describe('Simple Filter component', () => {
       });
 
       it('selects default options if querystring only has invalid IDs', async () => {
-        createWrapper({ defaultOptions: optionsAt([1, 3, 4]) });
+        createWrapper({ defaultIds: optionIdsAt([1, 3, 4]) });
 
         await clickItemAt(8);
         expectSelectedItems([1, 3, 4, 8]);
@@ -286,7 +280,7 @@ describe('Simple Filter component', () => {
         expectSelectedItems([8]);
 
         await updateQuerystring(['some', 'invalid', 'ids']);
-        expectAllOptionSelected();
+        expectSelectedItems([]);
       });
 
       it('does not change querystring for another filter when updating querystring for current filter', async () => {

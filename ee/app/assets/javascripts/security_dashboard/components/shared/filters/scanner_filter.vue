@@ -70,15 +70,13 @@ export default {
       return groups;
     },
     filterObject() {
-      if (this.isNoOptionsSelected) {
-        return { scannerId: [] };
-      }
-
-      const ids = this.selectedOptions.flatMap(({ scannerIds, reportType }) => {
-        return scannerIds.length
-          ? scannerIds.map((id) => `${SCANNER_ID_PREFIX}${id}`)
-          : [`${SCANNER_ID_PREFIX}${reportType}:null`];
-      });
+      const ids = this.selectedIds
+        .map((id) => this.optionsMap[id])
+        .flatMap(({ scannerIds, reportType }) => {
+          return scannerIds.length
+            ? scannerIds.map((id) => `${SCANNER_ID_PREFIX}${id}`)
+            : [`${SCANNER_ID_PREFIX}${reportType}:null`];
+        });
 
       return { scannerId: ids };
     },
@@ -88,11 +86,14 @@ export default {
   },
   methods: {
     toggleGroup(groupName) {
+      // Get all the options for the group.
       const options = Object.values(this.groups[groupName]);
+      const optionIds = options.map((option) => option.id);
+
       // If every option is selected, de-select all of them. Otherwise, select all of them.
-      this.selectedOptions = options.every((option) => this.selectedSet.has(option))
-        ? without(this.selectedOptions, ...options)
-        : union(this.selectedOptions, options);
+      this.selectedIds = options.every(this.isSelected)
+        ? without(this.selectedIds, ...optionIds)
+        : union(this.selectedIds, optionIds);
 
       this.updateQuerystring();
     },
@@ -101,14 +102,10 @@ export default {
 </script>
 
 <template>
-  <filter-body
-    :name="filter.name"
-    :selected-options="selectedOptionsOrAll"
-    :show-search-box="false"
-  >
+  <filter-body :name="filter.name" :selected-options="selectedOptions">
     <filter-item
       v-if="filter.allOption"
-      :is-checked="isNoOptionsSelected"
+      :is-checked="!hasSelectedOptions"
       :text="filter.allOption.name"
       data-testid="all"
       @click="deselectAllOptions"

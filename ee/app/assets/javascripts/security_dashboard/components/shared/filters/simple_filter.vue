@@ -1,5 +1,5 @@
 <script>
-import { isEqual, xor } from 'lodash';
+import { isEqual, xor, keyBy } from 'lodash';
 import FilterBody from './filter_body.vue';
 import FilterItem from './filter_item.vue';
 
@@ -13,83 +13,90 @@ export default {
   },
   data() {
     return {
-      selectedOptions: undefined,
+      selectedIds: this.filter.defaultIds,
     };
   },
   computed: {
     options() {
       return this.filter.options;
     },
+    // Used for O(1) lookups to convert IDs to option objects.
+    optionsMap() {
+      return keyBy(this.options, 'id');
+    },
     selectedSet() {
-      return new Set(this.selectedOptions);
+      return new Set(this.selectedIds);
     },
-    isNoOptionsSelected() {
-      return this.selectedOptions?.length <= 0;
+    hasSelectedOptions() {
+      return this.selectedIds.length;
     },
-    selectedOptionsOrAll() {
-      return this.selectedOptions?.length ? this.selectedOptions : [this.filter.allOption];
+    selectedOptions() {
+      return this.hasSelectedOptions
+        ? this.selectedIds.map((id) => this.optionsMap[id])
+        : [this.filter.allOption];
+    },
+    allId() {
+      return this.filter.allOption.id;
     },
     filterObject() {
-      // This is passed to the vulnerability list's GraphQL query as a variable.
-      return { [this.filter.id]: this.selectedOptions.map((x) => x.id) };
+      // This is used as a variable for the vulnerability list's GraphQL query.
+      return { [this.filter.id]: this.selectedIds };
     },
     querystringIds() {
       const ids = this.$route?.query[this.filter.id] || [];
       const idArray = Array.isArray(ids) ? ids : [ids];
-
-      return idArray.sort();
-    },
-    querystringOptions() {
-      // If the querystring IDs includes the All option, return an empty array. We'll do this even
-      // if there are other IDs because the special All option takes precedence.
-      if (this.querystringIds.includes(this.filter.allOption.id)) {
-        return [];
-      }
-
-      const options = this.options.filter((x) => this.querystringIds.includes(x.id));
-      // If the querystring IDs didn't match any options, return the default options.
-      if (!options.length) {
-        return this.filter.defaultOptions;
-      }
-
-      return options;
+      // Sort the IDs and remove duplicates.
+      return [...new Set(idArray.sort())];
     },
   },
   watch: {
-    selectedOptions() {
-      this.emitFilterChanged(this.filterObject);
+    '$route.query': {
+      immediate: true,
+      handler() {
+        this.processQuerystringIds();
+      },
+    },
+    selectedIds: {
+      immediate: true,
+      handler() {
+        this.emitFilterChanged(this.filterObject);
+      },
     },
   },
-  created() {
-    this.processQuerystringIds();
-    // When the user clicks the forward/back browser buttons, update the selected options.
-    window.addEventListener('popstate', this.processQuerystringIds);
-  },
   methods: {
-    toggleOption(option) {
-      // Toggle the option's existence in the array.
-      this.selectedOptions = xor(this.selectedOptions, [option]);
+    toggleOption({ id }) {
+      // Toggle the ID's existence in the array.
+      this.selectedIds = xor(this.selectedIds, [id]);
       this.updateQuerystring();
     },
     deselectAllOptions() {
-      this.selectedOptions = [];
+      this.selectedIds = [];
       this.updateQuerystring();
     },
     updateQuerystring() {
-      const options = this.selectedOptionsOrAll.map((x) => x.id);
+      const ids = this.hasSelectedOptions ? this.selectedIds : [this.allId];
       // To avoid a console error, don't update the querystring if it's the same as the current one.
-      if (!this.$router || isEqual(this.querystringIds, options)) {
+      if (!this.$router || isEqual(this.querystringIds, ids)) {
         return;
       }
 
-      const query = { ...this.$route.query, [this.filter.id]: options };
+      const query = { ...this.$route.query, [this.filter.id]: ids };
       this.$router.push({ query });
     },
-    isSelected(option) {
-      return this.selectedSet.has(option);
+    isSelected({ id }) {
+      return this.selectedSet.has(id);
     },
     processQuerystringIds() {
-      this.selectedOptions = this.querystringOptions;
+      // If the special All option is in the querystring, nothing should be selected, even if there
+      // are other IDs in the querystring.
+      if (this.querystringIds.includes(this.allId)) {
+        this.selectedIds = [];
+      } else {
+        // Valid IDs are ones that match the ID of a selectable option.
+        const validIds = this.querystringIds.filter((id) => Boolean(this.optionsMap[id]));
+        // If none of the querystring IDs were valid, use the default IDs.
+        this.selectedIds = validIds.length ? validIds : this.filter.defaultIds;
+      }
     },
     emitFilterChanged(data) {
       this.$emit('filter-changed', data);
@@ -99,10 +106,10 @@ export default {
 </script>
 
 <template>
-  <filter-body :name="filter.name" :selected-options="selectedOptionsOrAll">
+  <filter-body :name="filter.name" :selected-options="selectedOptions">
     <filter-item
       v-if="filter.allOption"
-      :is-checked="isNoOptionsSelected"
+      :is-checked="!hasSelectedOptions"
       :text="filter.allOption.name"
       data-testid="allOption"
       @click="deselectAllOptions"

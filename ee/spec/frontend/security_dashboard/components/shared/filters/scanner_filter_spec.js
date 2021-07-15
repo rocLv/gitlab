@@ -112,7 +112,7 @@ describe('Scanner Filter component', () => {
       };
 
       const selectedOptions = sampleSize(filter.options, 3); // Randomly select some options.
-      await wrapper.setData({ selectedOptions });
+      await wrapper.setData({ selectedIds: selectedOptions.map(({ id }) => id) });
 
       expectSelectedItems(selectedOptions);
 

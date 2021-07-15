@@ -30,7 +30,7 @@ export default {
   <filter-body
     v-model.trim="searchTerm"
     :name="filter.name"
-    :selected-options="selectedOptionsOrAll"
+    :selected-options="selectedOptions"
     :show-search-box="showSearchBox"
   >
     <filter-item
