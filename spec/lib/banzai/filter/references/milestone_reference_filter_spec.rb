@@ -87,13 +87,42 @@ RSpec.describe Banzai::Filter::References::MilestoneReferenceFilter do
       expect(doc.text).to eq "See #{milestone.reference_link_text}"
     end
 
-    it 'links with adjacent text' do
-      doc = reference_filter("Milestone (#{reference}.)")
-      expect(doc.to_html).to match(%r(\(<a.+>#{milestone.reference_link_text}</a>\.\)))
+    it 'links with adjacent html tags' do
+      doc = reference_filter("Milestone <p>#{reference}</p>.")
+      expect(doc.to_html).to match(%r(<p><a.+>#{milestone.reference_link_text}</a></p>))
     end
 
     it 'ignores invalid milestone names' do
       exp = act = "Milestone #{Milestone.reference_prefix}#{milestone.name.reverse}"
+
+      expect(reference_filter(act).to_html).to eq exp
+    end
+  end
+
+  shared_examples 'String-based single-word references with special characters' do
+    let(:reference) { "#{Milestone.reference_prefix}#{milestone.name}" }
+
+    before do
+      milestone.update!(name: '?g.fm&')
+    end
+
+    it 'links to a valid reference' do
+      doc = reference_filter("See #{reference}")
+
+      expect(doc.css('a').first.attr('href')).to eq urls.milestone_url(milestone)
+      expect(doc.text).to eq 'See %?g.fm&'
+    end
+
+    it 'does not include trailing punctuation', :aggregate_failures do
+      ['.', ', ok?', '...', '?', '!', ': is that ok?'].each do |trailing_punctuation|
+        doc = filter("Milestone #{reference}#{trailing_punctuation}")
+        expect(doc.to_html).to match(%r(<a.+>#{Milestone.reference_prefix}\?g\.fm&amp;</a>#{Regexp.escape(trailing_punctuation)}))
+      end
+    end
+
+    it 'ignores invalid milestone names' do
+      act = "Milestone #{Milestone.reference_prefix}#{milestone.name.reverse}"
+      exp = "Milestone #{Milestone.reference_prefix}&amp;mf.g?"
 
       expect(reference_filter(act).to_html).to eq exp
     end
@@ -116,6 +145,11 @@ RSpec.describe Banzai::Filter::References::MilestoneReferenceFilter do
     it 'links with adjacent text' do
       doc = reference_filter("Milestone (#{reference}.)")
       expect(doc.to_html).to match(%r(\(<a.+>#{milestone.reference_link_text}</a>\.\)))
+    end
+
+    it 'links with adjacent html tags' do
+      doc = reference_filter("Milestone <p>#{reference}</p>.")
+      expect(doc.to_html).to match(%r(<p><a.+>#{milestone.reference_link_text}</a></p>))
     end
 
     it 'ignores invalid milestone names' do
@@ -325,6 +359,7 @@ RSpec.describe Banzai::Filter::References::MilestoneReferenceFilter do
 
     it_behaves_like 'Integer-based references'
     it_behaves_like 'String-based single-word references'
+    it_behaves_like 'String-based single-word references with special characters'
     it_behaves_like 'String-based multi-word references in quotes'
     it_behaves_like 'referencing a milestone in a link href'
     it_behaves_like 'linking to a milestone as the entire link'
@@ -344,6 +379,7 @@ RSpec.describe Banzai::Filter::References::MilestoneReferenceFilter do
     include_examples 'reference parsing'
 
     it_behaves_like 'String-based single-word references'
+    it_behaves_like 'String-based single-word references with special characters'
     it_behaves_like 'String-based multi-word references in quotes'
     it_behaves_like 'referencing a milestone in a link href'
     it_behaves_like 'references with HTML entities'

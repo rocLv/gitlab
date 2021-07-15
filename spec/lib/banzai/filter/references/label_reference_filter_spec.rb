@@ -145,6 +145,11 @@ RSpec.describe Banzai::Filter::References::LabelReferenceFilter do
       expect(doc.to_html).to match(%r(\(<span.+><a.+><span.+>#{label.name}</span></a></span>\)\.))
     end
 
+    it 'links with adjacent html tags' do
+      doc = reference_filter("Label <p>#{reference}</p>.")
+      expect(doc.to_html).to match(%r(<p><span.+><a.+><span.+>#{label.name}</span></a></span></p>\.))
+    end
+
     it 'ignores invalid label names' do
       exp = act = "Label #{Label.reference_prefix}#{label.name.reverse}"
 
@@ -218,6 +223,11 @@ RSpec.describe Banzai::Filter::References::LabelReferenceFilter do
     it 'links with adjacent text' do
       doc = reference_filter("Label (#{reference}.)")
       expect(doc.to_html).to match(%r(\(<span.+><a.+><span.+>#{label.name}</span></a></span>\.\)))
+    end
+
+    it 'links with adjacent html tags' do
+      doc = reference_filter("Label <p>#{reference}</p>.")
+      expect(doc.to_html).to match(%r(<p><span.+><a.+><span.+>#{label.name}</span></a></span></p>\.))
     end
 
     it 'ignores invalid label names' do

@@ -64,7 +64,34 @@ class Milestone < ApplicationRecord
     # NOTE: The iid pattern only matches when all characters on the expression
     # are digits, so it will match %2 but not %2.1 because that's probably a
     # milestone name and we want it to be matched as such.
-    @reference_pattern ||= %r{
+    if Feature.enabled?(:milestone_reference_pattern, default_enabled: :yaml)
+      new_reference_pattern
+    else
+      old_reference_pattern
+    end
+  end
+
+  def self.new_reference_pattern
+    @new_reference_pattern ||= %r{
+      (#{Project.reference_pattern})?
+      #{Regexp.escape(reference_prefix)}
+      (?:
+        (?<milestone_iid>
+          \d+(?!\S\w)\b # Integer-based milestone iid, or
+        ) |
+        (?<milestone_name>
+            # String-based single-word milestone title, or
+            [A-Za-z0-9_\-\?\.&]+
+            (?<!\.|\?)
+          |
+          "[^"]+"      # String-based multi-word milestone surrounded in quotes
+        )
+      )
+    }x
+  end
+
+  def self.old_reference_pattern
+    @old_reference_pattern ||= %r{
       (#{Project.reference_pattern})?
       #{Regexp.escape(reference_prefix)}
       (?:
