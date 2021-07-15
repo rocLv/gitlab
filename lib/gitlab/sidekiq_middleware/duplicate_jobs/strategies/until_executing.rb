@@ -10,10 +10,12 @@ module Gitlab
         class UntilExecuting < Base
           include DeduplicatesWhenScheduling
 
-          def perform(_job)
-            duplicate_job.delete!
+          def perform(job)
+            super do
+              duplicate_job.delete!
 
-            yield
+              yield
+            end
           end
         end
       end

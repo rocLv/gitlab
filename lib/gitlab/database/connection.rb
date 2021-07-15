@@ -178,6 +178,22 @@ module Gitlab
         row['system_identifier']
       end
 
+      def pg_wal_lsn_diff(location1, location2)
+        lsn1 = connection.quote(location1)
+        lsn2 = connection.quote(location2)
+
+        # In case the host is a primary pg_last_wal_replay_lsn/pg_last_xlog_replay_location() returns
+        # NULL. The recovery check ensures we treat the host as up-to-date in
+        # such a case.
+        query = <<-SQL.squish
+            SELECT pg_wal_lsn_diff(#{lsn1}, #{lsn2})
+              AS result
+        SQL
+
+        row = connection.select_all(query).first
+        row['result'] if row
+      end
+
       # @param [ActiveRecord::Connection] ar_connection
       # @return [String]
       def get_write_location(ar_connection)

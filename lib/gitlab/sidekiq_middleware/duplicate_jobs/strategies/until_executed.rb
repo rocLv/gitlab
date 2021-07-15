@@ -10,8 +10,8 @@ module Gitlab
         class UntilExecuted < Base
           include DeduplicatesWhenScheduling
 
-          def perform(_job)
-            yield
+          def perform(job)
+            super
 
             duplicate_job.delete!
           end
