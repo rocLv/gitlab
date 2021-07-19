@@ -7,7 +7,7 @@ module Security
     presents :scan
 
     def errors
-      info['errors'].to_a.map { |error| format(ERROR_MESSAGE_FORMAT, error.symbolize_keys) }
+      processing_errors.to_a.map { |error| format(ERROR_MESSAGE_FORMAT, error.symbolize_keys) }
     end
   end
 end

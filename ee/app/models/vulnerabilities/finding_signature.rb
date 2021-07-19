@@ -2,10 +2,12 @@
 
 module Vulnerabilities
   class FindingSignature < ApplicationRecord
-    self.table_name = 'vulnerability_finding_signatures'
-
     include BulkInsertSafe
     include VulnerabilityFindingSignatureHelpers
+
+    self.table_name = 'vulnerability_finding_signatures'
+
+    attr_readonly(:created_at)
 
     belongs_to :finding, foreign_key: 'finding_id', inverse_of: :signatures, class_name: 'Vulnerabilities::Finding'
     enum algorithm_type: VulnerabilityFindingSignatureHelpers::ALGORITHM_TYPES, _prefix: :algorithm

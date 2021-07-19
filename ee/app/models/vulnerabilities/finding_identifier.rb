@@ -4,6 +4,8 @@ module Vulnerabilities
   class FindingIdentifier < ApplicationRecord
     self.table_name = "vulnerability_occurrence_identifiers"
 
+    attr_readonly(:created_at)
+
     alias_attribute :finding_id, :occurrence_id
 
     belongs_to :finding, class_name: 'Vulnerabilities::Finding', inverse_of: :finding_identifiers, foreign_key: 'occurrence_id'
