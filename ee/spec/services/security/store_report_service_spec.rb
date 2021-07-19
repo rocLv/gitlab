@@ -92,10 +92,7 @@ RSpec.describe Security::StoreReportService, '#execute' do
           end
 
           it 'inserts all evidences' do
-            # subject
-            # binding.pry
             expect { subject }.to change { Vulnerabilities::Finding::Evidence.count }.by(evidences)
-            # expect { Vulnerabilities::Finding::Evidence.count }.to eq(evidences)
           end
         end
       end

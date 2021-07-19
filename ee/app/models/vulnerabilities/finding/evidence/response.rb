@@ -8,6 +8,8 @@ module Vulnerabilities
 
         self.table_name = 'vulnerability_finding_evidence_responses'
 
+        FIELD_NAMES = %w[reason_phrase].freeze
+
         belongs_to :evidence,
                    class_name: 'Vulnerabilities::Finding::Evidence',
                    inverse_of: :response,

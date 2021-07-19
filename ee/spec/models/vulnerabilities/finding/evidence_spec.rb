@@ -30,6 +30,18 @@ RSpec.describe Vulnerabilities::Finding::Evidence do
       expect(evidence.request).not_to be_nil
     end
 
+    it 'creates a asset object' do
+      expect(evidence.asset).not_to be_nil
+    end
+
+    it 'creates a source object' do
+      expect(evidence.source).not_to be_nil
+    end
+
+    it 'creates a supporting_message object' do
+      expect(evidence.supporting_message).not_to be_nil
+    end
+
     it 'populates the created evidence with finding metadata' do
       expect(evidence.summary).to eq(finding.metadata.dig('evidence', 'summary'))
       expect(evidence.request.method).to eq(finding.metadata.dig('evidence', 'request', 'method'))
@@ -43,6 +55,10 @@ RSpec.describe Vulnerabilities::Finding::Evidence do
       expect(evidence.response.headers.count).to eq(finding.metadata.dig('evidence', 'response', 'headers').count)
       expect(evidence.response.headers.first.name).to eq(finding.metadata.dig('evidence', 'response', 'headers').first['name'])
       expect(evidence.response.headers.first.value).to eq(finding.metadata.dig('evidence', 'response', 'headers').first['value'])
+      expect(evidence.assets.first.name).to eq(finding.metadata.dig('evidence', 'assets').first['name'])
+      expect(evidence.source.url).to eq(finding.metadata.dig('evidence', 'source', 'url'))
+      expect(evidence.source.name).to eq(finding.metadata.dig('evidence', 'source', 'name'))
+      expect(evidence.supporting_messages.name).to eq(finding.metadata.dig('evidence', 'supporting_messages', 'name'))
     end
   end
 end

@@ -6,6 +6,8 @@ module Vulnerabilities
       class Header < ApplicationRecord
         self.table_name = 'vulnerability_finding_evidence_headers'
 
+        FIELD_NAMES = %w[name value].freeze
+
         belongs_to :request, class_name: 'Vulnerabilities::Finding::Evidence::Request', inverse_of: :headers, foreign_key: 'vulnerability_finding_evidence_request_id'
         belongs_to :response, class_name: 'Vulnerabilities::Finding::Evidence::Response', inverse_of: :headers, foreign_key: 'vulnerability_finding_evidence_response_id'
 

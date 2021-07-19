@@ -13,7 +13,7 @@ module Vulnerabilities
       has_one :source, class_name: 'Vulnerabilities::Finding::Evidence::Source', inverse_of: :evidence, foreign_key: 'vulnerability_finding_evidence_id'
       has_many :assets, class_name: 'Vulnerabilities::Finding::Evidence::Asset', inverse_of: :evidence, foreign_key: 'vulnerability_finding_evidence_id'
 
-      accepts_nested_attributes_for :request, :response
+      accepts_nested_attributes_for :request, :response, :supporting_message, :source, :assets
 
       validates :summary, length: { maximum: 8_000_000 }
 
