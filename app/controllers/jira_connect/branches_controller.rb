@@ -1,37 +1,28 @@
 # frozen_string_literal: true
 
+# NOTE: This controller does not inherit from JiraConnect::ApplicationController
+# because we don't receive a JWT for this action, so we rely on standard GitLab authentication.
 class JiraConnect::BranchesController < ApplicationController
-  include ActionView::Helpers::SanitizeHelper
+  before_action :feature_enabled!
 
-  before_action :feature_enabled
+  feature_category :integrations
 
   def new
-    params[:branch_name] ||= begin
-      return unless params[:issue]
+    return unless params[:issue_key].present?
 
-      branch_name = [
-        issue_params[:key].presence&.parameterize&.upcase,
-        issue_params[:summary].presence&.parameterize
-      ].compact.join('-')
+    @branch_name = Issue.to_branch_name(
+      params[:issue_key],
+      params[:issue_summary]
+    )
+  end
 
-      if branch_name.length > 100
-        truncated_string = branch_name[0, 100]
-        # Delete everything dangling after the last hyphen so as not to risk
-        # existence of unintended words in the branch name due to mid-word split.
-        branch_name = truncated_string[0, truncated_string.rindex("-")]
-      end
-
-      branch_name
-    end
+  def self.feature_enabled?(user)
+    Feature.enabled?(:jira_connect_create_branch, user, default_enabled: :yaml)
   end
 
   private
 
-  def issue_params
-    @issue_params ||= params.require(:issue).permit(:key, :summary)
-  end
-
   def feature_enabled!
-    render_404 unless Feature.enabled?(:jira_connect_create_branch, @user, default_enabled: :yaml)
+    render_404 unless self.class.feature_enabled?(current_user)
   end
 end
