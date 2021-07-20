@@ -6,8 +6,8 @@ import { extendedWrapper } from 'helpers/vue_test_utils_helper';
 import BaseComponent from '~/cycle_analytics/components/base.vue';
 import PathNavigation from '~/cycle_analytics/components/path_navigation.vue';
 import StageTable from '~/cycle_analytics/components/stage_table.vue';
-import { NOT_ENOUGH_DATA_ERROR } from '~/cycle_analytics/constants';
 import ValueStreamFilters from '~/cycle_analytics/components/value_stream_filters.vue';
+import { NOT_ENOUGH_DATA_ERROR } from '~/cycle_analytics/constants';
 import initState from '~/cycle_analytics/store/state';
 import {
   permissions,

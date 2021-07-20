@@ -4,15 +4,13 @@ import { decorateData, formatMedianValues, calculateFormattedDayInPast } from '.
 import * as types from './mutation_types';
 
 export default {
-  [types.INITIALIZE_VSA](state, { projectId, endpoints, currentGroup, features }) {
-    state.id = projectId;
+  [types.INITIALIZE_VSA](state, { endpoints, currentGroup }) {
     state.endpoints = endpoints;
     state.currentGroup = currentGroup;
 
     const { now, past } = calculateFormattedDayInPast(DEFAULT_DAYS_TO_DISPLAY);
     state.createdBefore = now;
     state.createdAfter = past;
-    state.features = features;
   },
   [types.SET_LOADING](state, loadingState) {
     state.isLoading = loadingState;
@@ -23,9 +21,9 @@ export default {
   [types.SET_SELECTED_STAGE](state, stage) {
     state.selectedStage = stage;
   },
-  [types.SET_DATE_RANGE](state, { startDate }) {
-    state.startDate = startDate;
-    const { now, past } = calculateFormattedDayInPast(startDate);
+  [types.SET_DATE_RANGE](state, daysInPast) {
+    state.startDate = daysInPast;
+    const { now, past } = calculateFormattedDayInPast(daysInPast);
     state.createdBefore = now;
     state.createdAfter = past;
   },
@@ -50,15 +48,13 @@ export default {
   [types.REQUEST_CYCLE_ANALYTICS_DATA](state) {
     state.isLoading = true;
     state.hasError = false;
-    if (!state.features.cycleAnalyticsForGroups) {
-      state.medians = {};
-    }
+    state.medians = {};
   },
   [types.RECEIVE_CYCLE_ANALYTICS_DATA_SUCCESS](state, data) {
-    const { summary, medians } = decorateData(data);
-    if (!state.features.cycleAnalyticsForGroups) {
-      state.medians = formatMedianValues(medians);
-    }
+    const { summary } = decorateData(data);
+    console.log('data', data);
+    console.log('summary', summary);
+    // TODO: do we still need the permissions check?
     state.permissions = data.permissions;
     state.summary = summary;
     state.hasError = false;
@@ -66,9 +62,7 @@ export default {
   [types.RECEIVE_CYCLE_ANALYTICS_DATA_ERROR](state) {
     state.isLoading = false;
     state.hasError = true;
-    if (!state.features.cycleAnalyticsForGroups) {
-      state.medians = {};
-    }
+    state.medians = {};
   },
   [types.REQUEST_STAGE_DATA](state) {
     state.isLoadingStage = true;
@@ -77,7 +71,6 @@ export default {
     state.hasError = false;
   },
   [types.RECEIVE_STAGE_DATA_SUCCESS](state, events = []) {
-    const { selectedStage } = state;
     state.isLoadingStage = false;
     state.isEmptyStage = !events.length;
     state.selectedStageEvents = events.map((ev) =>
@@ -100,5 +93,20 @@ export default {
   },
   [types.RECEIVE_STAGE_MEDIANS_ERROR](state) {
     state.medians = {};
+  },
+  [types.REQUEST_STAGE_COUNTS](state) {
+    state.stageCounts = {};
+  },
+  [types.RECEIVE_STAGE_COUNTS_SUCCESS](state, stageCounts = []) {
+    state.stageCounts = stageCounts.reduce(
+      (acc, { id, count }) => ({
+        ...acc,
+        [id]: count,
+      }),
+      {},
+    );
+  },
+  [types.RECEIVE_STAGE_COUNTS_ERROR](state) {
+    state.stageCounts = {};
   },
 };

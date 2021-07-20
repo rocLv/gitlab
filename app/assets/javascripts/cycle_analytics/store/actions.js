@@ -3,7 +3,8 @@ import {
   getProjectValueStreams,
   getProjectValueStreamMetrics,
   getValueStreamStageMedian,
-  getValueStreamStagesAndEvents,
+  getValueStreamStageRecords,
+  getValueStreamStageCounts,
 } from '~/api/analytics_api';
 import createFlash from '~/flash';
 import { __ } from '~/locale';
@@ -41,15 +42,10 @@ export const receiveValueStreamsSuccess = ({ commit, dispatch }, data = []) => {
 export const fetchValueStreams = ({ commit, dispatch, state }) => {
   const {
     endpoints: { fullPath },
-    features: { cycleAnalyticsForGroups },
   } = state;
   commit(types.REQUEST_VALUE_STREAMS);
 
-  const stageRequests = ['setSelectedStage'];
-  if (cycleAnalyticsForGroups) {
-    stageRequests.push('fetchStageMedians');
-  }
-
+  const stageRequests = ['setSelectedStage', 'fetchStageMedians', 'fetchStageCountValues'];
   return getProjectValueStreams(fullPath)
     .then(({ data }) => dispatch('receiveValueStreamsSuccess', data))
     .then(() => Promise.all(stageRequests.map((r) => dispatch(r))))
@@ -61,12 +57,12 @@ export const fetchCycleAnalyticsData = ({
   state: {
     endpoints: { requestPath },
   },
-  getters: { legacyFilterParams },
+  getters: { filterParams },
   commit,
 }) => {
   commit(types.REQUEST_CYCLE_ANALYTICS_DATA);
 
-  return getProjectValueStreamMetrics(requestPath, legacyFilterParams)
+  return getProjectValueStreamMetrics(requestPath, filterParams)
     .then(({ data }) => commit(types.RECEIVE_CYCLE_ANALYTICS_DATA_SUCCESS, data))
     .catch(() => {
       commit(types.RECEIVE_CYCLE_ANALYTICS_DATA_ERROR);
@@ -79,7 +75,7 @@ export const fetchCycleAnalyticsData = ({
 export const fetchStageData = ({ getters: { requestParams, filterParams }, commit }) => {
   commit(types.REQUEST_STAGE_DATA);
 
-  return getValueStreamStagesAndEvents({ ...requestParams, params: filterParams })
+  return getValueStreamStageRecords(requestParams, filterParams)
     .then(({ data }) => {
       // when there's a query timeout, the request succeeds but the error is encoded in the response data
       if (data?.error) {
@@ -118,6 +114,42 @@ export const fetchStageMedians = ({
       commit(types.RECEIVE_STAGE_MEDIANS_ERROR, error);
       createFlash({
         message: __('There was an error fetching median data for stages'),
+      });
+    });
+};
+
+const getStageCounts = ({ stageId, vsaParams, filterParams = {} }) => {
+  return getValueStreamStageCounts({ ...vsaParams, stageId }, filterParams).then(({ data }) => ({
+    id: stageId,
+    ...(data?.error
+      ? {
+          error: data.error,
+          value: null,
+        }
+      : data),
+  }));
+};
+
+export const fetchStageCountValues = ({
+  state: { stages },
+  getters: { requestParams: vsaParams, filterParams },
+  commit,
+}) => {
+  commit(types.REQUEST_STAGE_COUNTS);
+  return Promise.all(
+    stages.map(({ id: stageId }) =>
+      getStageCounts({
+        vsaParams,
+        stageId,
+        filterParams,
+      }),
+    ),
+  )
+    .then((data) => commit(types.RECEIVE_STAGE_COUNTS_SUCCESS, data))
+    .catch((error) => {
+      commit(types.RECEIVE_STAGE_COUNTS_ERROR, error);
+      createFlash({
+        message: __('There was an error fetching stage total counts'),
       });
     });
 };

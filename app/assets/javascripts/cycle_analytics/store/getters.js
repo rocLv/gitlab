@@ -14,11 +14,11 @@ export const pathNavigationData = ({ stages, medians, stageCounts, selectedStage
 
 export const requestParams = (state) => {
   const {
-    selectedStage: { id: stageId = null },
-    currentGroup: { path: groupId },
+    endpoints: { fullPath },
     selectedValueStream: { id: valueStreamId },
+    selectedStage: { id: stageId = null },
   } = state;
-  return { valueStreamId, groupId, stageId };
+  return { requestPath: fullPath, valueStreamId, stageId };
 };
 
 const dateRangeParams = ({ createdAfter, createdBefore }) => ({
@@ -26,15 +26,8 @@ const dateRangeParams = ({ createdAfter, createdBefore }) => ({
   created_before: createdBefore ? dateFormat(createdBefore, dateFormats.isoDate) : null,
 });
 
-export const legacyFilterParams = ({ startDate }) => {
-  return {
-    'cycle_analytics[start_date]': startDate,
-  };
-};
-
 export const filterParams = (state) => {
   const {
-    id,
     filters: {
       authors: { selected: selectedAuthor },
       milestones: { selected: selectedMilestone },
@@ -51,7 +44,6 @@ export const filterParams = (state) => {
   });
 
   return {
-    project_ids: [id],
     ...dateRangeParams(state),
     ...filterBarQuery,
   };

@@ -1,7 +1,6 @@
 import { DEFAULT_DAYS_TO_DISPLAY } from '../constants';
 
 export default () => ({
-  features: {},
   id: null,
   endpoints: {},
   startDate: DEFAULT_DAYS_TO_DISPLAY,
@@ -18,6 +17,7 @@ export default () => ({
   selectedStageEvents: [],
   selectedStageError: '',
   medians: {},
+  stageCounts: {},
   hasError: false,
   isLoading: false,
   isLoadingStage: false,

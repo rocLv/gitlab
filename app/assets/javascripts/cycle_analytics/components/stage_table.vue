@@ -177,6 +177,7 @@ export default {
 };
 </script>
 <template>
+  <!-- TODO: support pagination or disable it :thinking: -->
   <div data-testid="vsa-stage-table">
     <gl-loading-icon v-if="isLoading" class="gl-mt-4" size="md" />
     <gl-empty-state

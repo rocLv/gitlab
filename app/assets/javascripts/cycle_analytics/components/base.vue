@@ -49,6 +49,7 @@ export default {
       'createdBefore',
       'createdAfter',
       'currentGroup',
+      'stageCounts',
     ]),
     ...mapGetters(['pathNavigationData']),
     displayStageEvents() {
@@ -90,8 +91,8 @@ export default {
       'setSelectedStage',
       'setDateRange',
     ]),
-    handleDateSelect(startDate) {
-      this.setDateRange(startDate);
+    handleDateSelect(daysInPast) {
+      this.setDateRange(daysInPast);
     },
     onSelectStage(stage) {
       this.setSelectedStage(stage);
@@ -126,8 +127,8 @@ export default {
       class="js-path-navigation gl-w-full gl-pb-2"
       :loading="isLoading || isLoadingStage"
       :stages="pathNavigationData"
+      :stage-counts="stageCounts"
       :selected-stage="selectedStage"
-      :with-stage-counts="false"
       @selected="onSelectStage"
     />
     <gl-loading-icon v-if="isLoading" size="lg" />
@@ -169,6 +170,7 @@ export default {
           </div>
         </div>
       </div>
+      <!-- TODO: add stage count for selected stage -->
       <stage-table
         :is-loading="isLoading || isLoadingStage"
         :stage-events="selectedStageEvents"
