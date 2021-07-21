@@ -407,11 +407,19 @@ RSpec.describe Gitlab::Ci::Config do
         end
       end
 
-      context 'when external local file SHA is not defined' do
+      context 'when external local file SHA is not defined but ref is defined' do
+        it 'is using commit SHA from the ref' do
+          expect(project).to receive(:commit).with('feature_branch')
+
+          described_class.new(gitlab_ci_yml, project: project, sha: nil, ref: 'feature_branch', user: user)
+        end
+      end
+
+      context 'when external local file SHA and ref is not defined' do
         it 'is using latest SHA on the default branch' do
           expect(project.repository).to receive(:root_ref_sha)
 
-          described_class.new(gitlab_ci_yml, project: project, sha: nil, user: user)
+          described_class.new(gitlab_ci_yml, project: project, sha: nil, ref: nil, user: user)
         end
       end
     end

@@ -20,7 +20,7 @@ module Gitlab
       attr_reader :root, :context, :ref, :source
 
       def initialize(config, project: nil, sha: nil, user: nil, parent_pipeline: nil, ref: nil, source: nil)
-        @context = build_context(project: project, sha: sha, user: user, parent_pipeline: parent_pipeline)
+        @context = build_context(project: project, sha: sha, ref: ref, user: user, parent_pipeline: parent_pipeline)
         @context.set_deadline(TIMEOUT_SECONDS)
 
         @ref = ref
@@ -100,21 +100,33 @@ module Gitlab
         Config::EdgeStagesInjector.new(initial_config).to_hash
       end
 
-      def find_sha(project)
-        branches = project&.repository&.branches || []
+      def find_sha(project, ref)
+        commit_sha = project.commit(ref)&.sha if project && ref
+        return commit_sha if commit_sha.present?
 
-        unless branches.empty?
-          project.repository.root_ref_sha
-        end
+        branches = project&.repository&.branches || []
+        return if branches.empty?
+
+        project.repository.root_ref_sha
       end
 
-      def build_context(project:, sha:, user:, parent_pipeline:)
+      def build_context(project:, sha:, ref:, user:, parent_pipeline:)
+        resolved_sha = sha || find_sha(project, ref)
+
         Config::External::Context.new(
           project: project,
-          sha: sha || find_sha(project),
+          sha: resolved_sha,
           user: user,
           parent_pipeline: parent_pipeline,
-          variables: project&.predefined_variables&.to_runner_variables)
+          variables: build_variables(project, resolved_sha).to_runner_variables
+        )
+      end
+
+      def build_variables(project, sha)
+        Gitlab::Ci::Variables::Collection.new.tap do |variables|
+          variables.concat(project.predefined_variables) if project
+          variables.append(key: 'CI_COMMIT_SHA', value: sha)
+        end
       end
 
       def track_and_raise_for_dev_exception(error)
