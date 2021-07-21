@@ -8,6 +8,7 @@ module Gitlab
     CACHE_KEY = :issuables_count_for_state
     # The expiration time for the Rails cache.
     CACHE_EXPIRES_IN = 10.minutes
+    CACHING_COUNT_THRESHOLD = 1000
 
     # The state values that can be safely casted to a Symbol.
     STATES = %w[opened closed merged all].freeze
@@ -119,12 +120,17 @@ module Gitlab
     end
 
     def redis_store_cache
-      Rails.cache.fetch(redis_cache_key, cache_options) do
-        counts = perform_count(finder)
-        break counts if counts.empty?
+      counts = Rails.cache.read(redis_cache_key, cache_options)
+      return counts if counts.present?
 
-        counts
+      new_counts = perform_count(finder)
+      return new_counts if new_counts.empty?
+
+      if new_counts.values.all? { |count| count >= CACHING_COUNT_THRESHOLD }
+        Rails.cache.write(redis_cache_key, new_counts, cache_options)
       end
+
+      new_counts
     end
 
     def parent
