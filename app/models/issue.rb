@@ -317,15 +317,22 @@ class Issue < ApplicationRecord
     )
   end
 
-  def self.to_branch_name(*args)
-    branch_name = args.map(&:to_s).each_with_index.map do |arg, i|
-      arg.parameterize(preserve_case: i == 0).presence
-    end.compact.join('-')
+  # Takes an issue reference (e.g. IID) followed by one or more other arguments,
+  # and transforms them into a branch name suitable for use with Git.
+  #
+  # All values are parameterized, the case is preserved for the reference and
+  # lowercased for other arguments.
+  #
+  # The branch name is truncated to 100 characters, everything after the last
+  # hyphen is deleted so as not to risk unintended words due to word splitting.
+  def self.to_branch_name(reference, *args)
+    branch_name = [
+      reference.to_s.parameterize(preserve_case: true),
+      *args.map { |arg| arg.to_s.parameterize.presence }.compact
+    ].join('-')
 
     if branch_name.length > 100
       truncated_string = branch_name[0, 100]
-      # Delete everything dangling after the last hyphen so as not to risk
-      # existence of unintended words in the branch name due to mid-word split.
       branch_name = truncated_string.sub(/-[^-]*\Z/, '')
     end
 
