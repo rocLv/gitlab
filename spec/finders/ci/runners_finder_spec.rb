@@ -182,7 +182,7 @@ RSpec.describe Ci::RunnersFinder do
     end
 
     describe '#execute' do
-      subject { described_class.new(current_user: user, group: group, params: params).execute }
+      subject { described_class.new(current_user: user, params: params.merge(group: group)).execute }
 
       context 'with user as group owner' do
         before do
@@ -278,7 +278,7 @@ RSpec.describe Ci::RunnersFinder do
     end
 
     describe '#sort_key' do
-      subject { described_class.new(current_user: user, group: group, params: params).sort_key }
+      subject { described_class.new(current_user: user, params: params.merge(group: group)).sort_key }
 
       context 'without params' do
         it 'returns created_at_desc' do
