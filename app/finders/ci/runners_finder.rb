@@ -49,10 +49,15 @@ module Ci
 
       raise Gitlab::Access::AccessDeniedError unless can?(@current_user, :admin_group, group)
 
-      # Getting all runners from the group itself and all its descendants
-      descendant_projects = Project.for_group_and_its_subgroups(group)
+      case @params[:membership]
+      when :direct
+        @runners = Ci::Runner.belonging_to_group(group.id)
+      else
+        # Getting all runners from the group itself and all its descendants
+        descendant_projects = Project.for_group_and_its_subgroups(group)
 
-      @runners = Ci::Runner.belonging_to_group_or_project(group.self_and_descendants, descendant_projects)
+        @runners = Ci::Runner.belonging_to_group_or_project(group.self_and_descendants, descendant_projects)
+      end
     end
 
     def filter_by_status!

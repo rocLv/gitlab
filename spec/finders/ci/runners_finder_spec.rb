@@ -182,7 +182,18 @@ RSpec.describe Ci::RunnersFinder do
     end
 
     describe '#execute' do
-      subject { described_class.new(current_user: user, params: params.merge(group: group)).execute }
+      let(:group_params) { { group: group } }
+
+      subject { described_class.new(current_user: user, params: params.merge(group_params)).execute }
+
+      shared_examples 'membership equal to :descendants' do
+        it 'returns all runners' do
+          expect(subject).to eq([runner_project_7, runner_project_6, runner_project_5,
+                                 runner_project_4, runner_project_3, runner_project_2,
+                                 runner_project_1, runner_sub_group_4, runner_sub_group_3,
+                                 runner_sub_group_2, runner_sub_group_1, runner_group])
+        end
+      end
 
       context 'with user as group owner' do
         before do
@@ -190,11 +201,18 @@ RSpec.describe Ci::RunnersFinder do
         end
 
         context 'passing no params' do
-          it 'returns all descendant runners' do
-            expect(subject).to eq([runner_project_7, runner_project_6, runner_project_5,
-                                   runner_project_4, runner_project_3, runner_project_2,
-                                   runner_project_1, runner_sub_group_4, runner_sub_group_3,
-                                   runner_sub_group_2, runner_sub_group_1, runner_group])
+          it_behaves_like 'membership equal to :descendants'
+        end
+
+        context 'with :descendants membership' do
+          it_behaves_like 'membership equal to :descendants'
+        end
+
+        context 'with :direct membership' do
+          let(:group_params) { { group: group, membership: :direct } }
+
+          it 'returns runners belonging to group' do
+            expect(subject).to eq([runner_group])
           end
         end
 
