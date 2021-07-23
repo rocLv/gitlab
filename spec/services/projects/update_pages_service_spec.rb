@@ -94,6 +94,8 @@ RSpec.describe Projects::UpdatePagesService do
         expect(deployment.file_count).to eq(3)
         expect(deployment.file_sha256).to eq(artifacts_archive.file_sha256)
         expect(project.pages_metadatum.reload.pages_deployment_id).to eq(deployment.id)
+        puts "deployment #{deployment.inspect}"
+        expect(deployment.ci_build_id).not_to be_nil
       end
 
       it 'fails if another deployment is in progress' do
@@ -103,6 +105,20 @@ RSpec.describe Projects::UpdatePagesService do
           end.to raise_error("Failed to deploy pages - other deployment is in progress")
 
           expect(GenericCommitStatus.last.description).to eq("Failed to deploy pages - other deployment is in progress")
+        end
+      end
+
+      context 'multiple deployments check' do
+        let!(:pipeline2) { create(:ci_pipeline, project: project, sha: project.commit('HEAD').sha) }
+        let!(:build2) { create(:ci_build, pipeline: pipeline2, ref: 'HEAD') }
+        let!(:old_deployment) { create(:pages_deployment, project: project, ci_build_id: 2) }
+
+        it 'fails if sha on branch was updated before deployment was uploaded' do
+          expect(execute).to eq(:success)
+          expect(project.pages_metadatum).to be_deployed
+
+          expect(deploy_status).to be_failed
+          expect(deploy_status.description).to eq('build SHA is outdated for this ref')
         end
       end
 
@@ -126,14 +142,13 @@ RSpec.describe Projects::UpdatePagesService do
 
         it 'fails if sha on branch is not latest' do
           build.update!(ref: 'feature')
-  
+
           expect(execute).not_to eq(:success)
           expect(project.pages_metadatum).not_to be_deployed
-  
+
           expect(deploy_status).to be_failed
           expect(deploy_status.description).to eq('build SHA is outdated for this ref')
         end
-
       end
 
       it 'does not fail if pages_metadata is absent' do

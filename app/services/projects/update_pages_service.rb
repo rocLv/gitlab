@@ -149,7 +149,9 @@ module Projects
       File.open(artifacts_path) do |file|
         deployment = project.pages_deployments.create!(file: file,
                                                        file_count: entries_count,
-                                                       file_sha256: sha256)
+                                                       file_sha256: sha256,
+                                                       ci_build_id: build.id
+                                                      )
 
         validate_outdated_sha!
 
@@ -240,7 +242,7 @@ module Projects
 
       if Feature.enabled?(:pages_check_outdated_sha, default_enabled: :yaml)
         deployed_build_id = project.pages_metadatum&.pages_deployment&.ci_build_id
-
+        puts "deployed_build_id: #{ deployed_build_id } build.id: #{ build.id }"
         return unless deployed_build_id
         return if deployed_build_id < build.id
       end
@@ -251,6 +253,7 @@ module Projects
     def latest?
       # check if sha for the ref is still the most recent one
       # this helps in case when multiple deployments happens
+      puts "build.sha: #{sha} latest_sha: #{latest_sha}"
       sha == latest_sha
     end
 
