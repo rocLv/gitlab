@@ -99,7 +99,9 @@ constraints(::Constraints::GroupUrlConstrainer.new) do
       end
     end
 
-    get :seat_usage, to: 'seat_usage#show'
+    resource :seat_usage, only: :show, controller: :seat_usage do
+      post :export
+    end
 
     resources :epics, concerns: :awardable, constraints: { id: /\d+/ } do
       member do

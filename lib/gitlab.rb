@@ -45,6 +45,7 @@ module Gitlab
   HTTP_PROXY_ENV_VARS = %w(http_proxy https_proxy HTTP_PROXY HTTPS_PROXY).freeze
 
   def self.com?
+    return true
     # Check `gl_subdomain?` as well to keep parity with gitlab.com
     Gitlab.config.gitlab.url == Gitlab::Saas.com_url || gl_subdomain?
   end
