@@ -9,6 +9,7 @@ module Ci
 
     def initialize(current_user:, params:)
       @params = params
+      @group = params.delete(:group)
       @current_user = current_user
     end
 
@@ -33,7 +34,7 @@ module Ci
     private
 
     def search!
-      @params.has_key?(:group) ? group_runners : all_runners
+      @group ? group_runners : all_runners
 
       @runners = @runners.search(@params[:search]) if @params[:search].present?
     end
@@ -45,19 +46,18 @@ module Ci
     end
 
     def group_runners
-      group = @params[:group]
+      raise Gitlab::Access::AccessDeniedError unless can?(@current_user, :admin_group, @group)
 
-      raise Gitlab::Access::AccessDeniedError unless can?(@current_user, :admin_group, group)
-
-      case @params[:membership]
-      when :direct
-        @runners = Ci::Runner.belonging_to_group(group.id)
-      else
-        # Getting all runners from the group itself and all its descendants
-        descendant_projects = Project.for_group_and_its_subgroups(group)
-
-        @runners = Ci::Runner.belonging_to_group_or_project(group.self_and_descendants, descendant_projects)
-      end
+      @runners = case @params[:membership]
+                 when :direct
+                   Ci::Runner.belonging_to_group(@group.id)
+                 when :descendants, nil
+                   # Getting all runners from the group itself and all its descendant groups/projects
+                   descendant_projects = Project.for_group_and_its_subgroups(@group)
+                   Ci::Runner.belonging_to_group_or_project(@group.self_and_descendants, descendant_projects)
+                 else
+                   raise ArgumentError, 'Invalid membership filter'
+                 end
     end
 
     def filter_by_status!

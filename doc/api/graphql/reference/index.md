@@ -15307,8 +15307,7 @@ Values for filtering runners in namespaces.
 
 | Value | Description |
 | ----- | ----------- |
-| <a id="runnermembershipfilterall"></a>`ALL` | Include all runners that have either a direct or indirect relationship. |
-| <a id="runnermembershipfilterdescendents"></a>`DESCENDENTS` | Include runners that have either a direct relationship or a relationship with descendants. These can be project runners or group runners (in the case where group is queried). |
+| <a id="runnermembershipfilterdescendants"></a>`DESCENDANTS` | Include runners that have either a direct relationship or a relationship with descendants. These can be project runners or group runners (in the case where group is queried). |
 | <a id="runnermembershipfilterdirect"></a>`DIRECT` | Include runners that have a direct relationship. |
 
 ### `SastUiComponentSize`

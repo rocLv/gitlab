@@ -30,12 +30,6 @@ RSpec.describe Resolvers::Ci::GroupRunnersResolver do
         context 'with a membership argument' do
           include_context 'resolve args with membership'
 
-          context 'set to :all' do
-            let(:membership) { :all }
-
-            it { is_expected.to contain_exactly(subgroup_runner) }
-          end
-
           context 'set to :direct' do
             let(:membership) { :direct }
 
@@ -62,12 +56,6 @@ RSpec.describe Resolvers::Ci::GroupRunnersResolver do
 
           shared_examples 'returns self and descendant runners' do
             it { is_expected.to contain_exactly(group_runner, subgroup_runner, offline_project_runner, inactive_project_runner) }
-          end
-
-          context 'set to :all' do
-            let(:membership) { :all }
-
-            include_examples 'returns self and descendant runners'
           end
 
           context 'set to :direct' do

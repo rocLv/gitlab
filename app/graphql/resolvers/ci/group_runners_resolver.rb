@@ -7,7 +7,7 @@ module Resolvers
 
       argument :membership, ::Types::Ci::RunnerMembershipFilterEnum,
                required: false,
-               default_value: :descendents,
+               default_value: :descendants,
                description: 'Control which runners to include in the results.'
 
       protected

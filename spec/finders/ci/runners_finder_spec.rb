@@ -18,6 +18,13 @@ RSpec.describe Ci::RunnersFinder do
           end
         end
 
+        context 'with nil group' do
+          it 'returns all runners' do
+            expect(Ci::Runner).to receive(:with_tags).and_call_original
+            expect(described_class.new(current_user: admin, params: { group: nil }).execute).to match_array [runner1, runner2]
+          end
+        end
+
         context 'with preload param set to :tag_name true' do
           it 'requests tags' do
             expect(Ci::Runner).to receive(:with_tags).and_call_original
@@ -158,6 +165,7 @@ RSpec.describe Ci::RunnersFinder do
     let_it_be(:project_4) { create(:project, group: sub_group_2) }
     let_it_be(:project_5) { create(:project, group: sub_group_3) }
     let_it_be(:project_6) { create(:project, group: sub_group_4) }
+    let_it_be(:runner_instance) { create(:ci_runner, :instance, contacted_at: 13.minutes.ago) }
     let_it_be(:runner_group) { create(:ci_runner, :group, contacted_at: 12.minutes.ago) }
     let_it_be(:runner_sub_group_1) { create(:ci_runner, :group, active: false, contacted_at: 11.minutes.ago) }
     let_it_be(:runner_sub_group_2) { create(:ci_runner, :group, contacted_at: 10.minutes.ago) }
@@ -187,7 +195,7 @@ RSpec.describe Ci::RunnersFinder do
       subject { described_class.new(current_user: user, params: params.merge(group_params)).execute }
 
       shared_examples 'membership equal to :descendants' do
-        it 'returns all runners' do
+        it 'returns all descendant runners' do
           expect(subject).to eq([runner_project_7, runner_project_6, runner_project_5,
                                  runner_project_4, runner_project_3, runner_project_2,
                                  runner_project_1, runner_sub_group_4, runner_sub_group_3,
@@ -213,6 +221,15 @@ RSpec.describe Ci::RunnersFinder do
 
           it 'returns runners belonging to group' do
             expect(subject).to eq([runner_group])
+          end
+        end
+
+        context 'with nil group' do
+          let(:group_params) { { group: nil } }
+
+          it 'returns no runners' do
+            # Query should run against all runners, however since user is not admin, query returns no results
+            expect(subject).to eq([])
           end
         end
 
