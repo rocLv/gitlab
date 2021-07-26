@@ -33,10 +33,6 @@ export default function initShowIssue() {
   initSentryErrorStackTraceApp();
   initRelatedMergeRequestsApp();
 
-  import(/* webpackChunkName: 'design_management' */ '~/design_management')
-    .then((module) => module.default())
-    .catch(() => {});
-
   new ZenMode(); // eslint-disable-line no-new
 
   if (issueType !== IssuableType.TestCase) {

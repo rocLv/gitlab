@@ -35,6 +35,12 @@ export default {
         this.error = true;
       },
       result() {
+        this.designs.forEach((design) => {
+          const preloadEl = document.createElement('link');
+          preloadEl.rel = 'preload';
+          preloadEl.href = design.imageV432x230;
+          document.head.appendChild(preloadEl);
+        });
         if (this.$route.query.version && !this.hasValidVersion) {
           createFlash({
             message: s__(
