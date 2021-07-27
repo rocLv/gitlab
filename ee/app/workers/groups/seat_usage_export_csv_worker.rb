@@ -5,27 +5,18 @@ module Groups
   class SeatUsageExportCsvWorker
     include ApplicationWorker
 
-    # data_consistency :always
-    #
-    # sidekiq_options retry: 3
-    #
-    # feature_category :source_code_management
-    # tags :exclude_from_kubernetes
-    # idempotent!
-    # loggable_arguments 0, 1
-    #
-    # # group_id - The ID of the group for which to flush the cache.
-    # # statistics - An Array containing columns from NamespaceStatistics to
-    # #              refresh, if empty all columns will be refreshed
-    #
-    # feature_category :issue_tracking
-    # worker_resource_boundary :cpu
-    # loggable_arguments 2
+    data_consistency :delayed
+    feature_category :utilization
+    sidekiq_options retry: 3
 
-    def perform(group_id, requester_id)
-      # group = Group.find_by_id(group_id)
-      #
-      # return unless group
+    # group_id - The ID of the group for which to export seat usage.
+    # user_id - The ID of user that requested the export.
+    def perform(group_id, user_id)
+      group = Group.find_by_id(group_id)
+      return unless group
+
+      user = User.find_by_id(user_id)
+      return unless user
 
       # Groups::UpdateStatisticsService.new(group, statistics: statistics).execute
     end
