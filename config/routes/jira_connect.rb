@@ -14,4 +14,5 @@ namespace :jira_connect do
 
   resources :subscriptions, only: [:index, :create, :destroy]
   resources :branches, only: [:new]
+  resources :oauth_callbacks, only: [:index]
 end
