@@ -1,6 +1,8 @@
 <script>
 import { GlIcon } from '@gitlab/ui';
 import { throttle } from 'lodash';
+import { DESIGN_DETAIL_READY_EVENT } from '~/design_management/constants';
+import eventHub from '~/pages/projects/issues/event_hub';
 import { DESIGN_MARK_APP_START, DESIGN_MAIN_IMAGE_OUTPUT } from '~/performance/constants';
 import { performanceMarkAndMeasure } from '~/performance/utils';
 
@@ -65,6 +67,7 @@ export default {
           },
         ],
       });
+      eventHub.$emit(DESIGN_DETAIL_READY_EVENT);
     },
     onImgError() {
       this.imageError = true;

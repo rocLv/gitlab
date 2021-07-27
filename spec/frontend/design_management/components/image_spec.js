@@ -1,6 +1,8 @@
 import { GlIcon } from '@gitlab/ui';
 import { shallowMount } from '@vue/test-utils';
 import DesignImage from '~/design_management/components/image.vue';
+import { DESIGN_DETAIL_READY_EVENT } from '~/design_management/constants';
+import eventHub from '~/pages/projects/issues/event_hub';
 
 describe('Design management large image component', () => {
   let wrapper;
@@ -128,6 +130,30 @@ describe('Design management large image component', () => {
       return wrapper.vm.$nextTick().then(() => {
         expect(wrapper.element).toMatchSnapshot();
       });
+    });
+  });
+
+  describe('event emitting', () => {
+    it('notifies listeners right away if there is no image', () => {
+      jest.spyOn(eventHub, '$emit');
+      createComponent();
+
+      expect(eventHub.$emit).toHaveBeenCalledWith(DESIGN_DETAIL_READY_EVENT);
+    });
+
+    it('if the image is set, notify listeners after it is loaded', async () => {
+      jest.spyOn(eventHub, '$emit');
+      createComponent({
+        isLoading: false,
+        image: 'test.jpg',
+      });
+
+      expect(eventHub.$emit).not.toHaveBeenCalled();
+
+      wrapper.find('img').trigger('load');
+      await wrapper.vm.$nextTick();
+
+      expect(eventHub.$emit).toHaveBeenCalledWith(DESIGN_DETAIL_READY_EVENT);
     });
   });
 });
