@@ -22,6 +22,7 @@ class JiraConnect::SubscriptionsController < JiraConnect::ApplicationController
 
   def index
     @subscriptions = current_jira_installation.subscriptions.preload_namespace_route
+    @oauth_state = auth_token
   end
 
   def create

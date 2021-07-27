@@ -19,8 +19,17 @@ const updateSignInLinks = async () => {
   });
 };
 
+const updateOauthLink = async () => {
+  const location = await getLocation();
+  Array.from(document.querySelectorAll('.js-jira-connect-oauth')).forEach((el) => {
+    const updatedLink = `${el.getAttribute('href')}::${location}`;
+    el.setAttribute('href', updatedLink);
+  });
+};
+
 export async function initJiraConnect() {
   await updateSignInLinks();
+  await updateOauthLink();
 
   const el = document.querySelector('.js-jira-connect-app');
   if (!el) {
