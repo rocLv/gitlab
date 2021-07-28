@@ -3,10 +3,6 @@
 require 'spec_helper'
 
 RSpec.describe Groups::SeatUsageExportCsvWorker do
-  # it_behaves_like 'an idempotent worker' do
-  #   let(:job_args) { [1, 2] }
-  # end
-
   describe '#perform' do
     let_it_be(:group) { create(:group, :private) }
     let_it_be(:owner) { create(:user) }
