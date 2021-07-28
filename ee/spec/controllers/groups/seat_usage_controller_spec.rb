@@ -92,10 +92,10 @@ RSpec.describe Groups::SeatUsageController do
         group.add_developer(user)
       end
 
-      it 'renders 404 when user is not an owner' do
+      it 'renders 403 when user is not an owner' do
         request_csv
 
-        expect(response).to have_gitlab_http_status(:not_found)
+        expect(response).to have_gitlab_http_status(:forbidden)
       end
     end
   end
