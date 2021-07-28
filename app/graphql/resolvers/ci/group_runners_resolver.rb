@@ -15,6 +15,12 @@ module Resolvers
       def runners_finder_params(params)
         super(params).merge(membership: params[:membership])
       end
+
+      def parent_param
+        raise 'Expected group missing' unless parent.is_a?(Group)
+
+        { group: parent }
+      end
     end
   end
 end

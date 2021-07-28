@@ -24,6 +24,22 @@ RSpec.describe Resolvers::Ci::GroupRunnersResolver do
         group.add_owner(user)
       end
 
+      context 'with obj set to nil' do
+        let(:obj) { nil }
+
+        context 'with a membership argument' do
+          include_context 'resolve args with membership'
+
+          context 'set to :direct' do
+            let(:membership) { :direct }
+
+            it 'raises an error' do
+              expect { subject }.to raise_error('Expected group missing')
+            end
+          end
+        end
+      end
+
       context 'with obj set to subgroup' do
         let(:obj) { subgroup }
 
