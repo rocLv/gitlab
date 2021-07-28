@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 module JiraConnectHelper
+
+  def jira_connect_oauth
+    code_verifier = SecureRandom.hex(128)
+
+    {
+      # We should give the frontend the URL for the POST of the PKCE code flow here:
+      oauth_callback_url: 'TODO',
+      code_verifier: code_verifier,
+      code_challenge: Base64.urlsafe_encode64(Digest::SHA256.digest(code_verifier))
+    }
+  end
+
   def jira_connect_app_data(subscriptions)
     skip_groups = subscriptions.map(&:namespace_id)
 

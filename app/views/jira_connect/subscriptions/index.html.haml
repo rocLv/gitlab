@@ -8,15 +8,17 @@
   - elsif @subscriptions.present?
     = link_to _('Sign in to GitLab'), jira_connect_users_path, target: '_blank', rel: 'noopener noreferrer', class: 'js-jira-connect-sign-in'
 
+- oauth_stuff = jira_connect_oauth()
+
 %main.jira-connect-app.gl-px-5.gl-pt-7.gl-mx-auto
-  - if current_user.blank? && @subscriptions.empty?
+  - if true || (current_user.blank? && @subscriptions.empty?)
     .jira-connect-app-body.gl-px-5.gl-text-center
       %h2= s_('JiraService|GitLab for Jira Configuration')
       %p= s_('JiraService|Sign in to GitLab.com to get started.')
-
+      .oauth_metadata{ data: oauth_stuff }
       .gl-mt-7
         = external_link _('Sign in to GitLab'), jira_connect_users_path, class: "btn gl-button btn-confirm js-jira-connect-sign-in"
-        = link_to 'Oauth flow', oauth_authorization_url(client_id: 'd386d89c27b933d5fe97e37cba8b6075cc691418518ea6a73450503ad970d167',response_type: 'code', scope: 'api', redirect_uri: jira_connect_oauth_callbacks_url, state: @oauth_state), target: '_blank', class: 'js-jira-connect-oauth'
+        = link_to 'Oauth flow', oauth_authorization_url(client_id: '071651a23bd8ae40a4385c63f73004c8a5399fb467ad8b3ea1edfde075c0e3c1', response_type: 'code', scope: 'api', code_challenge: oauth_stuff[:code_challenge], code_challenge_method: 'S256', redirect_uri: jira_connect_oauth_callbacks_url, state: @oauth_state), class: 'js-jira-connect-oauth'
 
       .gl-mt-7
         %p= s_('Integrations|Note: this integration only works with accounts on GitLab.com (SaaS).')

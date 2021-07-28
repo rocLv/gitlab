@@ -8,6 +8,8 @@ import Translate from '~/vue_shared/translate';
 import JiraConnectApp from './components/app.vue';
 import createStore from './store';
 import { getLocation, sizeToParent } from './utils';
+import axios from '~/lib/utils/axios_utils';
+
 
 const store = createStore();
 
@@ -27,9 +29,33 @@ const updateOauthLink = async () => {
   });
 };
 
+const getOAuthAuthentication = async () => {
+  const location = await getLocation();
+
+  const locationParsed = new URL(location);
+
+  const code = locationParsed.searchParams.get('code');
+
+  if(code){
+    //try to oauth
+    const oauth_stuff = JSON.parse(localStorage.getItem('oauth_stuff'));
+
+    console.log('ANDY', code, oauth_stuff);
+
+    //const { data } = await axios.post('oaut')
+  }
+
+  localStorage.setItem('oauth_stuff', JSON.stringify(document.querySelector('.oauth_metadata').dataset))
+
+
+}
+
 export async function initJiraConnect() {
   await updateSignInLinks();
   await updateOauthLink();
+
+  const token = await getOAuthAuthentication();
+
 
   const el = document.querySelector('.js-jira-connect-app');
   if (!el) {
