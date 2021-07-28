@@ -93,22 +93,24 @@ RSpec.describe Resolvers::Ci::GroupRunnersResolver do
       end
     end
 
-    context 'with obj set to subgroup' do
-      let(:obj) { subgroup }
+    context 'when user has no access to the group' do
+      context 'with obj set to subgroup' do
+        let(:obj) { subgroup }
 
-      context 'with a membership argument' do
-        include_context 'resolve args with membership'
+        context 'with a membership argument' do
+          include_context 'resolve args with membership'
 
-        context 'set to :direct' do
-          let(:membership) { :direct }
+          context 'set to :direct' do
+            let(:membership) { :direct }
 
-          it { is_expected.to eq([]) }
-        end
+            it { is_expected.to eq([]) }
+          end
 
-        context 'set to :descendants' do
-          let(:membership) { :descendants }
+          context 'set to :descendants' do
+            let(:membership) { :descendants }
 
-          it { is_expected.to eq([]) }
+            it { is_expected.to eq([]) }
+          end
         end
       end
     end

@@ -230,6 +230,14 @@ RSpec.describe Ci::RunnersFinder do
             end
           end
 
+          context 'with unknown membership' do
+            let(:membership) { :unsupported }
+
+            it 'raises an error' do
+              expect { subject }.to raise_error(ArgumentError, 'Invalid membership filter')
+            end
+          end
+
           context 'with nil group' do
             let(:target_group) { nil }
 

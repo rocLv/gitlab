@@ -12,7 +12,7 @@ RSpec.shared_examples_for Resolvers::Ci::RunnersResolver do
       end
 
       context 'when the user cannot see runners' do
-        let(:user) { create(:user) }
+        let(:user) { build(:user) }
 
         it 'returns no runners' do
           is_expected.to be_empty
