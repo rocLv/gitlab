@@ -6,18 +6,38 @@ RSpec.describe Banzai::Filter::TableOfContentsTagFilter do
   include FilterSpecHelper
 
   context 'table of contents' do
-    let(:html) { '<p>[[<em>TOC</em>]]</p>' }
-
-    it 'replaces [[<em>TOC</em>]] with ToC result' do
-      doc = filter(html, {}, { toc: "FOO" })
-
-      expect(doc.to_html).to eq("FOO")
+    where(:toc_tag) do
+      ['[[<em>TOC</em>]]', '[TOC]', '[toc]']
     end
 
-    it 'handles an empty ToC result' do
-      doc = filter(html)
+    with_them do
+      let(:html) { "<p>#{toc_tag}</p>" }
 
-      expect(doc.to_html).to eq ''
+      it 'replaces tag with ToC result' do
+        doc = filter(html, {}, { toc: 'FOO' })
+
+        expect(doc.to_html).to eq('FOO')
+      end
+
+      it 'handles an empty ToC result' do
+        doc = filter(html)
+
+        expect(doc.to_html).to eq ''
+      end
+
+      it 'tag must be only thing in paragraph' do
+        html = "<p>#{toc_tag} something</p>"
+        doc = filter(html, {}, { toc: 'FOO' })
+
+        expect(doc.to_html).to eq html
+      end
+
+      it 'can contain leading or trailing spaces' do
+        html = "<p>      #{toc_tag}    </p>"
+        doc = filter(html, {}, { toc: 'FOO' })
+
+        expect(doc.to_html).to eq('FOO')
+      end
     end
   end
 end
