@@ -1,0 +1,20 @@
+
+%p You can close this window.
+%button#close_window Close window.
+
+-# TODO: Potentially new JS bundle
+= javascript_tag do
+  :plain
+      document.getElementById('close_window').addEventListener('click', () => {window.close()});
+      const origin = new URL(window.opener.location);
+      origin.hash = '';
+      origin.search = '';
+      const params = new URLSearchParams(location.search);
+      if(params.has('code') && params.has('state')){
+        window.opener.postMessage({success: true, code: params.get('code'), state: params.get('state')}, origin.toString())
+      } else {
+        window.opener.postMessage({success: false}, origin.toString())
+      }
+      // TODO: Add auto-closing, otherwise commenting it out was good for debugging.
+      //window.close()
+      
