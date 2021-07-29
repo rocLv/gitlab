@@ -96,4 +96,46 @@ RSpec.describe NamespaceSetting do
       end
     end
   end
+
+  describe '#delayed_project_removal' do
+    context 'when delayed deletion is enabled at the instance level' do
+      before do
+        stub_application_setting(deletion_adjourned_period: 7)
+      end
+
+      it 'defaults to true' do
+        group
+
+        expect(setting[:delayed_project_removal]).to eq(true)
+      end
+
+      context 'on a sub-group' do
+        it 'defaults to nil' do
+          subgroup = create(:group, parent: group)
+
+          expect(subgroup.namespace_settings[:delayed_project_removal]).to be_nil
+        end
+      end
+
+      context 'when providing a specific value' do
+        let(:group) { create(:group, namespace_settings: build(:namespace_settings, delayed_project_removal: false)) }
+
+        it 'saves the given value' do
+          expect(setting[:delayed_project_removal]).to eq(false)
+        end
+      end
+    end
+
+    context 'when delayed deletion is disabled at the instance level' do
+      before do
+        stub_application_setting(deletion_adjourned_period: 0)
+      end
+
+      it 'defaults to nil' do
+        group
+
+        expect(setting[:delayed_project_removal]).to be_nil
+      end
+    end
+  end
 end
