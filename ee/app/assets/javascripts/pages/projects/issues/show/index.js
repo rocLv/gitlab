@@ -2,7 +2,7 @@ import initRelatedFeatureFlags from 'ee/related_feature_flags';
 import initSidebarBundle from 'ee/sidebar/sidebar_bundle';
 
 import initShow from '~/pages/projects/issues/show';
-import initIssueApp from '~/pages/projects/issues/show/bootstrap';
+import initIssueBootstrap from '~/pages/projects/issues/show/bootstrap';
 import initRelatedIssues from '~/related_issues';
 import UserCallout from '~/user_callout';
 
@@ -17,7 +17,7 @@ const bootstrapFn = () => {
   new UserCallout({ className: 'js-weight-sidebar-callout' });
 };
 
-initIssueApp({
+initIssueBootstrap({
   initShow,
   bootstrapFn,
 });

@@ -1,18 +1,21 @@
 import DesignManagement from '~/design_management';
 import { DESIGN_DETAIL_READY_EVENT } from '~/design_management/constants';
+import { DESIGNS_ROUTE_NAME } from '~/design_management/router/constants';
 import eventHub from '../event_hub';
 
 const singleDesignId = (() => {
-  const designSingleRegexp = new RegExp('designs/(?<id>.+)');
+  const designSingleRegexp = new RegExp(`${DESIGNS_ROUTE_NAME}/(?<id>.+)`);
   const designGroups = window.location.href.match(designSingleRegexp)?.groups;
   return designGroups?.id;
 })();
 
-export default ({ initShow, bootstrapFn }) => {
+export default function initIssueBootstrap({ initShow, bootstrapFn }) {
   if (singleDesignId) {
     eventHub.$once(DESIGN_DETAIL_READY_EVENT, () => {
-      initShow();
-      bootstrapFn();
+      window.requestIdleCallback(() => {
+        initShow();
+        bootstrapFn();
+      });
     });
     DesignManagement();
   } else {
@@ -22,4 +25,4 @@ export default ({ initShow, bootstrapFn }) => {
       bootstrapFn();
     });
   }
-};
+}

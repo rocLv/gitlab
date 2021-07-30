@@ -71,6 +71,7 @@ export default {
     },
     onImgError() {
       this.imageError = true;
+      eventHub.$emit(DESIGN_DETAIL_READY_EVENT);
     },
     setBaseImageSize() {
       const { contentImg } = this.$refs;

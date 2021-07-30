@@ -141,7 +141,7 @@ describe('Design management large image component', () => {
       expect(eventHub.$emit).toHaveBeenCalledWith(DESIGN_DETAIL_READY_EVENT);
     });
 
-    it('if the image is set, notify listeners after it is loaded', async () => {
+    it.each(['load', 'error'])('notifies listeners on "%s"', async (event) => {
       jest.spyOn(eventHub, '$emit');
       createComponent({
         isLoading: false,
@@ -150,7 +150,7 @@ describe('Design management large image component', () => {
 
       expect(eventHub.$emit).not.toHaveBeenCalled();
 
-      wrapper.find('img').trigger('load');
+      wrapper.find('img').trigger(event);
       await wrapper.vm.$nextTick();
 
       expect(eventHub.$emit).toHaveBeenCalledWith(DESIGN_DETAIL_READY_EVENT);
