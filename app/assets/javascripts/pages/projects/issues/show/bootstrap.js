@@ -21,8 +21,8 @@ export default function initIssueBootstrap({ initShow, bootstrapFn }) {
   } else {
     initShow();
     window.requestIdleCallback(() => {
-      DesignManagement();
       bootstrapFn();
+      DesignManagement();
     });
   }
 }
