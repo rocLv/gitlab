@@ -7,41 +7,45 @@ import activeDiscussionQuery from './graphql/queries/active_discussion.query.gra
 import createRouter from './router';
 
 export default () => {
-  const el = document.querySelector('.js-design-management');
-  const { issueIid, projectPath, issuePath } = el.dataset;
-  const router = createRouter(issuePath);
+  return new Promise((resolve) => {
+    const el = document.querySelector('.js-design-management');
+    const { issueIid, projectPath, issuePath } = el.dataset;
+    const router = createRouter(issuePath);
 
-  apolloProvider.clients.defaultClient.cache.writeQuery({
-    query: activeDiscussionQuery,
-    data: {
-      activeDiscussion: {
-        __typename: 'ActiveDiscussion',
-        id: null,
-        source: null,
+    apolloProvider.clients.defaultClient.cache.writeQuery({
+      query: activeDiscussionQuery,
+      data: {
+        activeDiscussion: {
+          __typename: 'ActiveDiscussion',
+          id: null,
+          source: null,
+        },
       },
-    },
-  });
+    });
 
-  return new Vue({
-    el,
-    router,
-    apolloProvider,
-    provide: {
-      projectPath,
-      issueIid,
-    },
-    mounted() {
-      performanceMarkAndMeasure({
-        mark: DESIGN_MARK_APP_START,
-        measures: [
-          {
-            name: DESIGN_MEASURE_BEFORE_APP,
-          },
-        ],
-      });
-    },
-    render(createElement) {
-      return createElement(App);
-    },
+    resolve(
+      new Vue({
+        el,
+        router,
+        apolloProvider,
+        provide: {
+          projectPath,
+          issueIid,
+        },
+        mounted() {
+          performanceMarkAndMeasure({
+            mark: DESIGN_MARK_APP_START,
+            measures: [
+              {
+                name: DESIGN_MEASURE_BEFORE_APP,
+              },
+            ],
+          });
+        },
+        render(createElement) {
+          return createElement(App);
+        },
+      }),
+    );
   });
 };
