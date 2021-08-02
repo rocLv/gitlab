@@ -15194,6 +15194,7 @@ CREATE TABLE merge_requests (
     sprint_id bigint,
     merge_ref_sha bytea,
     draft boolean DEFAULT false NOT NULL,
+    upvotes_count integer DEFAULT 0 NOT NULL,
     CONSTRAINT check_970d272570 CHECK ((lock_version IS NOT NULL))
 );
 
