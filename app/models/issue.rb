@@ -544,11 +544,6 @@ class Issue < ApplicationRecord
     issue_assignees.pluck(:user_id)
   end
 
-  def update_upvotes_count
-    self.lock!
-    self.update_column(:upvotes_count, self.upvotes)
-  end
-
   # Returns `true` if the given User can read the current Issue.
   #
   # This method duplicates the same check of issue_policy.rb

@@ -107,4 +107,19 @@ module Awardable
   def awarded_emoji?(emoji_name, current_user)
     award_emoji.named(emoji_name).awarded_by(current_user).exists?
   end
+
+  def update_upvotes_count
+    return unless self.respond_to?(:upvotes_count)
+
+    lock_and_update_upvotes_count
+  end
+
+  private
+
+  def lock_and_update_upvotes_count
+    self.lock!
+    self.update_column(:upvotes_count, self.upvotes)
+  end
 end
+
+Awardable.prepend_mod

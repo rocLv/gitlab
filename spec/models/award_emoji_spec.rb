@@ -173,38 +173,49 @@ RSpec.describe AwardEmoji do
   end
 
   describe 'updating upvotes_count' do
-    context 'on an issue' do
-      let(:issue) { create(:issue) }
-      let(:upvote) { build(:award_emoji, :upvote, user: build(:user), awardable: issue) }
-      let(:downvote) { build(:award_emoji, :downvote, user: build(:user), awardable: issue) }
+    shared_examples 'updates upvotes_count' do
+      let_it_be(:upvote) { build(:award_emoji, :upvote, user: build(:user), awardable: awardable) }
+      let_it_be(:downvote) { build(:award_emoji, :downvote, user: build(:user), awardable: awardable) }
 
-      it 'updates upvotes_count on the issue when saved' do
-        expect(issue).to receive(:update_column).with(:upvotes_count, 1).once
+      it 'updates upvotes_count on the awardable when saved' do
+        expect(awardable).to receive(:update_column).with(:upvotes_count, 1).once
 
         upvote.save!
         downvote.save!
       end
 
-      it 'updates upvotes_count on the issue when destroyed' do
-        expect(issue).to receive(:update_column).with(:upvotes_count, 0).once
+      it 'updates upvotes_count on the awardable when destroyed' do
+        expect(awardable).to receive(:update_column).with(:upvotes_count, 0).once
 
         upvote.destroy!
         downvote.destroy!
       end
     end
 
-    context 'on another awardable' do
-      let(:merge_request) { create(:merge_request) }
-      let(:award_emoji) { build(:award_emoji, user: build(:user), awardable: merge_request) }
+    context 'on an issue' do
+      let_it_be(:awardable) { create(:issue) }
 
-      it 'does not update upvotes_count on the merge_request when saved' do
-        expect(merge_request).not_to receive(:update_column)
+      it_behaves_like 'updates upvotes_count'
+    end
+
+    context 'on a merge requests' do
+      let_it_be(:awardable) { create(:merge_request) }
+
+      it_behaves_like 'updates upvotes_count'
+    end
+
+    context 'on another awardable' do
+      let(:awardable) { create(:note) }
+      let(:award_emoji) { build(:award_emoji, user: build(:user), awardable: awardable) }
+
+      it 'does not update upvotes_count on the awardable when saved' do
+        expect(awardable).not_to receive(:update_column).with(:upvotes_count)
 
         award_emoji.save!
       end
 
-      it 'does not update upvotes_count on the merge_request when destroyed' do
-        expect(merge_request).not_to receive(:update_column)
+      it 'does not update upvotes_count on the awardable when destroyed' do
+        expect(awardable).not_to receive(:update_column).with(:upvotes_count)
 
         award_emoji.destroy!
       end
