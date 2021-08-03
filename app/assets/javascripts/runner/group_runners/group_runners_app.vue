@@ -7,10 +7,12 @@ import RunnerTypeHelp from '../components/runner_type_help.vue';
 import { I18N_FETCH_ERROR, GROUP_TYPE } from '../constants';
 import getGroupRunnersQuery from '../graphql/get_group_runners.query.graphql';
 import { captureException } from '../sentry_utils';
+import InstanceRunnersToggle from './instance_runners_toggle.vue';
 
 export default {
   name: 'GroupRunnersApp',
   components: {
+    InstanceRunnersToggle,
     RunnerList,
     RunnerManualSetupHelp,
     RunnerTypeHelp,
@@ -24,16 +26,23 @@ export default {
       type: String,
       required: true,
     },
+    instanceRunnersText: {
+      type: String,
+      required: true,
+    }
   },
   data() {
     return {
-      runners: {
-        items: [],
+      group: {
+        sharedRunnersSetting: null,
+        runners: {
+          items: [],
+        },
       },
     };
   },
   apollo: {
-    runners: {
+    group: {
       query: getGroupRunnersQuery,
       // Runners can be updated by users directly in this list.
       // A "cache and network" policy prevents outdated filtered
@@ -43,9 +52,12 @@ export default {
         return this.variables;
       },
       update(data) {
-        const { runners } = data?.group;
+        const { runners, sharedRunnersSetting } = data?.group;
         return {
-          items: runners?.nodes || [],
+          sharedRunnersSetting,
+          runners: {
+            items: runners?.nodes || [],
+          },
         };
       },
       error(error) {
@@ -61,11 +73,11 @@ export default {
         groupFullPath: this.groupFullPath,
       };
     },
-    runnersLoading() {
-      return this.$apollo.queries.runners.loading;
+    groupLoading() {
+      return this.$apollo.queries.group.loading;
     },
     noRunnersFound() {
-      return !this.runnersLoading && !this.runners.items.length;
+      return !this.groupLoading && !this.group.runners.items.length;
     },
   },
   errorCaptured(error) {
@@ -87,6 +99,12 @@ export default {
         <runner-type-help />
       </div>
       <div class="col-sm-6">
+        <instance-runners-toggle
+          v-model="group.sharedRunnersSetting"
+          :instance-runners-text="instanceRunnersText"
+          :loading="groupLoading"
+          :group-full-path="groupFullPath"
+        />
         <runner-manual-setup-help
           :registration-token="registrationToken"
           :type="$options.GROUP_TYPE"
@@ -98,7 +116,7 @@ export default {
       {{ __('No runners found') }}
     </div>
     <template v-else>
-      <runner-list :runners="runners.items" :loading="runnersLoading" />
+      <runner-list :runners="group.runners.items" :loading="groupLoading" />
     </template>
   </div>
 </template>

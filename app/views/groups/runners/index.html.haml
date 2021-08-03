@@ -1,6 +1,7 @@
 - page_title s_('Runners|Runners')
+- instance_runners_text = Gitlab::CurrentSettings.shared_runners_text.present? ? markdown(Gitlab::CurrentSettings.current_application_settings.shared_runners_text) : _('The same shared runner executes code from multiple projects, unless you configure autoscaling with %{link} set to 1 (which it is on GitLab.com).').html_safe % { link: link }
 
 %h2.page-title
   = s_('Runners|Group Runners')
 
-#js-group-runners{ data: { registration_token: @group.runners_token, runner_install_help_page: 'https://docs.gitlab.com/runner/install/', group_id: @group.id, group_full_path: @group.full_path } }
+#js-group-runners{ data: { registration_token: @group.runners_token, runner_install_help_page: 'https://docs.gitlab.com/runner/install/', group_id: @group.id, group_full_path: @group.full_path, instance_runners_text: instance_runners_text } }

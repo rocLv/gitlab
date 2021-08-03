@@ -12,7 +12,13 @@ export const initGroupRunners = (selector = '#js-group-runners') => {
     return null;
   }
 
-  const { registrationToken, runnerInstallHelpPage, groupId, groupFullPath } = el.dataset;
+  const {
+    registrationToken,
+    runnerInstallHelpPage,
+    groupId,
+    groupFullPath,
+    instanceRunnersText,
+  } = el.dataset;
 
   const apolloProvider = new VueApollo({
     defaultClient: createDefaultClient(
@@ -33,6 +39,7 @@ export const initGroupRunners = (selector = '#js-group-runners') => {
     render(h) {
       return h(GroupRunnersApp, {
         props: {
+          instanceRunnersText,
           registrationToken,
           groupFullPath,
         },

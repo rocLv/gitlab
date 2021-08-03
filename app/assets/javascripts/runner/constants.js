@@ -50,3 +50,9 @@ export const CONTACTED_DESC = 'CONTACTED_DESC'; // TODO Add this to the API
 export const CONTACTED_ASC = 'CONTACTED_ASC';
 
 export const DEFAULT_SORT = CREATED_DESC;
+
+// SharedRunnersSetting
+
+export const DISABLED_AND_UNOVERRIDABLE = 'DISABLED_AND_UNOVERRIDABLE';
+export const DISABLED_WITH_OVERRIDE = 'DISABLED_WITH_OVERRIDE';
+export const ENABLED = 'ENABLED';
