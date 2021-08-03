@@ -83,7 +83,7 @@ module EE
       end
 
       def requirement_sync_params
-        [:title, :description]
+        [:title, :description, :state]
       end
     end
   end
