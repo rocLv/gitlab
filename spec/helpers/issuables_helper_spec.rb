@@ -159,6 +159,42 @@ RSpec.describe IssuablesHelper do
             .to eq('<span>All</span>')
         end
       end
+
+      context 'when count is over the threshold' do
+        before do
+          allow(helper).to receive(:issuables_count_for_state).and_return(1100)
+          stub_const("Gitlab::IssuablesCountForState::THRESHOLD", 1000)
+        end
+
+        it 'returns complete count if truncate is not set' do
+          expect(helper.issuables_state_counter_text(:issues, :opened, true))
+            .to eq('<span>Open</span> <span class="badge badge-muted badge-pill gl-badge gl-tab-counter-badge sm">1,100</span>')
+        end
+
+        context 'when truncate is set to true' do
+          context 'when feature flag cached_issuables_state_count is disabled' do
+            before do
+              stub_feature_flags(cached_issuables_state_count: false)
+            end
+
+            it 'returns complete count' do
+              expect(helper.issuables_state_counter_text(:issues, :opened, true, truncate: true))
+                .to eq('<span>Open</span> <span class="badge badge-muted badge-pill gl-badge gl-tab-counter-badge sm">1,100</span>')
+            end
+          end
+
+          context 'when feature flag cached_issuables_state_count is enabled' do
+            before do
+              stub_feature_flags(cached_issuables_state_count: true)
+            end
+
+            it 'returns truncated count' do
+              expect(helper.issuables_state_counter_text(:issues, :opened, true, truncate: true))
+                .to eq('<span>Open</span> <span class="badge badge-muted badge-pill gl-badge gl-tab-counter-badge sm">1.1k</span>')
+            end
+          end
+        end
+      end
     end
   end
 

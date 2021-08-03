@@ -186,20 +186,26 @@ module IssuablesHelper
     nil
   end
 
-  def issuables_state_counter_text(issuable_type, state, display_count)
-    titles = {
-      opened: "Open"
-    }
-
+  def issuables_state_counter_text(issuable_type, state, display_count, truncate: false)
+    titles = { opened: "Open" }
     state_title = titles[state] || state.to_s.humanize
     html = content_tag(:span, state_title)
 
     return html.html_safe unless display_count
 
     count = issuables_count_for_state(issuable_type, state)
+    formatted_count =
+      if truncate && Feature.enabled?(:cached_issuables_state_count, parent, default_enabled: :yaml)
+        format_count_with_threshold(count, Gitlab::IssuablesCountForState::THRESHOLD)
+      else
+        number_with_delimiter(count)
+      end
 
     if count != -1
-      html << " " << content_tag(:span, number_with_delimiter(count), class: 'badge badge-muted badge-pill gl-badge gl-tab-counter-badge sm')
+      html << " " << content_tag(:span,
+        formatted_count,
+        class: 'badge badge-muted badge-pill gl-badge gl-tab-counter-badge sm'
+      )
     end
 
     html.html_safe
@@ -283,7 +289,9 @@ module IssuablesHelper
   end
 
   def issuables_count_for_state(issuable_type, state)
-    cached = Feature.enabled?(:cached_issuables_state_count, parent, default_enabled: :yaml)
+    cached =
+      Feature.enabled?(:cached_issuables_state_count, parent, default_enabled: :yaml) &&
+        issuable_type == :issues
 
     Gitlab::IssuablesCountForState.new(finder, store_in_redis_cache: cached)[state]
   end
@@ -438,6 +446,18 @@ module IssuablesHelper
 
   def parent
     @project || @group
+  end
+
+  def format_count_with_threshold(count, threshold)
+    if count > threshold
+      ActiveSupport::NumberHelper
+        .number_to_human(
+          count,
+          units: { thousand: 'k', million: 'm' }, precision: 1, significant: false, format: '%n%u'
+        )
+    else
+      number_with_delimiter(count)
+    end
   end
 end
 

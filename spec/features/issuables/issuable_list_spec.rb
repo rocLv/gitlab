@@ -60,17 +60,29 @@ RSpec.describe 'issuable list', :js do
       stub_feature_flags(cached_issuables_state_count: true)
     end
 
-    it 'displays a warning if counting the number of issues times out' do
+    it 'does not display counts in tabs if issues times out' do
       allow_any_instance_of(IssuesFinder).to receive(:count_by_state).and_raise(ActiveRecord::QueryCanceled)
-      allow(Rails.cache).to receive(:fetch).and_call_original
-      allow(Rails.cache).to receive(:fetch).with(
+      allow(Rails.cache).to receive(:read).and_call_original
+      allow(Rails.cache).to receive(:read).with(
         ['project', project.id, 'IssuesFinder', 'total'],
         { expires_in: Gitlab::IssuablesCountForState::CACHE_EXPIRES_IN }
-      ).and_return({ opened: 1, closed: 1, all: 2 })
+      ).and_return(nil)
 
       visit_issuable_list(:issue)
 
-      expect(page).to have_text('Open 1 Closed 1 All 2')
+      expect(page).to have_text('Open Closed All')
+    end
+
+    it 'truncates counts if over the threshold' do
+      allow(Rails.cache).to receive(:read).and_call_original
+      allow(Rails.cache).to receive(:read).with(
+        ['project', project.id, 'IssuesFinder', 'total'],
+        { expires_in: Gitlab::IssuablesCountForState::CACHE_EXPIRES_IN }
+      ).and_return({ opened: 1050, closed: 1050, all: 2100 })
+
+      visit_issuable_list(:issue)
+
+      expect(page).to have_text('Open 1.1k Closed 1.1k All 2.1k')
     end
   end
 
@@ -79,7 +91,7 @@ RSpec.describe 'issuable list', :js do
       stub_feature_flags(cached_issuables_state_count: false)
     end
 
-    it 'displays a warning if counting the number of issues times out' do
+    it 'does not display counts in tabs if issues times out' do
       allow_any_instance_of(IssuesFinder).to receive(:count_by_state).and_raise(ActiveRecord::QueryCanceled)
 
       visit_issuable_list(:issue)

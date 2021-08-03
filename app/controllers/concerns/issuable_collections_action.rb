@@ -12,6 +12,7 @@ module IssuableCollectionsAction
               .page(params[:page])
 
     @issuable_meta_data = Gitlab::IssuableMetadata.new(current_user, @issues).data
+    @truncate_issuables_count = true
 
     respond_to do |format|
       format.html
