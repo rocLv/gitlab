@@ -55,8 +55,10 @@ RSpec.describe RequirementsManagement::UpdateRequirementService do
             { title: new_title, description: new_description }
           end
 
-          it 'updates the synced requirement_issue with title or description' do
-            expect { subject }.to change { requirement.requirement_issue.description }.from(description).to(new_description)
+          it 'updates the synced requirement_issue with title and description' do
+            expect { subject }
+              .to change { requirement.requirement_issue.description }.from(description).to(new_description)
+              .and change { requirement.requirement_issue.title }.from(title).to(new_title)
           end
 
           context 'when updating only title' do
@@ -103,7 +105,7 @@ RSpec.describe RequirementsManagement::UpdateRequirementService do
 
         context 'if there is no requirement_issue' do
           it 'does not call the Issues::UpdateService' do
-            expect(Issues::CreateService).not_to receive(:new)
+            expect(Issues::UpdateService).not_to receive(:new)
 
             subject
           end

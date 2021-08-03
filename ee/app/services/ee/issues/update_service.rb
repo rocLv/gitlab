@@ -74,16 +74,16 @@ module EE
         # That way they always stay in sync
         # See gitlab-org/gitlab#323779 for details
 
-        if issue.previous_changes.slice(*allowlisted_sync_params).any?
+        if issue.previous_changes.slice(*requirement_sync_params).any?
           # Sync directly rather than via auth-check service, so stays in sync even if the Requirements feature is no longer available via license.
-          sync_params = params.slice(*allowlisted_sync_params)
+          sync_params = params.slice(*requirement_sync_params)
 
           issue.requirement.update!(sync_params)
         end
       end
 
-      def allowlisted_sync_params
-        [:title, :description, :state]
+      def requirement_sync_params
+        [:title, :description]
       end
     end
   end
