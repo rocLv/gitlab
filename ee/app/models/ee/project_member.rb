@@ -9,6 +9,7 @@ module EE
 
       validate :sso_enforcement, if: :group, unless: :project_bot
       validate :gma_enforcement, if: :group, unless: :project_bot
+      validate :group_domain_limitations, if: -> { group && group_has_domain_limitations? }, on: :create
 
       before_destroy :delete_member_branch_protection
       before_destroy :delete_protected_environment_acceses
@@ -39,6 +40,16 @@ module EE
       unless ::Gitlab::Auth::GroupSaml::GmaMembershipEnforcer.new(project).can_add_user?(user)
         errors.add(:user, _('is not in the group enforcing Group Managed Account'))
       end
+    end
+
+    def provisioned_by_this_group?
+      false
+    end
+
+    def group_saml_identity(root_ancestor: false)
+      return unless group
+
+      super
     end
   end
 end
