@@ -30,6 +30,8 @@ RSpec.describe API::Todos do
       let!(:epic_todo) { create_todo_for_new_epic }
 
       before do
+        stub_licensed_features(epics: true)
+
         get api('/todos', personal_access_token: pat)
       end
 
@@ -44,7 +46,8 @@ RSpec.describe API::Todos do
 
         create_todo_for_new_epic
 
-        expect { get api('/todos', personal_access_token: pat) }.not_to exceed_query_limit(control)
+        # Additional query due to authorization check on new group
+        expect { get api('/todos', personal_access_token: pat) }.not_to exceed_query_limit(control).with_threshold(1)
       end
 
       it 'includes the Epic Todo in the response' do

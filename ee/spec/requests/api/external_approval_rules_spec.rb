@@ -49,11 +49,11 @@ RSpec.describe ::API::ExternalApprovalRules do
   end
 
   describe 'GET projects/:id/external_approval_rules' do
-    let_it_be(:rule) { create(:external_approval_rule, project: project, name: 'Rule 1', external_url: "http://rule1.example") }
     let_it_be(:protected_branches) { create_list(:protected_branch, 3, project: project) }
 
     before_all do
       create(:external_approval_rule) # Creating an orphaned rule to make sure project scoping works as expected
+      create(:external_approval_rule, project: project, name: 'Rule 1', external_url: "http://rule1.example")
     end
 
     before do
@@ -71,7 +71,7 @@ RSpec.describe ::API::ExternalApprovalRules do
     it 'paginates correctly' do
       get api(collection_url, project.owner), params: { per_page: 1 }
 
-      expect_paginated_array_response([1])
+      expect_paginated_array_response([rule.id])
     end
 
     context 'when feature is disabled, unlicensed or user has permission' do
