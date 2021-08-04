@@ -37,9 +37,6 @@ class Projects::IssuesController < Projects::ApplicationController
   before_action :authorize_import_issues!, only: [:import_csv]
   before_action :authorize_download_code!, only: [:related_branches]
 
-  # Limit the amount of issues created per minute
-  before_action :create_rate_limit, only: [:create]
-
   before_action do
     push_frontend_feature_flag(:tribute_autocomplete, @project)
     push_frontend_feature_flag(:vue_issuables_list, project)
@@ -137,7 +134,14 @@ class Projects::IssuesController < Projects::ApplicationController
 
     spam_params = ::Spam::SpamParams.new_from_request(request: request)
     service = ::Issues::CreateService.new(project: project, current_user: current_user, params: create_params, spam_params: spam_params)
-    @issue = service.execute
+    rls = service.execute
+
+    if rls.rate_limited?
+      rls.log_request(request)
+      return render plain: _('This endpoint has been requested too many times. Try again later.'), status: :too_many_requests
+    end
+
+    @issue = rls.issue
 
     create_vulnerability_issue_feedback(issue)
 
@@ -370,20 +374,6 @@ class Projects::IssuesController < Projects::ApplicationController
 
   def branch_link(branch)
     project_compare_path(project, from: project.default_branch, to: branch[:name])
-  end
-
-  def create_rate_limit
-    key = :issues_create
-
-    if rate_limiter.throttled?(key, scope: [@project, @current_user])
-      rate_limiter.log_request(request, "#{key}_request_limit".to_sym, current_user)
-
-      render plain: _('This endpoint has been requested too many times. Try again later.'), status: :too_many_requests
-    end
-  end
-
-  def rate_limiter
-    ::Gitlab::ApplicationRateLimiter
   end
 
   def service_desk?

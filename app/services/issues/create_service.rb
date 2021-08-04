@@ -4,6 +4,9 @@ module Issues
   class CreateService < Issues::BaseService
     include ResolveDiscussions
 
+    RATE_LIMITED_KEY = :issues_create
+    RATE_LIMITED_OBJECT_NAME = :issue
+
     # NOTE: For Issues::CreateService, we require the spam_params and do not default it to nil, because
     # spam_checking is likely to be necessary.  However, if there is not a request available in scope
     # in the caller (for example, an issue created via email) and the required arguments to the
@@ -19,11 +22,18 @@ module Issues
     end
 
     def execute(skip_system_notes: false)
-      @issue = BuildService.new(project: project, current_user: current_user, params: params).execute
+      rls.execute do
+        @issue = BuildService.new(project: project, current_user: current_user, params: params).execute
 
-      filter_resolve_discussion_params
+        filter_resolve_discussion_params
 
-      create(@issue, skip_system_notes: skip_system_notes)
+        create(@issue, skip_system_notes: skip_system_notes)
+      end
+      rls
+    end
+
+    def rls
+      @rls ||= RateLimitedService.new(key: RATE_LIMITED_KEY, object_name: RATE_LIMITED_OBJECT_NAME, project: project, user: current_user)
     end
 
     def before_create(issue)

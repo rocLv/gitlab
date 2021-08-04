@@ -74,15 +74,26 @@ module Mutations
         params = build_create_issue_params(attributes.merge(author_id: current_user.id))
 
         spam_params = ::Spam::SpamParams.new_from_request(request: context[:request])
-        issue = ::Issues::CreateService.new(project: project, current_user: current_user, params: params, spam_params: spam_params).execute
+        service = ::Issues::CreateService.new(project: project, current_user: current_user, params: params, spam_params: spam_params)
+        rls = service.execute
 
-        if issue.spam?
-          issue.errors.add(:base, 'Spam detected.')
+        if rls.rate_limited?
+          issue = nil
+          errors = ['This endpoint has been requested too many times. Try again later.']
+        else
+          issue = rls.issue
+
+          if issue.spam?
+            issue.errors.add(:base, 'Spam detected.')
+          end
+
+          issue = issue.valid? ? issue : nil,
+          errors = errors_on_object(issue)
         end
 
         {
-          issue: issue.valid? ? issue : nil,
-          errors: errors_on_object(issue)
+          issue: issue,
+          errors: errors
         }
       end
 

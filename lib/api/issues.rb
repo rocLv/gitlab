@@ -256,10 +256,19 @@ module API
 
         begin
           spam_params = ::Spam::SpamParams.new_from_request(request: request)
-          issue = ::Issues::CreateService.new(project: user_project,
+          service = ::Issues::CreateService.new(project: user_project,
                                               current_user: current_user,
                                               params: issue_params,
-                                              spam_params: spam_params).execute
+                                              spam_params: spam_params)
+
+          rls = service.execute
+
+          if rls.rate_limited?
+            rls.log_request(request)
+            render_api_error!({ error: 'This endpoint has been requested too many times. Try again later.' }, 429)
+          end
+
+          issue = rls.issue
 
           if issue.spam?
             render_api_error!({ error: 'Spam detected' }, 400)
