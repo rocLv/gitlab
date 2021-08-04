@@ -81,6 +81,16 @@ RSpec.describe RequirementsManagement::UpdateRequirementService do
             end
           end
 
+          context "updates requirement's state" do
+            let(:params) do
+              { state: :archived }
+            end
+
+            it 'updates issue state from opened to closed' do
+              expect { subject }.to change { requirement.requirement_issue.reload.state }.from("opened").to("closed")
+            end
+          end
+
           context 'if update fails' do
             let(:params) do
               { title: nil }
@@ -89,16 +99,6 @@ RSpec.describe RequirementsManagement::UpdateRequirementService do
             it 'does not update' do
               expect { subject }.not_to change { requirement.reload.title }
               expect { subject }.not_to change { requirement.requirement_issue.reload.title }
-            end
-          end
-
-          context 'when updating some unrelated field' do
-            let(:params) do
-              { state: :archived }
-            end
-
-            it 'does not update' do
-              expect { subject }.not_to change { requirement.requirement_issue.state }
             end
           end
         end

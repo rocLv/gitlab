@@ -513,6 +513,7 @@ RSpec.describe Issues::UpdateService do
     describe 'sync Requirement work item with Requirement object' do
       let_it_be(:title) { 'title' }
       let_it_be(:description) { 'description' }
+      let_it_be(:state) { Issue.available_states[:opened] }
 
       let_it_be_with_reload(:issue) { create(:issue, issue_type: :requirement, project: project, title: title, description: description) }
 
@@ -535,6 +536,26 @@ RSpec.describe Issues::UpdateService do
 
           expect(requirement.reload.title).to eq(new_title)
           expect(requirement.reload.description).to eq(new_description)
+        end
+
+        context 'updating state' do
+          it 'updates from opened to closed' do
+            expect { update_issue( { state_event: 'close' } ) }
+              .to change { requirement.reload.state }
+              .from('opened')
+              .to('archived')
+          end
+
+          context 'from closed to opened' do
+            before do
+              issue.update_attribute(:state, :closed)
+              requirement.update_attribute(:state, :archived)
+            end
+
+            it 'updates' do
+              expect { update_issue( { state_event: 'reopen' } ) }.to change { requirement.reload.state }.from('archived').to('opened')
+            end
+          end
         end
 
         context 'if update fails' do

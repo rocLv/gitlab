@@ -83,7 +83,32 @@ module EE
       end
 
       def requirement_sync_params
-        [:title, :description, :state]
+        [:title, :description]
+      end
+
+      override :change_state
+      def change_state(issuable)
+        state_event = params[:state_event]
+
+        super
+
+        sync_requirement_state(state_event, issuable) if state_event && issuable.requirement
+      end
+
+      def sync_requirement_state(state_event, issue)
+        case state_event
+        when 'reopen'
+          arg = 'opened'
+        when 'close'
+          arg = 'archived'
+        end
+
+        return unless arg
+
+        ::RequirementsManagement::UpdateRequirementService.new(
+          issue.project,
+          current_user,
+          state: arg).execute(issue.requirement)
       end
     end
   end

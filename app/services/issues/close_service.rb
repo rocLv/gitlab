@@ -24,7 +24,8 @@ module Issues
         return issue
       end
 
-      if project.issues_enabled? && issue.close(current_user)
+      close = issue.close(current_user)
+      if project.issues_enabled? && close
         event_service.close_issue(issue, current_user)
         create_note(issue, closed_via) if system_note
 

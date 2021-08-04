@@ -8,7 +8,10 @@ module RequirementsManagement
       attrs = whitelisted_requirement_params
       requirement.update(attrs)
 
-      sync_with_requirement_issue(attrs, requirement) if requirement.requirement_issue
+      if requirement.requirement_issue
+        sync_text_with_requirement_issue(attrs, requirement)
+        sync_state_with_requirement_issue(attrs, requirement)
+      end
 
       create_test_report_for(requirement) if manually_create_test_report?
 
@@ -31,13 +34,27 @@ module RequirementsManagement
       params.slice(:title, :description, :state)
     end
 
-    def sync_with_requirement_issue(attrs, requirement)
+    def sync_text_with_requirement_issue(attrs, requirement)
       return unless requirement.previous_changes.include?(:title) || requirement.previous_changes.include?(:description)
 
       requirement_issue = requirement.requirement_issue
 
       ::Issues::UpdateService.new(project: project, current_user: current_user, params: attrs.slice(:title, :description))
           .execute(requirement_issue)
+    end
+
+    def sync_state_with_requirement_issue(attrs, requirement)
+      return unless requirement.previous_changes.include?(:state)
+
+      requirement_issue = requirement.requirement_issue
+
+      if attrs[:state] == (:opened || 'opened')
+        ::Issues::CloseService.new(project: project, current_user: current_user)
+            .close_issue(requirement_issue)
+      else
+        ::Issues::ReopenService.new(project: project, current_user: current_user)
+            .execute(requirement_issue)
+      end
     end
   end
 end
