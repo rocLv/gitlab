@@ -162,6 +162,9 @@ module Gitlab
         raise Gitlab::Git::CommitError, 'failed to apply merge to branch' unless branch_update.commit_id.present?
 
         Gitlab::Git::OperationService::BranchUpdate.from_gitaly(branch_update)
+
+      rescue GRPC::FailedPrecondition => e
+        raise Gitlab::Git::CommitError, e.details
       ensure
         request_enum.close
       end

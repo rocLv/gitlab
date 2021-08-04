@@ -338,7 +338,7 @@ RSpec.describe MergeRequests::MergeService do
           .to eq('You are not allowed to merge this merge request')
       end
 
-      it 'logs and saves error if there is an PreReceiveError exception' do
+      it 'logs and saves error if there is a PreReceiveError exception' do
         error_message = 'error message'
 
         allow(service).to receive(:repository).and_raise(Gitlab::Git::PreReceiveError, "GitLab: #{error_message}")
@@ -347,6 +347,16 @@ RSpec.describe MergeRequests::MergeService do
         service.execute(merge_request)
 
         expect(merge_request.merge_error).to include('Something went wrong during merge pre-receive hook')
+        expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(error_message))
+      end
+
+      it 'logs and saves error if there is a CommitError exception' do
+        error_message = 'something went wrong'
+        allow(service).to receive(:repository).and_raise(Gitlab::Git::CommitError, error_message)
+
+        service.execute(merge_request)
+
+        expect(merge_request.merge_error).to eq(error_message)
         expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(error_message))
       end
 

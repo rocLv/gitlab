@@ -131,6 +131,25 @@ RSpec.describe Gitlab::GitalyClient::OperationService do
     end
   end
 
+  describe '#user_merge_branch' do
+    let(:source_sha) { 'cfe32cf61b73a0d5e9f13e774abde7ff789b1660' }
+    let(:branch) { 'branch' }
+    let(:message) { 'message' }
+
+    subject { client.user_merge_branch(user, source_sha, branch, message) }
+
+    context 'when FailedPrecondition is raised' do
+      before do
+        expect_any_instance_of(Gitaly::OperationService::Stub)
+          .to receive(:user_merge_branch).and_raise(GRPC::FailedPrecondition, 'something went wrong')
+      end
+
+      it 'raises Gitlab::Git::CommitError' do
+        expect { subject }.to raise_error(Gitlab::Git::CommitError, 'something went wrong')
+      end
+    end
+  end
+
   describe '#user_delete_branch' do
     let(:branch_name) { 'my-branch' }
     let(:request) do
