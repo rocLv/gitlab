@@ -156,20 +156,6 @@ RSpec.describe Gitlab::SearchResults do
     describe '#merge_requests' do
       let(:scope) { 'merge_requests' }
 
-      it 'includes project filter by default' do
-        expect(results).to receive(:project_ids_relation).and_call_original
-
-        results.objects(scope)
-      end
-
-      it 'skips project filter if default project context is used' do
-        allow(results).to receive(:default_project_filter).and_return(true)
-
-        expect(results).not_to receive(:project_ids_relation)
-
-        results.objects(scope)
-      end
-
       context 'filtering' do
         let!(:opened_result) { create(:merge_request, :opened, source_project: project, title: 'foo opened') }
         let!(:closed_result) { create(:merge_request, :closed, source_project: project, title: 'foo closed') }
@@ -196,20 +182,6 @@ RSpec.describe Gitlab::SearchResults do
 
     describe '#issues' do
       let(:scope) { 'issues' }
-
-      it 'includes project filter by default' do
-        expect(results).to receive(:project_ids_relation).and_call_original
-
-        results.objects(scope)
-      end
-
-      it 'skips project filter if default project context is used' do
-        allow(results).to receive(:default_project_filter).and_return(true)
-
-        expect(results).not_to receive(:project_ids_relation)
-
-        results.objects(scope)
-      end
 
       context 'filtering' do
         let_it_be(:closed_result) { create(:issue, :closed, project: project, title: 'foo closed') }

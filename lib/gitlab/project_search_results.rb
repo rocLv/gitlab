@@ -190,7 +190,7 @@ module Gitlab
     end
 
     def issuable_params
-      super.merge(project_id: project.id)
+      super.merge(project_id: project.id, attempt_project_search_optimizations: true)
     end
   end
 end

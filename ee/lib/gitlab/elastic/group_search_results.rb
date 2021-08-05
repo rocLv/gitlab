@@ -6,12 +6,11 @@ module Gitlab
     # superclass inside a module, because autoloading can occur in a
     # different order between execution environments.
     class GroupSearchResults < Gitlab::Elastic::SearchResults
-      attr_reader :group, :default_project_filter, :filters
+      attr_reader :group, :filters
 
       # rubocop:disable Metrics/ParameterLists
-      def initialize(current_user, query, limit_project_ids = nil, group:, public_and_internal_projects: false, default_project_filter: false, order_by: nil, sort: nil, filters: {})
+      def initialize(current_user, query, limit_project_ids = nil, group:, public_and_internal_projects: false, order_by: nil, sort: nil, filters: {})
         @group = group
-        @default_project_filter = default_project_filter
         @filters = filters
 
         super(current_user, query, limit_project_ids, public_and_internal_projects: public_and_internal_projects, order_by: order_by, sort: sort, filters: filters)
