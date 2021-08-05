@@ -13,8 +13,6 @@ module EE
         end
 
         class ProjectSecuritySetting < ActiveRecord::Base
-          include BulkInsertSafe
-
           self.table_name = 'project_security_settings'
 
           belongs_to :project, inverse_of: :security_setting

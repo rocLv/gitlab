@@ -6,7 +6,7 @@ class ScheduleSecuritySettingCreation < ActiveRecord::Migration[6.1]
   disable_ddl_transaction!
 
   class Project < ActiveRecord::Base
-    include EachBatch
+    self.table_name = 'projects'
 
     has_one :security_setting, class_name: 'ProjectSecuritySetting'
 
