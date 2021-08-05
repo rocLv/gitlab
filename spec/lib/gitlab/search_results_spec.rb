@@ -241,99 +241,121 @@ RSpec.describe Gitlab::SearchResults do
   end
 
   describe 'confidential issues' do
-    let(:project_1) { create(:project, :internal) }
-    let(:project_2) { create(:project, :internal) }
-    let(:project_3) { create(:project, :internal) }
-    let(:project_4) { create(:project, :internal) }
     let(:query) { 'issue' }
-    let(:limit_projects) { Project.where(id: [project_1.id, project_2.id, project_3.id]) }
-    let(:author) { create(:user) }
-    let(:assignee) { create(:user) }
-    let(:non_member) { create(:user) }
-    let(:member) { create(:user) }
-    let(:admin) { create(:admin) }
-    let!(:issue) { create(:issue, project: project_1, title: 'Issue 1') }
-    let!(:security_issue_1) { create(:issue, :confidential, project: project_1, title: 'Security issue 1', author: author) }
-    let!(:security_issue_2) { create(:issue, :confidential, title: 'Security issue 2', project: project_1, assignees: [assignee]) }
-    let!(:security_issue_3) { create(:issue, :confidential, project: project_2, title: 'Security issue 3', author: author) }
-    let!(:security_issue_4) { create(:issue, :confidential, project: project_3, title: 'Security issue 4', assignees: [assignee]) }
-    let!(:security_issue_5) { create(:issue, :confidential, project: project_4, title: 'Security issue 5') }
+    let(:limit_projects) { ProjectsFinder.new(params: { non_archived: true }, current_user: current_user).execute } #  { Project.where(id: [project_1.id, project_2.id, project_3.id]) }
 
-    it 'does not list confidential issues for non project members' do
-      results = described_class.new(non_member, query, limit_projects)
-      issues = results.objects('issues')
+    let_it_be(:project_1) { create(:project, :internal) }
+    let_it_be(:project_2) { create(:project, :internal) }
+    let_it_be(:project_3) { create(:project, :internal) }
+    let_it_be(:project_4) { create(:project, :internal) }
+    let_it_be(:author) { create(:user) }
+    let_it_be(:assignee) { create(:user) }
+    let_it_be(:admin) { create(:admin) }
+    let_it_be(:current_user) { create(:user) }
+    let_it_be(:issue) { create(:issue, project: project_1, title: 'Issue 1') }
+    let_it_be(:security_issue_1) { create(:issue, :confidential, project: project_1, title: 'Security issue 1', author: author) }
+    let_it_be(:security_issue_2) { create(:issue, :confidential, title: 'Security issue 2', project: project_1, assignees: [assignee]) }
+    let_it_be(:security_issue_3) { create(:issue, :confidential, project: project_2, title: 'Security issue 3', author: author) }
+    let_it_be(:security_issue_4) { create(:issue, :confidential, project: project_3, title: 'Security issue 4', assignees: [assignee]) }
+    let_it_be(:security_issue_5) { create(:issue, :confidential, project: project_4, title: 'Security issue 5') }
 
-      expect(issues).to include issue
-      expect(issues).not_to include security_issue_1
-      expect(issues).not_to include security_issue_2
-      expect(issues).not_to include security_issue_3
-      expect(issues).not_to include security_issue_4
-      expect(issues).not_to include security_issue_5
-      expect(results.limited_issues_count).to eq 1
+    context 'non project members' do
+      it 'does not list confidential issues' do
+        results = described_class.new(current_user, query, limit_projects)
+        issues = results.objects('issues')
+
+        expect(issues).to include issue
+        expect(issues).not_to include security_issue_1
+        expect(issues).not_to include security_issue_2
+        expect(issues).not_to include security_issue_3
+        expect(issues).not_to include security_issue_4
+        expect(issues).not_to include security_issue_5
+        expect(results.limited_issues_count).to eq 1
+      end
     end
 
-    it 'does not list confidential issues for project members with guest role' do
-      project_1.add_guest(member)
-      project_2.add_guest(member)
+    context 'project members with guest role' do
+      let(:current_user) { create(:user) }
 
-      results = described_class.new(member, query, limit_projects)
-      issues = results.objects('issues')
+      before do
+        project_1.add_guest(current_user)
+        project_2.add_guest(current_user)
+      end
 
-      expect(issues).to include issue
-      expect(issues).not_to include security_issue_1
-      expect(issues).not_to include security_issue_2
-      expect(issues).not_to include security_issue_3
-      expect(issues).not_to include security_issue_4
-      expect(issues).not_to include security_issue_5
-      expect(results.limited_issues_count).to eq 1
+      it 'does not list confidential issues' do
+        results = described_class.new(current_user, query, limit_projects)
+        issues = results.objects('issues')
+
+        expect(issues).to include issue
+        expect(issues).not_to include security_issue_1
+        expect(issues).not_to include security_issue_2
+        expect(issues).not_to include security_issue_3
+        expect(issues).not_to include security_issue_4
+        expect(issues).not_to include security_issue_5
+        expect(results.limited_issues_count).to eq 1
+      end
     end
 
-    it 'lists confidential issues for author' do
-      results = described_class.new(author, query, limit_projects)
-      issues = results.objects('issues')
+    context 'author' do
+      let(:current_user) { author }
 
-      expect(issues).to include issue
-      expect(issues).to include security_issue_1
-      expect(issues).not_to include security_issue_2
-      expect(issues).to include security_issue_3
-      expect(issues).not_to include security_issue_4
-      expect(issues).not_to include security_issue_5
-      expect(results.limited_issues_count).to eq 3
+      it 'lists confidential issues for author' do
+        results = described_class.new(current_user, query, limit_projects)
+        issues = results.objects('issues')
+
+        expect(issues).to include issue
+        expect(issues).to include security_issue_1
+        expect(issues).not_to include security_issue_2
+        expect(issues).to include security_issue_3
+        expect(issues).not_to include security_issue_4
+        expect(issues).not_to include security_issue_5
+        expect(results.limited_issues_count).to eq 3
+      end
     end
 
-    it 'lists confidential issues for assignee' do
-      results = described_class.new(assignee, query, limit_projects)
-      issues = results.objects('issues')
+    context 'assignee' do
+      let(:current_user) { assignee }
 
-      expect(issues).to include issue
-      expect(issues).not_to include security_issue_1
-      expect(issues).to include security_issue_2
-      expect(issues).not_to include security_issue_3
-      expect(issues).to include security_issue_4
-      expect(issues).not_to include security_issue_5
-      expect(results.limited_issues_count).to eq 3
+      it 'lists confidential issues for assignee' do
+        results = described_class.new(current_user, query, limit_projects)
+        issues = results.objects('issues')
+
+        expect(issues).to include issue
+        expect(issues).not_to include security_issue_1
+        expect(issues).to include security_issue_2
+        expect(issues).not_to include security_issue_3
+        expect(issues).to include security_issue_4
+        expect(issues).not_to include security_issue_5
+        expect(results.limited_issues_count).to eq 3
+      end
     end
 
-    it 'lists confidential issues for project members' do
-      project_1.add_developer(member)
-      project_2.add_developer(member)
+    context 'project members with developer role' do
+      before do
+        project_1.add_developer(current_user)
+        project_2.add_developer(current_user)
+      end
 
-      results = described_class.new(member, query, limit_projects)
-      issues = results.objects('issues')
+      it 'lists confidential issues for project members' do
+        results = described_class.new(current_user, query, limit_projects)
+        issues = results.objects('issues')
 
-      expect(issues).to include issue
-      expect(issues).to include security_issue_1
-      expect(issues).to include security_issue_2
-      expect(issues).to include security_issue_3
-      expect(issues).not_to include security_issue_4
-      expect(issues).not_to include security_issue_5
-      expect(results.limited_issues_count).to eq 4
+        expect(issues).to include issue
+        expect(issues).to include security_issue_1
+        expect(issues).to include security_issue_2
+        expect(issues).to include security_issue_3
+        expect(issues).not_to include security_issue_4
+        expect(issues).not_to include security_issue_5
+        expect(results.limited_issues_count).to eq 4
+      end
     end
 
     context 'with admin user' do
+      let(:current_user) { admin }
+
       context 'when admin mode enabled', :enable_admin_mode do
         it 'lists all issues' do
-          results = described_class.new(admin, query, limit_projects)
+          results = described_class.new(current_user, query, limit_projects)
           issues = results.objects('issues')
 
           expect(issues).to include issue
@@ -341,14 +363,14 @@ RSpec.describe Gitlab::SearchResults do
           expect(issues).to include security_issue_2
           expect(issues).to include security_issue_3
           expect(issues).to include security_issue_4
-          expect(issues).not_to include security_issue_5
-          expect(results.limited_issues_count).to eq 5
+          expect(issues).to include security_issue_5
+          expect(results.limited_issues_count).to eq 6
         end
       end
 
       context 'when admin mode disabled' do
         it 'does not list confidential issues' do
-          results = described_class.new(admin, query, limit_projects)
+          results = described_class.new(current_user, query, limit_projects)
           issues = results.objects('issues')
 
           expect(issues).to include issue

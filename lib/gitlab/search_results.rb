@@ -159,7 +159,7 @@ module Gitlab
 
     def issues(finder_params = {})
       issues = IssuesFinder.new(current_user, issuable_params.merge(finder_params)).execute
-
+      issues = issues.in_projects(project_ids_relation)
       apply_sort(issues, scope: 'issues')
     end
 
@@ -175,7 +175,7 @@ module Gitlab
 
     def merge_requests
       merge_requests = MergeRequestsFinder.new(current_user, issuable_params).execute
-
+      merge_requests = merge_requests.in_projects(project_ids_relation)
       apply_sort(merge_requests, scope: 'merge_requests')
     end
 
