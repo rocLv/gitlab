@@ -24,6 +24,11 @@ module Types
             null: true,
             description: 'Steps of the escalation policy.',
             method: :active_rules
+
+      field :on_call_users, [Types::IncidentManagement::OncallUserType],
+            null: true,
+            description: 'Current oncall users for the escalation policy.',
+            resolver: ::Resolvers::IncidentManagement::EscalationPolicyOncallUsersResolver
     end
   end
 end
