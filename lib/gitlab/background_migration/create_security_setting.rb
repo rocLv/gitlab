@@ -3,7 +3,7 @@
 module Gitlab
   module BackgroundMigration
     class CreateSecuritySetting
-      def perform(_project_ids)
+      def perform(from_id, to_id)
       end
     end
   end

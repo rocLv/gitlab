@@ -10,6 +10,8 @@ module EE
           self.table_name = 'projects'
 
           has_one :security_setting, class_name: 'ProjectSecuritySetting'
+
+          scope :without_security_settings, -> { left_joins(:security_setting).where(project_security_settings: { project_id: nil }) }
         end
 
         class ProjectSecuritySetting < ActiveRecord::Base
@@ -19,8 +21,8 @@ module EE
         end
 
         override :perform
-        def perform(project_ids)
-          projects = Project.where(id: project_ids)
+        def perform(from_id, to_id)
+          projects = Project.without_security_settings.where(id: from_id..to_id)
 
           projects.each(&:create_security_setting)
         end

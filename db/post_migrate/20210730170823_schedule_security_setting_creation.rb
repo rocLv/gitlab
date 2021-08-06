@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
 class ScheduleSecuritySettingCreation < ActiveRecord::Migration[6.1]
+  include Gitlab::Database::MigrationHelpers
+
   MIGRATION = 'CreateSecuritySetting'.freeze
+  BATCH_SIZE = 1000
+  INTERVAL = 5.minutes.to_i
 
   disable_ddl_transaction!
 
   class Project < ActiveRecord::Base
+    include EachBatch
+
     self.table_name = 'projects'
 
     has_one :security_setting, class_name: 'ProjectSecuritySetting'
@@ -20,11 +26,11 @@ class ScheduleSecuritySettingCreation < ActiveRecord::Migration[6.1]
   def up
     return unless Gitlab.ee? # Security Settings available only in EE version
 
-    Project.without_security_settings.select(:id).each_batch do |relation|
-      project_ids = relation.pluck(:id)
-
-      BackgroundMigrationWorker.perform_async([MIGRATION, project_ids])
-    end
+    relation = Project.without_security_settings
+    queue_background_migration_jobs_by_range_at_intervals(relation,
+                                                          MIGRATION,
+                                                          INTERVAL,
+                                                          batch_size: BATCH_SIZE)
   end
 
   # We're adding data so no need for rollback
