@@ -3,7 +3,7 @@
 class ScheduleSecuritySettingCreation < ActiveRecord::Migration[6.1]
   include Gitlab::Database::MigrationHelpers
 
-  MIGRATION = 'CreateSecuritySetting'.freeze
+  MIGRATION = 'CreateSecuritySetting'
   BATCH_SIZE = 1000
   INTERVAL = 5.minutes.to_i
 
@@ -26,7 +26,7 @@ class ScheduleSecuritySettingCreation < ActiveRecord::Migration[6.1]
   def up
     return unless Gitlab.ee? # Security Settings available only in EE version
 
-    relation = Project.without_security_settings
+    relation = Project.all
     queue_background_migration_jobs_by_range_at_intervals(relation,
                                                           MIGRATION,
                                                           INTERVAL,
