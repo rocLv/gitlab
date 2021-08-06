@@ -5,6 +5,8 @@
 
 module Packages
   class CreatePipelineService < BaseContainerService
+    include ::Gitlab::Utils::StrongMemoize
+
     alias_method :push, :container
 
     def execute
@@ -22,12 +24,23 @@ module Packages
       Ci::CreatePipelineService.new(
         project,
         current_user,
-        { before_sha: push.sha, ref: 'master' }
-      ).execute(:package_push_event, package_push: push)
+        ref: branch,
+        sha: commit
+      ).execute(:package_push_event)
     end
 
     def project
       push.project
+    end
+
+    def branch
+      strong_memoize(:branch) { project.default_branch }
+    end
+
+    def commit
+      strong_memoize(:commit) do
+        project.commit(branch)&.id if branch
+      end
     end
   end
 end

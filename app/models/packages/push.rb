@@ -7,7 +7,7 @@ class Packages::Push < ApplicationRecord
 
   validates :sha, presence: true
 
-  before_validation :set_sha, unless: :sha?
+  before_validation :set_sha, unless: :sha?, if: :package_file_id?
 
   scope :with_sha, ->(sha) { find_by(sha: sha) }
 

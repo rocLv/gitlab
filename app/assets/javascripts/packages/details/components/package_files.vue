@@ -79,6 +79,7 @@ export default {
           class: 'gl-text-right',
           tdClass: 'gl-w-4',
         },
+        {
           key: 'pipeline',
           label: '',
           class: 'gl-text-right',
@@ -158,20 +159,6 @@ export default {
         </gl-dropdown>
       </template>
 
-      <template #row-details="{ item }">
-        <div
-          class="gl-display-flex gl-flex-direction-column gl-flex-grow-1 gl-bg-gray-10 gl-rounded-base gl-inset-border-1-gray-100"
-        >
-          <file-sha
-            v-if="item.file_sha256"
-            data-testid="sha-256"
-            title="SHA-256"
-            :sha="item.file_sha256"
-          />
-          <file-sha v-if="item.file_md5" data-testid="md5" title="MD5" :sha="item.file_md5" />
-          <file-sha v-if="item.file_sha1" data-testid="sha-1" title="SHA-1" :sha="item.file_sha1" />
-      </template>
-
       <template #cell(pipeline)="{ item }">
         <div v-if="item.package_pipeline_detailed_status" class="ci-status-link">
           <gl-link
@@ -186,6 +173,21 @@ export default {
               :aria-label="statusTitle"
             />
           </gl-link>
+        </div>
+      </template>
+
+      <template #row-details="{ item }">
+        <div
+          class="gl-display-flex gl-flex-direction-column gl-flex-grow-1 gl-bg-gray-10 gl-rounded-base gl-inset-border-1-gray-100"
+        >
+          <file-sha
+            v-if="item.file_sha256"
+            data-testid="sha-256"
+            title="SHA-256"
+            :sha="item.file_sha256"
+          />
+          <file-sha v-if="item.file_md5" data-testid="md5" title="MD5" :sha="item.file_md5" />
+          <file-sha v-if="item.file_sha1" data-testid="sha-1" title="SHA-1" :sha="item.file_sha1" />
         </div>
       </template>
     </gl-table>
