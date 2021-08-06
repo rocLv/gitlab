@@ -5,15 +5,15 @@ module API
     feature_category :package_registry
 
     resource :package_pushes, requirements: API::NAMESPACE_OR_PROJECT_REQUIREMENTS do
-      desc 'Get package file from single push' do
+      desc 'Download package file from single push' do
         detail 'This feature is WIP'
       end
       params do
-        requires :sha, type: String, desc: 'Sha of package push'
+        requires :pipeline_id, type: String, desc: 'Pipeline id of package push'
       end
       route_setting :authentication, job_token_allowed: true
-      get ':sha' do
-        push = ::Packages::Push.with_sha(params[:sha])
+      get ':pipeline_id' do
+        push = ::Packages::Push.with_pipeline_id(params[:pipeline_id]).last
 
         not_found!("Package push") unless can?(current_user, :read_package, push&.project)
 

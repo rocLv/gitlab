@@ -16230,10 +16230,9 @@ ALTER SEQUENCE packages_packages_id_seq OWNED BY packages_packages.id;
 CREATE TABLE packages_pushes (
     id bigint NOT NULL,
     package_file_id bigint NOT NULL,
-    sha text NOT NULL,
+    pipeline_id bigint NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    updated_at timestamp with time zone NOT NULL,
-    CONSTRAINT check_8564956a86 CHECK ((char_length(sha) <= 255))
+    updated_at timestamp with time zone NOT NULL
 );
 
 CREATE SEQUENCE packages_pushes_id_seq
@@ -24632,6 +24631,8 @@ CREATE INDEX index_packages_project_id_name_partial_for_nuget ON packages_packag
 
 CREATE INDEX index_packages_pushes_on_package_file_id ON packages_pushes USING btree (package_file_id);
 
+CREATE INDEX index_packages_pushes_on_pipeline_id ON packages_pushes USING btree (pipeline_id);
+
 CREATE INDEX index_packages_tags_on_package_id ON packages_tags USING btree (package_id);
 
 CREATE INDEX index_packages_tags_on_package_id_and_updated_at ON packages_tags USING btree (package_id, updated_at DESC);
@@ -25625,8 +25626,6 @@ CREATE INDEX tmp_index_namespaces_empty_traversal_ids_with_child_namespaces ON n
 CREATE INDEX tmp_index_namespaces_empty_traversal_ids_with_root_namespaces ON namespaces USING btree (id) WHERE ((parent_id IS NULL) AND (traversal_ids = '{}'::integer[]));
 
 CREATE INDEX tmp_index_on_vulnerabilities_non_dismissed ON vulnerabilities USING btree (id) WHERE (state <> 2);
-
-CREATE UNIQUE INDEX uniq_packages_pushes_on_sha ON packages_pushes USING btree (sha);
 
 CREATE UNIQUE INDEX uniq_pkgs_deb_grp_architectures_on_distribution_id_and_name ON packages_debian_group_architectures USING btree (distribution_id, name);
 
@@ -26781,6 +26780,9 @@ ALTER TABLE ONLY clusters_applications_elastic_stacks
 
 ALTER TABLE ONLY incident_management_oncall_participants
     ADD CONSTRAINT fk_rails_032b12996a FOREIGN KEY (oncall_rotation_id) REFERENCES incident_management_oncall_rotations(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY packages_pushes
+    ADD CONSTRAINT fk_rails_03684ed6da FOREIGN KEY (pipeline_id) REFERENCES ci_pipelines(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY events
     ADD CONSTRAINT fk_rails_0434b48643 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;

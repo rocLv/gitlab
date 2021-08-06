@@ -17,17 +17,13 @@ class CreatePackagesPushes < ActiveRecord::Migration[6.0]
                      foreign_key: { to_table: :packages_package_files, on_delete: :cascade },
                      null: false,
                      index: true
-        t.text :sha, null: false, index: false
+        t.references :pipeline,
+                     foreign_key: { to_table: :ci_pipelines, on_delete: :cascade },
+                     null: false,
+                     index: true
         t.timestamps_with_timezone
-
-        t.index :sha,
-                name: INDEX_NAME,
-                unique: true,
-                using: :btree
       end
     end
-
-    add_text_limit :packages_pushes, :sha, 255
   end
 
   def down

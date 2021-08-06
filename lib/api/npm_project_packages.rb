@@ -58,8 +58,7 @@ module API
         if created_package[:status] == :error
           render_api_error!(created_package[:message], created_package[:http_status])
         else
-          push = ::Packages::Push.create!(package_file_id: created_package.package_files.first.id)
-          ::Packages::CreatePipelineService.new(container: push, current_user: current_user).execute
+          ::Packages::CreatePushService.new(created_package.package_files.last, current_user).execute
 
           created_package
         end
