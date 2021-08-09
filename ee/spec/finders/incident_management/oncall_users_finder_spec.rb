@@ -55,9 +55,11 @@ RSpec.describe IncidentManagement::OncallUsersFinder do
 
   let(:oncall_at) { Time.current }
   let(:schedule) { nil }
+  let(:rotations) { nil }
+  let(:include_schedule) { false }
 
   describe '#execute' do
-    subject(:execute) { described_class.new(project, oncall_at: oncall_at, schedule: schedule).execute }
+    subject(:execute) { described_class.new(project, oncall_at: oncall_at, schedule: schedule, rotations: rotations, include_schedule: include_schedule).execute }
 
     context 'when feature is available' do
       before do
@@ -74,6 +76,25 @@ RSpec.describe IncidentManagement::OncallUsersFinder do
         let(:schedule) { s1 }
 
         it { is_expected.to contain_exactly(user_1, user_2) }
+      end
+
+      context 'with :rotations paramater specified' do
+        let(:rotations) { s2.rotations }
+
+        it { is_expected.to contain_exactly(user_4, user_1) }
+      end
+
+      context 'with :include_schedule paramater specified' do
+        let(:include_schedule) { true }
+
+        it 'returns relevant schedules and users for the rotations' do
+          expect(execute).to contain_exactly(
+            { schedule: s1, user: user_1 },
+            { schedule: s1, user: user_2 },
+            { schedule: s2, user: user_4 },
+            { schedule: s2, user: user_1 }
+          )
+        end
       end
 
       context 'with :oncall_at parameter specified' do

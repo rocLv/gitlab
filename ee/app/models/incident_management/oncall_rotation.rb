@@ -61,8 +61,8 @@ module IncidentManagement
 
     delegate :project, to: :schedule
 
-    def self.pluck_id_and_user_id
-      joins(shifts: { participant: :user }).pluck(:id, 'users.id')
+    def self.pluck_id_schedule_id_user_id
+      joins(shifts: { participant: :user }).pluck(:id, :oncall_schedule_id, 'users.id')
     end
 
     # The duration of a shift cycle, which is the time until the next participant is on-call.
