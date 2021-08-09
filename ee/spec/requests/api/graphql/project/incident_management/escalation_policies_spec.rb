@@ -92,11 +92,12 @@ RSpec.describe 'getting Incident Management escalation policies' do
       end
 
       context 'requesting single policy' do
+        let(:escalation_fields) { all_graphql_fields_for('EscalationPolicyType') }
         let(:query) do
           graphql_query_for(
             'project',
             { 'fullPath' => project.full_path },
-            query_graphql_field('incidentManagementEscalationPolicy', { id: policy.to_global_id.to_s }, all_graphql_fields_for('EscalationPolicyType'))
+            query_graphql_field('incidentManagementEscalationPolicy', { id: policy.to_global_id.to_s }, escalation_fields)
           )
         end
 
@@ -136,6 +137,18 @@ RSpec.describe 'getting Incident Management escalation policies' do
               }
             ]
           )
+        end
+
+        context 'requesting on call users' do
+          it 'avoids an n+1 if more than one user is on call' do
+            control = ActiveRecord::QueryRecorder.new { post_graphql(query, current_user: current_user) }
+
+            # Create extra rule with new schedule
+            oncall_schedule = create(:incident_management_oncall_schedule, :with_rotation, project: project)
+            create(:incident_management_escalation_rule, oncall_schedule: oncall_schedule, policy: policy)
+
+            expect { post_graphql(query, current_user: current_user) }.not_to exceed_query_limit(control)
+          end
         end
       end
     end

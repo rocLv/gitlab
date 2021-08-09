@@ -9269,6 +9269,7 @@ Represents an escalation policy.
 | <a id="escalationpolicytypedescription"></a>`description` | [`String`](#string) | The description of the escalation policy. |
 | <a id="escalationpolicytypeid"></a>`id` | [`IncidentManagementEscalationPolicyID`](#incidentmanagementescalationpolicyid) | ID of the escalation policy. |
 | <a id="escalationpolicytypename"></a>`name` | [`String`](#string) | The name of the escalation policy. |
+| <a id="escalationpolicytypeoncallusers"></a>`onCallUsers` | [`[IncidentManagementOncallUser!]`](#incidentmanagementoncalluser) | Current oncall users for the escalation policy. |
 | <a id="escalationpolicytyperules"></a>`rules` | [`[EscalationRuleType!]`](#escalationruletype) | Steps of the escalation policy. |
 
 ### `EscalationRuleType`
@@ -10141,6 +10142,17 @@ A block of time for which a participant is on-call.
 | <a id="incidentmanagementoncallshiftendsat"></a>`endsAt` | [`Time`](#time) | End time of the on-call shift. |
 | <a id="incidentmanagementoncallshiftparticipant"></a>`participant` | [`OncallParticipantType`](#oncallparticipanttype) | Participant assigned to the on-call shift. |
 | <a id="incidentmanagementoncallshiftstartsat"></a>`startsAt` | [`Time`](#time) | Start time of the on-call shift. |
+
+### `IncidentManagementOncallUser`
+
+Described an oncall user.
+
+#### Fields
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="incidentmanagementoncalluserschedule"></a>`schedule` | [`IncidentManagementOncallSchedule`](#incidentmanagementoncallschedule) | Schedule where the user is on call. |
+| <a id="incidentmanagementoncalluseruser"></a>`user` | [`UserCore!`](#usercore) | User that is on call. |
 
 ### `InstanceSecurityDashboard`
 
