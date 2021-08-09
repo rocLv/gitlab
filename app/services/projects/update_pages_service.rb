@@ -149,7 +149,9 @@ module Projects
       File.open(artifacts_path) do |file|
         deployment = project.pages_deployments.create!(file: file,
                                                        file_count: entries_count,
-                                                       file_sha256: sha256)
+                                                       file_sha256: sha256,
+                                                       ci_pipeline_id: build.pipeline.id
+                                                      )
 
         validate_outdated_sha!
 

@@ -93,6 +93,7 @@ RSpec.describe Projects::UpdatePagesService do
         expect(deployment.file).to be
         expect(deployment.file_count).to eq(3)
         expect(deployment.file_sha256).to eq(artifacts_archive.file_sha256)
+        expect(deployment.ci_pipeline_id).to eq(pipeline.id)
         expect(project.pages_metadatum.reload.pages_deployment_id).to eq(deployment.id)
       end
 

@@ -9537,39 +9537,39 @@ CREATE TABLE application_settings (
     elasticsearch_indexed_file_size_limit_kb integer DEFAULT 1024 NOT NULL,
     enforce_namespace_storage_limit boolean DEFAULT false NOT NULL,
     container_registry_delete_tags_service_timeout integer DEFAULT 250 NOT NULL,
-    kroki_url character varying,
-    kroki_enabled boolean,
-    elasticsearch_client_request_timeout integer DEFAULT 0 NOT NULL,
     gitpod_enabled boolean DEFAULT false NOT NULL,
     gitpod_url text DEFAULT 'https://gitpod.io/'::text,
+    elasticsearch_client_request_timeout integer DEFAULT 0 NOT NULL,
     abuse_notification_email character varying,
-    require_admin_approval_after_user_signup boolean DEFAULT true NOT NULL,
     help_page_documentation_base_url text,
+    require_admin_approval_after_user_signup boolean DEFAULT true NOT NULL,
     automatic_purchased_storage_allocation boolean DEFAULT false NOT NULL,
     encrypted_ci_jwt_signing_key text,
     encrypted_ci_jwt_signing_key_iv text,
     container_registry_expiration_policies_worker_capacity integer DEFAULT 0 NOT NULL,
-    elasticsearch_analyzers_smartcn_enabled boolean DEFAULT false NOT NULL,
-    elasticsearch_analyzers_smartcn_search boolean DEFAULT false NOT NULL,
-    elasticsearch_analyzers_kuromoji_enabled boolean DEFAULT false NOT NULL,
-    elasticsearch_analyzers_kuromoji_search boolean DEFAULT false NOT NULL,
     secret_detection_token_revocation_enabled boolean DEFAULT false NOT NULL,
     secret_detection_token_revocation_url text,
     encrypted_secret_detection_token_revocation_token text,
     encrypted_secret_detection_token_revocation_token_iv text,
+    elasticsearch_analyzers_smartcn_enabled boolean DEFAULT false NOT NULL,
+    elasticsearch_analyzers_smartcn_search boolean DEFAULT false NOT NULL,
+    elasticsearch_analyzers_kuromoji_enabled boolean DEFAULT false NOT NULL,
+    elasticsearch_analyzers_kuromoji_search boolean DEFAULT false NOT NULL,
+    new_user_signups_cap integer,
     domain_denylist_enabled boolean DEFAULT false,
     domain_denylist text,
     domain_allowlist text,
-    new_user_signups_cap integer,
     encrypted_cloud_license_auth_token text,
     encrypted_cloud_license_auth_token_iv text,
     secret_detection_revocation_token_types_url text,
     cloud_license_enabled boolean DEFAULT false NOT NULL,
+    kroki_url text,
+    kroki_enabled boolean DEFAULT false NOT NULL,
     disable_feed_token boolean DEFAULT false NOT NULL,
     personal_access_token_prefix text,
     rate_limiting_response_text text,
-    invisible_captcha_enabled boolean DEFAULT false NOT NULL,
     container_registry_cleanup_tags_service_max_list_size integer DEFAULT 200 NOT NULL,
+    invisible_captcha_enabled boolean DEFAULT false NOT NULL,
     enforce_ssh_key_expiration boolean DEFAULT true NOT NULL,
     git_two_factor_session_expiry integer DEFAULT 15 NOT NULL,
     keep_latest_artifact boolean DEFAULT true NOT NULL,
@@ -9611,7 +9611,7 @@ CREATE TABLE application_settings (
     CONSTRAINT app_settings_container_reg_cleanup_tags_max_list_size_positive CHECK ((container_registry_cleanup_tags_service_max_list_size >= 0)),
     CONSTRAINT app_settings_ext_pipeline_validation_service_url_text_limit CHECK ((char_length(external_pipeline_validation_service_url) <= 255)),
     CONSTRAINT app_settings_registry_exp_policies_worker_capacity_positive CHECK ((container_registry_expiration_policies_worker_capacity >= 0)),
-    CONSTRAINT check_17d9558205 CHECK ((char_length((kroki_url)::text) <= 1024)),
+    CONSTRAINT check_17d9558205 CHECK ((char_length(kroki_url) <= 1024)),
     CONSTRAINT check_2dba05b802 CHECK ((char_length(gitpod_url) <= 255)),
     CONSTRAINT check_51700b31b5 CHECK ((char_length(default_branch_name) <= 255)),
     CONSTRAINT check_57123c9593 CHECK ((char_length(help_page_documentation_base_url) <= 255)),
@@ -13988,9 +13988,9 @@ CREATE TABLE incident_management_oncall_rotations (
     length_unit smallint NOT NULL,
     starts_at timestamp with time zone NOT NULL,
     name text NOT NULL,
-    ends_at timestamp with time zone,
     active_period_start time without time zone,
     active_period_end time without time zone,
+    ends_at timestamp with time zone,
     CONSTRAINT check_5209fb5d02 CHECK ((char_length(name) <= 200))
 );
 
@@ -16314,6 +16314,7 @@ CREATE TABLE pages_deployments (
     file_count integer NOT NULL,
     file_sha256 bytea NOT NULL,
     size bigint,
+    ci_pipeline_id integer,
     CONSTRAINT check_5f9132a958 CHECK ((size IS NOT NULL)),
     CONSTRAINT check_f0fe8032dd CHECK ((char_length(file) <= 255))
 );
@@ -18843,8 +18844,8 @@ CREATE TABLE user_details (
     bio_html text,
     cached_markdown_version integer,
     webauthn_xid text,
-    other_role text,
     provisioned_by_group_id bigint,
+    other_role text,
     pronouns text,
     pronunciation text,
     CONSTRAINT check_245664af82 CHECK ((char_length(webauthn_xid) <= 100)),
@@ -19728,8 +19729,8 @@ CREATE TABLE web_hooks (
     encrypted_url character varying,
     encrypted_url_iv character varying,
     deployment_events boolean DEFAULT false NOT NULL,
-    releases_events boolean DEFAULT false NOT NULL,
     feature_flag_events boolean DEFAULT false NOT NULL,
+    releases_events boolean DEFAULT false NOT NULL,
     member_events boolean DEFAULT false NOT NULL,
     subgroup_events boolean DEFAULT false NOT NULL,
     recent_failures smallint DEFAULT 0 NOT NULL,
@@ -26192,6 +26193,9 @@ ALTER TABLE ONLY merge_requests
 
 ALTER TABLE ONLY ci_builds
     ADD CONSTRAINT fk_6661f4f0e8 FOREIGN KEY (resource_group_id) REFERENCES ci_resource_groups(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY pages_deployments
+    ADD CONSTRAINT fk_689a4298e9 FOREIGN KEY (ci_pipeline_id) REFERENCES ci_pipelines(id) ON DELETE SET NULL;
 
 ALTER TABLE ONLY project_pages_metadata
     ADD CONSTRAINT fk_69366a119e FOREIGN KEY (artifacts_archive_id) REFERENCES ci_job_artifacts(id) ON DELETE SET NULL;
