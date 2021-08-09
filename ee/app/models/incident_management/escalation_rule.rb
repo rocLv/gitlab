@@ -27,6 +27,7 @@ module IncidentManagement
 
     scope :not_removed, -> { where(is_removed: false) }
     scope :removed, -> { where(is_removed: true) }
+    scope :user_notify, -> { where.not(user_id: nil).includes(:user) }
 
     private
 

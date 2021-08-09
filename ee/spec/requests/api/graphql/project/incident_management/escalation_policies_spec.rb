@@ -70,7 +70,10 @@ RSpec.describe 'getting Incident Management escalation policies' do
     end
 
     context 'with escalation policies' do
-      let_it_be(:policy) { create(:incident_management_escalation_policy, project: project) }
+      let_it_be(:policy) { create(:incident_management_escalation_policy, rule_count: 0, project: project) }
+      let_it_be(:oncall_schedule) { create(:incident_management_oncall_schedule, :with_rotation, project: project) }
+      let_it_be(:schedule_rule) { create(:incident_management_escalation_rule, oncall_schedule: oncall_schedule, policy: policy) }
+      let_it_be(:schedule_rule_user) { schedule_rule.oncall_schedule.rotations.first.users.first }
 
       let(:last_policy) { escalation_policies.last }
 
@@ -103,8 +106,7 @@ RSpec.describe 'getting Incident Management escalation policies' do
           policy_data = graphql_data.dig('project', 'incidentManagementEscalationPolicy')
 
           last_policy_rule = policy.rules.last
-
-          expect(policy_data).to include(
+          expect(policy_data).to match(
             'id' => policy.to_global_id.to_s,
             'name' => policy.name,
             'description' => policy.description,
@@ -120,6 +122,17 @@ RSpec.describe 'getting Incident Management escalation policies' do
                   'timezone' => last_policy_rule.oncall_schedule.timezone
                 },
                 'user' => nil
+              }
+            ],
+            'onCallUsers' => [
+              {
+                'schedule' => hash_including(
+                  'name' => oncall_schedule.name
+                ),
+                'user' => hash_including(
+                  'id' => schedule_rule_user.to_global_id.to_s,
+                  'username' => schedule_rule_user.username
+                )
               }
             ]
           )

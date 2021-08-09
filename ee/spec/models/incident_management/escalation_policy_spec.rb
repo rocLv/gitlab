@@ -11,6 +11,8 @@ RSpec.describe IncidentManagement::EscalationPolicy do
     it { is_expected.to belong_to(:project) }
     it { is_expected.to have_many(:rules) }
     it { is_expected.to have_many(:active_rules).order(elapsed_time_seconds: :asc, status: :asc).class_name('EscalationRule').inverse_of(:policy) }
+    it { is_expected.to have_many(:oncall_schedules).through(:rules) }
+    it { is_expected.to have_many(:oncall_rotations).through(:oncall_schedules) }
 
     describe '.active_rules' do
       let(:policy) { create(:incident_management_escalation_policy) }

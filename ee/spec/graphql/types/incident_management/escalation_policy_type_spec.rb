@@ -13,6 +13,7 @@ RSpec.describe GitlabSchema.types['EscalationPolicyType'] do
       name
       description
       rules
+      onCallUsers
     ]
 
     expect(described_class).to have_graphql_fields(*expected_fields)
