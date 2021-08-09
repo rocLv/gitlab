@@ -4,6 +4,11 @@ module Gitlab
   module GitalyClient
     class RefService
       include Gitlab::EncodingHelper
+      extend Gitlab::Cache::RequestCache
+
+      request_cache_key do
+        [@repository&.name, @repository&.commit&.id, @storage]
+      end
 
       # 'repository' is a Gitlab::Git::Repository
       def initialize(repository)
@@ -107,10 +112,14 @@ module Gitlab
 
       def ref_exists?(ref_name)
         request = Gitaly::RefExistsRequest.new(repository: @gitaly_repo, ref: encode_binary(ref_name))
-        response = GitalyClient.call(@storage, :ref_service, :ref_exists, request, timeout: GitalyClient.fast_timeout)
+        response = ref_exists_with_cache_call(request)
         response.value
       rescue GRPC::InvalidArgument => e
         raise ArgumentError, e.message
+      end
+
+      request_cache def ref_exists_with_cache_call(request)
+        GitalyClient.call(@storage, :ref_service, :ref_exists, request, timeout: GitalyClient.fast_timeout)
       end
 
       def find_branch(branch_name)
