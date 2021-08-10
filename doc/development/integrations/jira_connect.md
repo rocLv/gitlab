@@ -92,3 +92,18 @@ To add a [namespace](../../user/group/index.md#namespaces) to Jira:
 1. Append the cookies to the cURL command in your terminal `--cookies "PASTE COOKIES HERE"`.
 1. Submit the cURL request.
 1. If the response is `{"success":true}` the namespace was added.
+
+## OAuth flow
+
+> - [Deployed behind a feature flag](../../user/feature_flags.md), disabled by default.
+
+This will be the new way of authenticating GitLab users with Jira Connect. It is behind a
+feature flag that is disabled by default. To use the OAuth, follow these steps:
+
+1. Start a Gitpod and open the rails console `bundle exec rails console`
+1. Enable the feature flag `Feature.enable(:jira_connect_oauth)`
+1. On your GitLab instance, go to admin -> applications
+1. Create a new app with, Name: `Jira Connect`, Redirect URI: `YOUR_GITPOD_INSTANCE/-/jira_connect/oauth_callbacks`, Scopes: `api`, Trusted: No, Confidential: No
+1. Copy Application ID
+1. Go to [gitpod.io/variables](https://gitpod.io/variables)
+1. Create a new variable with name `JIRA_CONNECT_OAUTH_CLIENT_ID`, scope `*/*` and paste the Application ID as value.
