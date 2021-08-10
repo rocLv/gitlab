@@ -22,9 +22,15 @@ module EE
 
         override :perform
         def perform(from_id, to_id)
-          projects = Project.without_security_settings.where(id: from_id..to_id)
+          select_from = Project.without_security_settings.where(id: from_id..to_id).select('id, NOW(), NOW()').to_sql
 
-          projects.each(&:create_security_setting)
+          ActiveRecord::Base.connection_pool.with_connection do |connection|
+            connection.execute <<~SQL
+              INSERT INTO project_security_settings (project_id, created_at, updated_at)
+              #{select_from}
+              ON CONFLICT (project_id) DO NOTHING
+            SQL
+          end
         end
       end
     end
