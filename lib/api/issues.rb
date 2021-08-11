@@ -6,6 +6,8 @@ module API
     helpers Helpers::IssuesHelpers
     helpers Helpers::RateLimiter
 
+    STATISTICS_TIMEOUT = 10000 # Time in miliseconds
+
     before { authenticate_non_get! }
 
     feature_category :issue_tracking
@@ -106,7 +108,7 @@ module API
     get '/issues_statistics' do
       authenticate! unless params[:scope] == 'all'
 
-      present issues_statistics, with: Grape::Presenters::Presenter
+      present issues_statistics(fast_fail: true, fast_fail_time: STATISTICS_TIMEOUT), with: Grape::Presenters::Presenter
     end
 
     resource :issues do
@@ -178,7 +180,7 @@ module API
         use :issues_stats_params
       end
       get ":id/issues_statistics" do
-        present issues_statistics(group_id: user_group.id, include_subgroups: true), with: Grape::Presenters::Presenter
+        present issues_statistics(args: { group_id: user_group.id, include_subgroups: true }), with: Grape::Presenters::Presenter
       end
     end
 
@@ -213,7 +215,7 @@ module API
         use :issues_stats_params
       end
       get ":id/issues_statistics" do
-        present issues_statistics(project_id: user_project.id), with: Grape::Presenters::Presenter
+        present issues_statistics(args: { project_id: user_project.id }), with: Grape::Presenters::Presenter
       end
 
       desc 'Get a single project issue' do

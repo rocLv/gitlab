@@ -195,6 +195,24 @@ RSpec.describe API::Issues do
           expect(response).to have_gitlab_http_status(:unauthorized)
         end
 
+        context 'when finder timeouts while counting' do
+          before do
+            allow_next_instance_of(IssuesFinder) do |instance|
+              allow(instance).to receive(:count_by_state).and_raise(ActiveRecord::QueryCanceled)
+            end
+          end
+
+          it 'fails fast and returns -1 for all counts' do
+            get api('/issues_statistics'), params: { scope: 'all' }
+
+            expect(response).to have_gitlab_http_status(:ok)
+            expect(json_response['statistics']).not_to be_nil
+            expect(json_response['statistics']['counts']['all']).to eq(-1)
+            expect(json_response['statistics']['counts']['closed']).to eq(-1)
+            expect(json_response['statistics']['counts']['opened']).to eq(-1)
+          end
+        end
+
         context 'no state is treated as all state' do
           let(:params) { {} }
           let(:counts) { { all: 2, closed: 1, opened: 1 } }

@@ -18,10 +18,11 @@ module Gitlab
     # finder - The finder class to use for retrieving the issuables.
     # fast_fail - restrict counting to a shorter period, degrading gracefully on
     # failure
-    def initialize(finder, project = nil, fast_fail: false)
+    def initialize(finder, project = nil, fast_fail: false, fast_fail_time: 5000)
       @finder = finder
       @project = project
       @fast_fail = fast_fail
+      @fast_fail_time = fast_fail_time
       @cache = Gitlab::SafeRequestStore[CACHE_KEY] ||= initialize_cache
     end
 
@@ -78,7 +79,7 @@ module Gitlab
       # to perform the calculation more efficiently. Until then, use a shorter
       # timeout and return -1 as a sentinel value if it is triggered
       begin
-        ApplicationRecord.with_fast_read_statement_timeout do
+        ApplicationRecord.with_fast_read_statement_timeout(@fast_fail_time) do
           finder.count_by_state
         end
       rescue ActiveRecord::QueryCanceled => err

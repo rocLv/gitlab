@@ -58,9 +58,9 @@ module API
         finder.execute.with_api_entity_associations
       end
 
-      def issues_statistics(args = {})
+      def issues_statistics(args: {}, fast_fail: false, fast_fail_time: 5000)
         finder = issue_finder(args)
-        counter = Gitlab::IssuablesCountForState.new(finder)
+        counter = Gitlab::IssuablesCountForState.new(finder, fast_fail: fast_fail, fast_fail_time: fast_fail_time)
 
         {
           statistics: {
