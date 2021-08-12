@@ -7,6 +7,7 @@ class DiffNote < Note
   include NoteOnDiff
   include DiffPositionableNote
   include Gitlab::Utils::StrongMemoize
+  extend Gitlab::Cache::RequestCache
 
   def self.noteable_types
     %w(MergeRequest Commit DesignManagement::Design)
@@ -115,6 +116,20 @@ class DiffNote < Note
     position&.multiline?
   end
 
+  def shas
+    [
+      self.original_position.base_sha,
+      self.original_position.start_sha,
+      self.original_position.head_sha
+    ].tap do |a|
+      if self.position != self.original_position
+        a << self.position.base_sha
+        a << self.position.start_sha
+        a << self.position.head_sha
+      end
+    end
+  end
+
   private
 
   def enqueue_diff_file_creation_job
@@ -173,20 +188,9 @@ class DiffNote < Note
   end
 
   def keep_around_commits
-    shas = [
-      self.original_position.base_sha,
-      self.original_position.start_sha,
-      self.original_position.head_sha
-    ]
-
-    if self.position != self.original_position
-      shas << self.position.base_sha
-      shas << self.position.start_sha
-      shas << self.position.head_sha
-    end
-
     repository.keep_around(*shas)
   end
+  request_cache(:keep_around_commits) { Digest::SHA1.hexdigest(shas.join(':')) }
 
   def repository
     noteable.respond_to?(:repository) ? noteable.repository : project.repository
