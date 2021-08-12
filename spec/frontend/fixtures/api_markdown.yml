@@ -80,11 +80,5 @@
     |--------|--------|
     | cell | cell |
     | cell | cell |
-- name: table_with_alignment
-  markdown: |-
-    | header | : header : | header : |
-    |--------|------------|----------|
-    | cell | cell | cell |
-    | cell | cell | cell |
 - name: emoji
   markdown: ':sparkles: :heart: :100:'

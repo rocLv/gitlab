@@ -1,5 +1,6 @@
+import { uniq } from 'lodash';
 import {
-  MarkdownSerializer as ProseMirrorMarkdownSerializer,
+  MarkdownSerializerState,
   defaultMarkdownSerializer,
 } from 'prosemirror-markdown/src/to_markdown';
 import { DOMParser as ProseMirrorDOMParser } from 'prosemirror-model';
@@ -48,6 +49,7 @@ const defaultSerializerConfig = {
       expelEnclosingWhitespace: true,
     },
   },
+
   nodes: {
     [Blockquote.name]: defaultMarkdownSerializer.nodes.blockquote,
     [BulletList.name]: defaultMarkdownSerializer.nodes.bullet_list,
@@ -63,7 +65,9 @@ const defaultSerializerConfig = {
 
       state.write(`:${name}:`);
     },
-    [HardBreak.name]: defaultMarkdownSerializer.nodes.hard_break,
+    [HardBreak.name]: (state, node, parent, index) => {
+      state.renderHardBreak(node, parent, index);
+    },
     [Heading.name]: defaultMarkdownSerializer.nodes.heading,
     [HorizontalRule.name]: defaultMarkdownSerializer.nodes.horizontal_rule,
     [Image.name]: (state, node) => {
@@ -76,62 +80,221 @@ const defaultSerializerConfig = {
     [OrderedList.name]: defaultMarkdownSerializer.nodes.ordered_list,
     [Paragraph.name]: defaultMarkdownSerializer.nodes.paragraph,
     [Table.name]: (state, node) => {
-      state.renderContent(node);
+      state.renderTable(node);
     },
     [TableCell.name]: (state, node) => {
-      state.renderInline(node);
+      state.renderTableCell(node);
     },
     [TableHeader.name]: (state, node) => {
-      state.renderInline(node);
+      state.renderTableCell(node);
     },
     [TableRow.name]: (state, node) => {
-      const isHeaderRow = node.child(0).type.name === 'tableHeader';
-
-      const renderRow = () => {
-        const cellWidths = [];
-
-        state.flushClose(1);
-
-        state.write('| ');
-        node.forEach((cell, _, i) => {
-          if (i) state.write(' | ');
-
-          const { length } = state.out;
-          state.render(cell, node, i);
-          cellWidths.push(state.out.length - length);
-        });
-        state.write(' |');
-
-        state.closeBlock(node);
-
-        return cellWidths;
-      };
-
-      const renderHeaderRow = (cellWidths) => {
-        state.flushClose(1);
-
-        state.write('|');
-        node.forEach((cell, _, i) => {
-          if (i) state.write('|');
-
-          state.write(cell.attrs.align === 'center' ? ':' : '-');
-          state.write(state.repeat('-', cellWidths[i]));
-          state.write(cell.attrs.align === 'center' || cell.attrs.align === 'right' ? ':' : '-');
-        });
-        state.write('|');
-
-        state.closeBlock(node);
-      };
-
-      if (isHeaderRow) {
-        renderHeaderRow(renderRow());
-      } else {
-        renderRow();
-      }
+      state.renderTableRow(node);
     },
     [Text.name]: defaultMarkdownSerializer.nodes.text,
   },
 };
+
+class ContentEditorMarkdownSerializerState extends MarkdownSerializerState {
+  tableMap = new Map();
+
+  defaultAttrs = {
+    td: { colspan: 1, rowspan: 1, colwidth: null },
+    th: { colspan: 1, rowspan: 1, colwidth: null },
+  };
+
+  constructor(nodes, marks, options) {
+    super(
+      { ...defaultSerializerConfig.nodes, ...nodes },
+      { ...defaultSerializerConfig.marks, ...marks },
+      options,
+    );
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  shouldRenderCellInline(cell) {
+    return cell.childCount === 1 && cell.child(0).type.name === 'paragraph';
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getRowsAndCells(table) {
+    const cells = [];
+    const rows = [];
+    table.descendants((n) => {
+      if (n.type.name === 'tableCell' || n.type.name === 'tableHeader') {
+        cells.push(n);
+        return false;
+      }
+
+      if (n.type.name === 'tableRow') {
+        rows.push(n);
+      }
+
+      return true;
+    });
+    return { rows, cells };
+  }
+
+  tableHasBlockContent(table) {
+    const { cells } = this.getRowsAndCells(table);
+
+    const childCount = Math.max(...cells.map((cell) => cell.childCount));
+    const maxColspan = Math.max(...cells.map((cell) => cell.attrs.colspan));
+    const maxRowspan = Math.max(...cells.map((cell) => cell.attrs.rowspan));
+
+    if (childCount === 1 && maxColspan === 1 && maxRowspan === 1) {
+      const children = uniq(cells.map((cell) => cell.child(0).type.name));
+      if (children.length === 1 && children[0] === 'paragraph') {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  renderTagOpen(tag, attrs = {}) {
+    this.write(`<${tag}`);
+
+    Object.entries(attrs).forEach(([key, value]) => {
+      if (this.defaultAttrs[tag]?.[key] === value) return;
+
+      this.write(` ${key}=${this.quote(value?.toString() || '')}`);
+    });
+
+    this.write('>');
+  }
+
+  renderTagClose(tag) {
+    this.write(`</${tag}>`);
+  }
+
+  renderTableCell(node) {
+    if (!this.isInBlockTable(node) || this.shouldRenderCellInline(node)) {
+      this.renderInline(node.child(0));
+    } else {
+      this.renderContent(node);
+    }
+  }
+
+  renderTableRowAsMarkdown(node, isHeaderRow = false) {
+    const cellWidths = [];
+
+    this.flushClose(1);
+
+    this.write('| ');
+    node.forEach((cell, _, i) => {
+      if (i) this.write(' | ');
+
+      const { length } = this.out;
+      this.render(cell, node, i);
+      cellWidths.push(this.out.length - length);
+    });
+    this.write(' |');
+
+    this.closeBlock(node);
+
+    if (isHeaderRow) this.renderTableHeaderRowAsMarkdown(node, cellWidths);
+  }
+
+  renderTableHeaderRowAsMarkdown(node, cellWidths) {
+    this.flushClose(1);
+
+    this.write('|');
+    node.forEach((cell, _, i) => {
+      if (i) this.write('|');
+
+      this.write(cell.attrs.align === 'center' ? ':' : '-');
+      this.write(this.repeat('-', cellWidths[i]));
+      this.write(cell.attrs.align === 'center' || cell.attrs.align === 'right' ? ':' : '-');
+    });
+    this.write('|');
+
+    this.closeBlock(node);
+  }
+
+  renderTableRowAsHTML(node, isHeaderRow = false) {
+    const tag = isHeaderRow ? 'th' : 'td';
+
+    this.renderTagOpen('tr');
+    node.forEach((cell, _, i) => {
+      this.renderTagOpen(tag, cell.attrs);
+      if (!this.shouldRenderCellInline(cell)) {
+        this.write('\n\n');
+      }
+      this.render(cell, node, i);
+      this.flushClose(1);
+      this.renderTagClose(tag);
+    });
+    this.renderTagClose('tr');
+  }
+
+  renderTableRow(node) {
+    const isHeaderRow = node.child(0).type.name === 'tableHeader';
+
+    if (this.isInBlockTable(node)) {
+      this.renderTableRowAsHTML(node, isHeaderRow);
+    } else {
+      this.renderTableRowAsMarkdown(node, isHeaderRow);
+    }
+  }
+
+  renderTable(node) {
+    this.setIsInBlockTable(node, this.tableHasBlockContent(node));
+
+    if (this.isInBlockTable(node)) this.renderTagOpen('table');
+
+    this.renderContent(node);
+
+    if (this.isInBlockTable(node)) this.renderTagClose('table');
+
+    this.unsetIsInBlockTable(node);
+  }
+
+  renderHardBreak(node, parent, index) {
+    let br = '\\\n';
+
+    if (this.isInTable(parent) && !this.isInBlockTable(parent)) {
+      br = '<br>';
+    }
+
+    for (let i = index + 1; i < parent.childCount; i += 1)
+      if (parent.child(i).type !== node.type) {
+        this.write(br);
+        return;
+      }
+  }
+
+  isInBlockTable(node) {
+    return this.tableMap.get(node);
+  }
+
+  isInTable(node) {
+    return this.tableMap.has(node);
+  }
+
+  setIsInBlockTable(table, value) {
+    this.tableMap.set(table, value);
+
+    const { rows, cells } = this.getRowsAndCells(table);
+    rows.forEach((row) => this.tableMap.set(row, value));
+    cells.forEach((cell) => {
+      this.tableMap.set(cell, value);
+      if (cell.childCount && cell.child(0).type.name === 'paragraph')
+        this.tableMap.set(cell.child(0), value);
+    });
+  }
+
+  unsetIsInBlockTable(table) {
+    this.tableMap.delete(table);
+
+    const { rows, cells } = this.getRowsAndCells(table);
+    rows.forEach((row) => this.tableMap.delete(row));
+    cells.forEach((cell) => {
+      this.tableMap.delete(cell);
+      if (cell.childCount) this.tableMap.delete(cell.child(0));
+    });
+  }
+}
 
 const wrapHtmlPayload = (payload) => `<div>${payload}</div>`;
 
@@ -147,7 +310,7 @@ const wrapHtmlPayload = (payload) => `<div>${payload}</div>`;
  * that parses the Markdown and converts it into HTML.
  * @returns a markdown serializer
  */
-export default ({ render = () => null, serializerConfig }) => ({
+export default ({ render = () => null, serializerConfig = {} } = {}) => ({
   /**
    * Converts a Markdown string into a ProseMirror JSONDocument based
    * on a ProseMirror schema.
@@ -182,19 +345,12 @@ export default ({ render = () => null, serializerConfig }) => ({
    */
   serialize: ({ schema, content }) => {
     const proseMirrorDocument = schema.nodeFromJSON(content);
-    const serializer = new ProseMirrorMarkdownSerializer(
-      {
-        ...defaultSerializerConfig.nodes,
-        ...serializerConfig.nodes,
-      },
-      {
-        ...defaultSerializerConfig.marks,
-        ...serializerConfig.marks,
-      },
+    const state = new ContentEditorMarkdownSerializerState(
+      serializerConfig.nodes,
+      serializerConfig.marks,
+      { tightLists: true },
     );
-
-    return serializer.serialize(proseMirrorDocument, {
-      tightLists: true,
-    });
+    state.renderContent(proseMirrorDocument);
+    return state.out;
   },
 });
