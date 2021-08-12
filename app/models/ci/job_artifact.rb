@@ -121,9 +121,16 @@ module Ci
 
     mount_file_store_uploader JobArtifactUploader
 
+    # Allows file to be stored prior to record persistence
+    # which avoids holding transactions open for long periods
+    after_initialize :set_default
+    skip_callback :save, :after, :store_file!, if: :hashed_persistence_agnostic_path?
+    set_callback :save, :before, :store_file!, if: :hashed_persistence_agnostic_path?
+
+    before_save :set_size, if: :file_changed?
+
     validates :file_format, presence: true, unless: :trace?, on: :create
     validate :validate_file_format!, unless: :trace?, on: :create
-    before_save :set_size, if: :file_changed?
 
     update_project_statistics project_statistics_name: :build_artifacts_size
 
@@ -229,7 +236,8 @@ module Ci
     #                 This is the default value.
     enum file_location: {
       legacy_path: 1,
-      hashed_path: 2
+      hashed_path: 2,
+      hashed_persistence_agnostic_path: 3
     }
 
     def validate_file_format!
@@ -326,6 +334,10 @@ module Ci
     end
 
     private
+
+    def set_default
+      self.file_location = 3
+    end
 
     def set_size
       self.size = file.size

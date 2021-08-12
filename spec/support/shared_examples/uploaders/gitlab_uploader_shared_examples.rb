@@ -63,7 +63,6 @@ RSpec.shared_examples "builds correct paths" do |**patterns|
     end
 
     it "throws an exception" do
-      expect { subject.cache!(fixture_file_upload(fixture)) }.to raise_error(Gitlab::Utils::PathTraversalAttackError)
       expect { subject.store!(fixture_file_upload(fixture)) }.to raise_error(Gitlab::Utils::PathTraversalAttackError)
     end
   end

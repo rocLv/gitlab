@@ -23,17 +23,20 @@ class JobArtifactUploader < GitlabUploader
   private
 
   def dynamic_segment
-    # This now tests model.created_at because it can for some reason be nil in the test suite,
-    # and it's not clear if this is intentional or not
-    raise ObjectNotReadyError, 'JobArtifact is not ready' unless model.id && model.created_at
-
-    if model.hashed_path?
+    if model.hashed_persistence_agnostic_path?
+      hashed_persistence_agnostic_path
+    elsif model.hashed_path?
       hashed_path
     elsif model.legacy_path?
       legacy_path
     else
       raise UnknownFileLocationError
     end
+  end
+
+  # Allows file to be stored prior to model being saved, in order to avoid long transactions
+  def hashed_persistence_agnostic_path
+    Gitlab::HashedPath.new(model.job_id, root_hash: model.project_id)
   end
 
   def hashed_path

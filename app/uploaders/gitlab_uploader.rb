@@ -37,7 +37,9 @@ class GitlabUploader < CarrierWave::Uploader::Base
 
   delegate :base_dir, :file_storage?, to: :class
 
-  before :cache, :protect_from_path_traversal!
+  # TODO: We at least want to exclude store_dir when checking for path traversal on cache(It dosn't use the store_dir method).
+  # I think we only care about cache_dir and file name on cache https://github.com/carrierwaveuploader/carrierwave/blob/master/lib/carrierwave/uploader/cache.rb#L163
+  before :store, :protect_from_path_traversal!
 
   def initialize(model, mounted_as = nil, **uploader_context)
     super(model, mounted_as)

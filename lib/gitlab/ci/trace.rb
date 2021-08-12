@@ -255,7 +255,8 @@ module Gitlab
             project: job.project,
             file_type: :trace,
             file: stream,
-            file_sha256: self.class.hexdigest(path))
+            file_sha256: self.class.hexdigest(path)
+          )
         end
       end
 

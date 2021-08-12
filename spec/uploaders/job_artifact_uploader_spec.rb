@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe JobArtifactUploader do
   let(:store) { described_class::Store::LOCAL }
-  let(:job_artifact) { create(:ci_job_artifact, file_store: store) }
+  let(:job_artifact) { create(:ci_job_artifact, file_store: store, file_location: 2) }
   let(:uploader) { described_class.new(job_artifact, :file) }
 
   subject { uploader }
@@ -73,7 +73,7 @@ RSpec.describe JobArtifactUploader do
     end
 
     context 'when the artifact file is stored in hashed_path' do
-      let(:job_artifact) { create(:ci_job_artifact, :archive) }
+      let(:job_artifact) { create(:ci_job_artifact, :archive, file_location: 2) }
       let(:disk_hash) { Digest::SHA2.hexdigest(model.project_id.to_s) }
       let(:creation_date) { model.created_at.utc.strftime('%Y_%m_%d') }
 
