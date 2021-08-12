@@ -1,4 +1,4 @@
-import { GlDropdown, GlButton } from '@gitlab/ui';
+import { GlDropdown } from '@gitlab/ui';
 import { mountExtended } from 'helpers/vue_test_utils_helper';
 import ToolbarTableButton from '~/content_editor/components/toolbar_table_button.vue';
 import { createTestEditor, mockChainedCommands } from '../test_utils';
@@ -16,7 +16,8 @@ describe('content_editor/components/toolbar_table_button', () => {
   };
 
   const findDropdown = () => wrapper.findComponent(GlDropdown);
-  const getNumButtons = () => findDropdown().findAllComponents(GlButton).length;
+  const getNumButtons = () =>
+    findDropdown().element.querySelectorAll('.js-table-creator-grid-item').length;
 
   beforeEach(() => {
     editor = createTestEditor();
@@ -50,9 +51,7 @@ describe('content_editor/components/toolbar_table_button', () => {
       it('marks all rows and cols before it as active', () => {
         const prevRow = Math.max(1, row - 1);
         const prevCol = Math.max(1, col - 1);
-        expect(wrapper.findByTestId(`table-${prevRow}-${prevCol}`).element).toHaveClass(
-          'gl-bg-blue-50!',
-        );
+        expect(wrapper.findByTestId(`table-${prevRow}-${prevCol}`).element).toHaveClass('active');
       });
 
       it('shows a help text indicating the size of the table being inserted', () => {

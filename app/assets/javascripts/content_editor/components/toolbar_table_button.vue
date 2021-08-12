@@ -1,5 +1,5 @@
 <script>
-import { GlDropdown, GlDropdownDivider, GlDropdownForm, GlButton } from '@gitlab/ui';
+import { GlDropdown, GlDropdownDivider, GlDropdownForm } from '@gitlab/ui';
 import { __, sprintf } from '~/locale';
 import { clamp } from '../services/utils';
 
@@ -15,7 +15,6 @@ export default {
     GlDropdown,
     GlDropdownDivider,
     GlDropdownForm,
-    GlButton,
   },
   inject: ['tiptapEditor'],
   data() {
@@ -62,22 +61,22 @@ export default {
 };
 </script>
 <template>
-  <gl-dropdown size="small" category="tertiary" icon="table">
-    <gl-dropdown-form class="gl-px-3! gl-w-auto!">
-      <div class="gl-w-auto!">
-        <div v-for="r of list(maxRows)" :key="r" class="gl-display-flex">
-          <gl-button
-            v-for="c of list(maxCols)"
-            :key="c"
-            :data-testid="`table-${r}-${c}`"
-            :class="{ 'gl-bg-blue-50!': r <= rows && c <= cols }"
-            :aria-label="getButtonLabel(r, c)"
-            class="gl-display-inline! gl-px-0! gl-w-5! gl-h-5! gl-rounded-0!"
-            @mouseover="setRowsAndCols(r, c)"
-            @click="insertTable()"
-          />
-        </div>
-        <gl-dropdown-divider />
+  <gl-dropdown size="small" category="tertiary" icon="table" class="table-dropdown">
+    <gl-dropdown-form class="gl-px-3!">
+      <div v-for="r of list(maxRows)" :key="r" class="gl-display-flex">
+        <div
+          v-for="c of list(maxCols)"
+          :key="c"
+          :data-testid="`table-${r}-${c}`"
+          :class="{ active: r <= rows && c <= cols }"
+          :aria-label="getButtonLabel(r, c)"
+          class="table-creator-grid-item js-table-creator-grid-item"
+          @mouseover="setRowsAndCols(r, c)"
+          @click="insertTable()"
+        ></div>
+      </div>
+      <gl-dropdown-divider class="gl-my-3! gl-mx-n4!" />
+      <div class="gl-px-1">
         {{ getButtonLabel(rows, cols) }}
       </div>
     </gl-dropdown-form>
