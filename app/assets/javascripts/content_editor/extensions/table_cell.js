@@ -1,5 +1,1 @@
-import { TableCell } from '@tiptap/extension-table-cell';
-
-export default TableCell.extend({
-  content: 'inline*',
-});
+export { TableCell as default } from '@tiptap/extension-table-cell';

@@ -1,5 +1,1 @@
-import { TableHeader } from '@tiptap/extension-table-header';
-
-export default TableHeader.extend({
-  content: 'inline*',
-});
+export { TableHeader as default } from '@tiptap/extension-table-header';
