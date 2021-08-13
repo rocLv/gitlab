@@ -1,7 +1,7 @@
 import { GlAlert, GlButton, GlModal, GlLink } from '@gitlab/ui';
 import { mount, shallowMount } from '@vue/test-utils';
 
-import JiraConnectApp from '~/jira_connect/subscriptions/components/app.vue';
+import JiraConnectAppLegacy from '~/jira_connect/subscriptions/pages/app_legacy.vue';
 import createStore from '~/jira_connect/subscriptions/store';
 import { SET_ALERT } from '~/jira_connect/subscriptions/store/mutation_types';
 import { __ } from '~/locale';
@@ -11,7 +11,7 @@ jest.mock('~/jira_connect/subscriptions/utils', () => ({
   getLocation: jest.fn(),
 }));
 
-describe('JiraConnectApp', () => {
+describe('JiraConnectAppLegacy', () => {
   let wrapper;
   let store;
 
@@ -23,7 +23,7 @@ describe('JiraConnectApp', () => {
   const createComponent = ({ provide, mountFn = shallowMount } = {}) => {
     store = createStore();
 
-    wrapper = mountFn(JiraConnectApp, {
+    wrapper = mountFn(JiraConnectAppLegacy, {
       store,
       provide,
     });

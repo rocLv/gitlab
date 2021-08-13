@@ -5,11 +5,10 @@ import Vue from 'vue';
 import GlFeatureFlagsPlugin from '~/vue_shared/gl_feature_flags_plugin';
 import Translate from '~/vue_shared/translate';
 
-import JiraConnectApp from './components/app.vue';
+import JiraConnectAppLegacy from './pages/app_legacy.vue';
+import JiraConnectAppOauth from './pages/app_oauth.vue';
 import createStore from './store';
 import { getLocation, sizeToParent } from './utils';
-
-const store = createStore();
 
 const updateSignInLinks = async () => {
   const location = await getLocation();
@@ -19,20 +18,36 @@ const updateSignInLinks = async () => {
   });
 };
 
-export async function initJiraConnect() {
-  await updateSignInLinks();
+async function initJiraConnectWithOAuth(el) {
+  const { oauthMetadata } = el.dataset;
+  const store = createStore();
 
-  const el = document.querySelector('.js-jira-connect-app');
-  if (!el) {
-    return null;
-  }
+  setConfigs();
+  sizeToParent();
 
+  Vue.use(Translate);
+  Vue.use(GlFeatureFlagsPlugin);
+
+  return new Vue({
+    el,
+    store,
+    provide: {
+      oauthMetadata: JSON.parse(oauthMetadata),
+    },
+    render(createElement) {
+      return createElement(JiraConnectAppOauth);
+    },
+  });
+}
+
+async function initJiraConnectLegacy(el) {
   setConfigs();
   Vue.use(Translate);
   Vue.use(GlFeatureFlagsPlugin);
 
   const { groupsPath, subscriptions, subscriptionsPath, usersPath } = el.dataset;
   sizeToParent();
+  const store = createStore();
 
   return new Vue({
     el,
@@ -44,9 +59,22 @@ export async function initJiraConnect() {
       usersPath,
     },
     render(createElement) {
-      return createElement(JiraConnectApp);
+      return createElement(JiraConnectAppLegacy);
     },
   });
+}
+
+export async function initJiraConnect() {
+  await updateSignInLinks();
+
+  const jiraConnectLegacyEl = document.querySelector('.js-jira-connect-app');
+  const jiraConnectOAuthEl = document.querySelector('.js-jira-connect-app-oauth');
+
+  if (jiraConnectLegacyEl) {
+    initJiraConnectLegacy(jiraConnectLegacyEl);
+  } else if (jiraConnectOAuthEl) {
+    initJiraConnectWithOAuth(jiraConnectOAuthEl);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initJiraConnect);

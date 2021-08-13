@@ -1,11 +1,11 @@
 <script>
 import { GlAlert, GlButton, GlLink, GlModal, GlModalDirective, GlSprintf } from '@gitlab/ui';
 import { mapState, mapMutations } from 'vuex';
-import { retrieveAlert, getLocation } from '~/jira_connect/subscriptions/utils';
+import { retrieveAlert } from '~/jira_connect/subscriptions/utils';
 import { __ } from '~/locale';
+import GroupsList from '../components/groups_list.vue';
+import SubscriptionsList from '../components/subscriptions_list.vue';
 import { SET_ALERT } from '../store/mutation_types';
-import GroupsList from './groups_list.vue';
-import SubscriptionsList from './subscriptions_list.vue';
 
 export default {
   name: 'JiraConnectApp',
@@ -21,25 +21,8 @@ export default {
   directives: {
     GlModalDirective,
   },
-  inject: {
-    usersPath: {
-      default: '',
-    },
-  },
-  data() {
-    return {
-      location: '',
-    };
-  },
   computed: {
     ...mapState(['alert']),
-    usersPathWithReturnTo() {
-      if (this.location) {
-        return `${this.usersPath}?return_to=${this.location}`;
-      }
-
-      return this.usersPath;
-    },
     shouldShowAlert() {
       return Boolean(this.alert?.message);
     },
@@ -51,15 +34,12 @@ export default {
   },
   created() {
     this.setInitialAlert();
-    this.setLocation();
   },
   methods: {
     ...mapMutations({
       setAlert: SET_ALERT,
     }),
-    async setLocation() {
-      this.location = await getLocation();
-    },
+
     setInitialAlert() {
       const { linkUrl, title, message, variant } = retrieveAlert() || {};
       this.setAlert({ linkUrl, title, message, variant });
@@ -93,30 +73,19 @@ export default {
     <div class="jira-connect-app-body gl-my-7 gl-px-5 gl-pb-4">
       <div class="gl-display-flex gl-justify-content-end">
         <gl-button
-          v-if="usersPath"
+          v-gl-modal-directive="'add-namespace-modal'"
           category="primary"
           variant="info"
           class="gl-align-self-center"
-          :href="usersPathWithReturnTo"
-          target="_blank"
-          >{{ s__('Integrations|Sign in to add namespaces') }}</gl-button
+          >{{ s__('Integrations|Add namespace') }}</gl-button
         >
-        <template v-else>
-          <gl-button
-            v-gl-modal-directive="'add-namespace-modal'"
-            category="primary"
-            variant="info"
-            class="gl-align-self-center"
-            >{{ s__('Integrations|Add namespace') }}</gl-button
-          >
-          <gl-modal
-            modal-id="add-namespace-modal"
-            :title="s__('Integrations|Link namespaces')"
-            :action-cancel="$options.modal.cancelProps"
-          >
-            <groups-list />
-          </gl-modal>
-        </template>
+        <gl-modal
+          modal-id="add-namespace-modal"
+          :title="s__('Integrations|Link namespaces')"
+          :action-cancel="$options.modal.cancelProps"
+        >
+          <groups-list />
+        </gl-modal>
       </div>
 
       <subscriptions-list />
