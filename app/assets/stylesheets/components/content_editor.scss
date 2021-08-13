@@ -6,7 +6,35 @@
       margin-bottom: 0 !important;
     }
   }
+
+  ul[data-type='taskList'] {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin: 0 !important;
+    }
+  }
+
+  [data-type='taskList'] {
+    p {
+      margin-bottom: 0;
+    }
+
+    li {
+      > * {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      > label {
+        padding: $gl-padding-4 / 2 $gl-padding-8 0 0;
+        margin: 0;
+      }
+    }
+  }
 }
+
 
 .table-creator-grid-item {
   display: inline;
