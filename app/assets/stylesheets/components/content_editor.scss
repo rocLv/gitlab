@@ -57,5 +57,9 @@
 .table-dropdown .dropdown-menu {
   min-width: 0;
   width: auto;
-  white-space: nowrap;
+
+  &,
+  .dropdown-item {
+    white-space: nowrap;
+  }
 }

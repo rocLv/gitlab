@@ -10786,6 +10786,11 @@ msgstr ""
 msgid "Delete badge"
 msgstr ""
 
+msgid "Delete column"
+msgid_plural "Delete %d columns"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Delete comment"
 msgstr ""
 
@@ -10816,6 +10821,11 @@ msgstr ""
 msgid "Delete project. Are you ABSOLUTELY SURE?"
 msgstr ""
 
+msgid "Delete row"
+msgid_plural "Delete %d rows"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Delete self monitoring project"
 msgstr ""
 
@@ -10832,6 +10842,9 @@ msgid "Delete source branch"
 msgstr ""
 
 msgid "Delete subscription"
+msgstr ""
+
+msgid "Delete table"
 msgstr ""
 
 msgid "Delete this attachment"
@@ -17805,6 +17818,12 @@ msgstr ""
 msgid "Insert code"
 msgstr ""
 
+msgid "Insert column after"
+msgstr ""
+
+msgid "Insert column before"
+msgstr ""
+
 msgid "Insert image"
 msgstr ""
 
@@ -17812,6 +17831,12 @@ msgid "Insert inline code"
 msgstr ""
 
 msgid "Insert link"
+msgstr ""
+
+msgid "Insert row after"
+msgstr ""
+
+msgid "Insert row before"
 msgstr ""
 
 msgid "Insert suggestion"
@@ -34947,6 +34972,9 @@ msgid "Toggle emoji award"
 msgstr ""
 
 msgid "Toggle focus mode"
+msgstr ""
+
+msgid "Toggle header row"
 msgstr ""
 
 msgid "Toggle keyboard shortcuts help dialog"
