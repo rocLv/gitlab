@@ -5,7 +5,7 @@ import waitForPromises from 'helpers/wait_for_promises';
 import * as JiraConnectApi from '~/jira_connect/subscriptions/api';
 import GroupItemName from '~/jira_connect/subscriptions/components/group_item_name.vue';
 import GroupsListItem from '~/jira_connect/subscriptions/components/groups_list_item.vue';
-import { persistAlert, reloadPage } from '~/jira_connect/subscriptions/utils';
+import { persistAlert } from '~/jira_connect/subscriptions/utils';
 import { mockGroup1 } from '../mock_data';
 
 jest.mock('~/jira_connect/subscriptions/utils');
@@ -79,15 +79,7 @@ describe('GroupsListItem', () => {
       });
     });
 
-    describe('when request is successful', () => {
-      it('reloads the page', async () => {
-        clickLinkButton();
-
-        await waitForPromises();
-
-        expect(reloadPage).toHaveBeenCalled();
-      });
-    });
+    describe('when request is successful', () => {});
 
     describe('when request has errors', () => {
       const mockErrorMessage = 'error message';
@@ -104,7 +96,6 @@ describe('GroupsListItem', () => {
 
         await waitForPromises();
 
-        expect(reloadPage).not.toHaveBeenCalled();
         expect(wrapper.emitted('error')[0][0]).toBe(mockErrorMessage);
       });
     });

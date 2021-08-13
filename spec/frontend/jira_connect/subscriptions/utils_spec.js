@@ -1,12 +1,10 @@
 import { useLocalStorageSpy } from 'helpers/local_storage_helper';
-import { useMockLocationHelper } from 'helpers/mock_window_location_helper';
 import { ALERT_LOCALSTORAGE_KEY } from '~/jira_connect/subscriptions/constants';
 import {
   persistAlert,
   retrieveAlert,
   getJwt,
   getLocation,
-  reloadPage,
   sizeToParent,
 } from '~/jira_connect/subscriptions/utils';
 
@@ -88,32 +86,6 @@ describe('JiraConnect utils', () => {
 
         expect(getLocationSpy).not.toHaveBeenCalled();
         expect(location).toBeUndefined();
-      });
-    });
-
-    describe('reloadPage', () => {
-      const reloadSpy = jest.fn();
-
-      useMockLocationHelper();
-
-      it('calls the function when AP.navigator.reload is a function', async () => {
-        global.AP = {
-          navigator: {
-            reload: reloadSpy,
-          },
-        };
-
-        await reloadPage();
-
-        expect(reloadSpy).toHaveBeenCalled();
-        expect(window.location.reload).not.toHaveBeenCalled();
-      });
-
-      it('calls window.location.reload when AP.navigator.reload is not a function', async () => {
-        await reloadPage();
-
-        expect(reloadSpy).not.toHaveBeenCalled();
-        expect(window.location.reload).toHaveBeenCalled();
       });
     });
 

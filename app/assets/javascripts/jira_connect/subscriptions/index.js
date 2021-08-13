@@ -20,8 +20,12 @@ const updateSignInLinks = async () => {
 
 async function initJiraConnectWithOAuth(el) {
   const { oauthMetadata } = el.dataset;
+  const { groups_path: groupsPath, subscriptions_path: subscriptionsPath } = JSON.parse(
+    oauthMetadata,
+  );
   const store = createStore();
 
+  await updateSignInLinks();
   setConfigs();
   sizeToParent();
 
@@ -33,6 +37,8 @@ async function initJiraConnectWithOAuth(el) {
     store,
     provide: {
       oauthMetadata: JSON.parse(oauthMetadata),
+      groupsPath,
+      subscriptionsPath,
     },
     render(createElement) {
       return createElement(JiraConnectAppOauth);
@@ -41,13 +47,15 @@ async function initJiraConnectWithOAuth(el) {
 }
 
 async function initJiraConnectLegacy(el) {
+  const { groupsPath, subscriptions, subscriptionsPath, usersPath } = el.dataset;
+  const store = createStore();
+
+  await updateSignInLinks();
   setConfigs();
+  sizeToParent();
+
   Vue.use(Translate);
   Vue.use(GlFeatureFlagsPlugin);
-
-  const { groupsPath, subscriptions, subscriptionsPath, usersPath } = el.dataset;
-  sizeToParent();
-  const store = createStore();
 
   return new Vue({
     el,
@@ -64,9 +72,7 @@ async function initJiraConnectLegacy(el) {
   });
 }
 
-export async function initJiraConnect() {
-  await updateSignInLinks();
-
+function initJiraConnect() {
   const jiraConnectLegacyEl = document.querySelector('.js-jira-connect-app');
   const jiraConnectOAuthEl = document.querySelector('.js-jira-connect-app-oauth');
 

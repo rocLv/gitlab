@@ -99,7 +99,7 @@ export default {
           class="gl-align-self-center"
           :href="usersPathWithReturnTo"
           target="_blank"
-          >{{ s__('Integrations|Sign in to add namespaces') }}</gl-button
+          >{{ s__('Integrations|Sign in to GitLab') }}</gl-button
         >
         <template v-else>
           <gl-button

@@ -7,6 +7,8 @@
  */
 import { GlButton } from '@gitlab/ui';
 import axios from '~/lib/utils/axios_utils';
+import { s__ } from '~/locale';
+import { setAuthorizationHeader } from '../api';
 
 const oauthWindowSize = 800;
 const oauthWindowOptions = [
@@ -44,31 +46,37 @@ export default {
     // All the event handling should happen in this component
     startOAuthFlow() {
       const { oauth_authorize_url } = this.oauthMetadata;
-      window.open(oauth_authorize_url, 'OAuth Login', oauthWindowOptions);
+      window.open(oauth_authorize_url, s__('Integrations|Sign in to GitLab'), oauthWindowOptions);
     },
     // All the event handling should happen in this component
-    handleWindowMessage(event) {
-      if (window.origin === event.origin) {
-        const state = event.data?.state;
-        // The state should match the OAuth data
-        if (state === this.oauthMetadata.state) {
-          const code = event.data?.code;
-          this.getOAuthToken(code);
-        }
+    async handleWindowMessage(event) {
+      if (window.origin !== event.origin) {
+        return;
       }
+
+      const state = event.data?.state;
+      // The state should match the OAuth data
+      if (state !== this.oauthMetadata.state) {
+        return;
+      }
+
+      const code = event.data?.code;
+      this.token = await this.getOAuthToken(code);
+      setAuthorizationHeader(this.token);
+
+      this.loading = false;
+
+      await this.loadUser();
     },
     // This potentially should be moved to the store
     async getOAuthToken(code) {
       const { oauth_token_payload: oauthTokenPayload, oauth_token_url } = this.oauthMetadata;
       const { data } = await axios.post(oauth_token_url, { ...oauthTokenPayload, code });
 
-      this.token = data.access_token;
-      this.loading = false;
-
-      await this.loadUser();
+      return data.access_token;
     },
     async loadUser() {
-      const { data } = await axios.get(`${window.origin}/api/v4/user`, {
+      const { data } = await axios.get('/api/v4/user', {
         headers: { Authorization: `Bearer ${this.token}` },
       });
 
@@ -79,22 +87,17 @@ export default {
 </script>
 <template>
   <div class="jira-connect-app-body gl-px-5 gl-text-center">
-    <h2>GitLab for Jira Configuration</h2>
-    <p>Sign in to GitLab.com to get started.</p>
+    <h2>{{ s__('JiraService|GitLab for Jira Configuration') }}</h2>
+    <p>{{ s__('JiraService|Sign in to GitLab.com to get started.') }}</p>
+
     <div class="gl-mt-7">
-      <gl-button
-        v-if="token === null"
-        icon="external-link"
-        variant="confirm"
-        :disabled="loading"
-        @click="startOAuthFlow"
-      >
-        Sign in to GitLab
+      <gl-button icon="external-link" variant="confirm" :loading="loading" @click="startOAuthFlow">
+        {{ s__('Integrations|Sign in to GitLab') }}
       </gl-button>
-      <pre v-else-if="user">Token: {{ token }}, User: {{ user.username }}</pre>
     </div>
-    <div class="gl-mt-7">
-      <p>Note: this integration only works with accounts on GitLab.com (SaaS).</p>
-    </div>
+
+    <p class="gl-mt-7">
+      {{ s__('JiraConnect|Note: this integration only works with accounts on GitLab.com (SaaS).') }}
+    </p>
   </div>
 </template>

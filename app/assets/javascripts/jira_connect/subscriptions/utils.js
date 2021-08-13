@@ -58,14 +58,6 @@ export const getLocation = () => {
   });
 };
 
-export const reloadPage = () => {
-  if (isFunction(AP?.navigator?.reload)) {
-    AP.navigator.reload();
-  } else {
-    window.location.reload();
-  }
-};
-
 export const sizeToParent = () => {
   if (isFunction(AP?.sizeToParent)) {
     AP.sizeToParent();

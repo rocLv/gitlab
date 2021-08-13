@@ -29,3 +29,17 @@ export const fetchGroups = async (groupsPath, { page, perPage, search }) => {
     },
   });
 };
+
+export const fetchSubscriptions = async (subscriptionsPath) => {
+  const jwt = await getJwt();
+
+  return axios.get(subscriptionsPath, {
+    params: {
+      jwt,
+    },
+  });
+};
+
+export const setAuthorizationHeader = (token) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+};

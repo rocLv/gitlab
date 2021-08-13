@@ -6,7 +6,6 @@ import * as JiraConnectApi from '~/jira_connect/subscriptions/api';
 import SubscriptionsList from '~/jira_connect/subscriptions/components/subscriptions_list.vue';
 import createStore from '~/jira_connect/subscriptions/store';
 import { SET_ALERT } from '~/jira_connect/subscriptions/store/mutation_types';
-import { reloadPage } from '~/jira_connect/subscriptions/utils';
 import { mockSubscription } from '../mock_data';
 
 jest.mock('~/jira_connect/subscriptions/utils');
@@ -80,15 +79,7 @@ describe('SubscriptionsList', () => {
       expect(removeSubscriptionSpy).toHaveBeenCalledWith(mockSubscription.unlink_path);
     });
 
-    describe('when request is successful', () => {
-      it('reloads the page', async () => {
-        clickUnlinkButton();
-
-        await waitForPromises();
-
-        expect(reloadPage).toHaveBeenCalled();
-      });
-    });
+    describe('when request is successful', () => {});
 
     describe('when request has errors', () => {
       const mockErrorMessage = 'error message';
@@ -104,7 +95,6 @@ describe('SubscriptionsList', () => {
 
         await waitForPromises();
 
-        expect(reloadPage).not.toHaveBeenCalled();
         expect(store.commit.mock.calls).toEqual(
           expect.arrayContaining([
             [

@@ -1,8 +1,9 @@
 <script>
 import { GlButton } from '@gitlab/ui';
+import { mapActions } from 'vuex';
 import { helpPagePath } from '~/helpers/help_page_helper';
 import { addSubscription } from '~/jira_connect/subscriptions/api';
-import { persistAlert, reloadPage } from '~/jira_connect/subscriptions/utils';
+import { persistAlert } from '~/jira_connect/subscriptions/utils';
 import { s__ } from '~/locale';
 import GroupItemName from './group_item_name.vue';
 
@@ -33,6 +34,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['fetchSubscriptions']),
     onClick() {
       this.isLoading = true;
 
@@ -47,7 +49,8 @@ export default {
             variant: 'success',
           });
 
-          reloadPage();
+          // todo can probably add to store directly
+          this.fetchSubscriptions(this.subscriptionsPath);
         })
         .catch((error) => {
           this.$emit(

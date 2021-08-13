@@ -34,7 +34,9 @@ module JiraConnectHelper
         client_id: ENV['JIRA_CONNECT_OAUTH_CLIENT_ID'],
         redirect_uri: jira_connect_oauth_callbacks_url,
         code_verifier: oauth_code_verifier
-      }
+      },
+      subscriptions_path: jira_connect_subscriptions_path,
+      groups_path: api_v4_groups_path(params: { min_access_level: Gitlab::Access::MAINTAINER })
     }
   end
 
