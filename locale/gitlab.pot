@@ -18314,6 +18314,9 @@ msgstr ""
 msgid "Integrations|When you mention a Jira issue in a commit or merge request, GitLab creates a remote link and comment (if enabled)."
 msgstr ""
 
+msgid "Integrations|You can close this window."
+msgstr ""
+
 msgid "Integrations|You can now close this window and return to the GitLab for Jira application."
 msgstr ""
 
