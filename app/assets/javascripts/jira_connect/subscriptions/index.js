@@ -6,10 +6,13 @@ import GlFeatureFlagsPlugin from '~/vue_shared/gl_feature_flags_plugin';
 import Translate from '~/vue_shared/translate';
 
 import JiraConnectApp from './components/app.vue';
+import JiraOauthConnectApp from './components/oauth_app.vue';
 import createStore from './store';
 import { getLocation, sizeToParent } from './utils';
 
-const store = createStore();
+const getOAuthMetadata = () => {
+  return JSON.parse(document.getElementById('oauth_metadata').textContent);
+};
 
 const updateSignInLinks = async () => {
   const location = await getLocation();
@@ -18,35 +21,49 @@ const updateSignInLinks = async () => {
     el.setAttribute('href', updatedLink);
   });
 };
-
 export async function initJiraConnect() {
   await updateSignInLinks();
-
-  const el = document.querySelector('.js-jira-connect-app');
-  if (!el) {
-    return null;
-  }
 
   setConfigs();
   Vue.use(Translate);
   Vue.use(GlFeatureFlagsPlugin);
 
-  const { groupsPath, subscriptions, subscriptionsPath, usersPath } = el.dataset;
-  sizeToParent();
+  const el = document.querySelector('.js-jira-connect-app');
+  if (el) {
+    const { groupsPath, subscriptions, subscriptionsPath, usersPath } = el.dataset;
+    sizeToParent();
+    const store = createStore();
 
-  return new Vue({
-    el,
-    store,
-    provide: {
-      groupsPath,
-      subscriptions: JSON.parse(subscriptions),
-      subscriptionsPath,
-      usersPath,
-    },
-    render(createElement) {
-      return createElement(JiraConnectApp);
-    },
-  });
+    return new Vue({
+      el,
+      store,
+      provide: {
+        groupsPath,
+        subscriptions: JSON.parse(subscriptions),
+        subscriptionsPath,
+        usersPath,
+      },
+      render(createElement) {
+        return createElement(JiraConnectApp);
+      },
+    });
+  }
+
+  const elNew = document.querySelector('.js-jira-connect-oauth-app');
+  if (elNew) {
+    // We probably want to add a store here as well. It could handle all the oAuth stuff.
+    return new Vue({
+      el: elNew,
+      provide: {
+        oauthConfig: getOAuthMetadata(),
+      },
+      render(createElement) {
+        return createElement(JiraOauthConnectApp);
+      },
+    });
+  }
+
+  return null;
 }
 
 document.addEventListener('DOMContentLoaded', initJiraConnect);
