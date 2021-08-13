@@ -1,0 +1,61 @@
+.ProseMirror {
+  td,
+  th,
+  li {
+    :only-child {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  ul[data-type='taskList'] {
+    list-style: none;
+    padding: 0;
+
+    li {
+      margin: 0 !important;
+    }
+  }
+
+  [data-type='taskList'] {
+    p {
+      margin-bottom: 0;
+    }
+
+    li {
+      > * {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      > label {
+        padding: $gl-padding-4 / 2 $gl-padding-8 0 0;
+        margin: 0;
+      }
+    }
+  }
+}
+
+
+.table-creator-grid-item {
+  display: inline;
+  cursor: pointer;
+  width: $gl-padding-24;
+  height: $gl-padding-24;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 $gl-padding-4 $white,
+    inset $gl-padding-4 / 2 $gl-padding-4 / 2 0 #{$gl-padding-4 * 3 / 4} $gray-100,
+    inset #{-$gl-padding-4 / 2} #{-$gl-padding-4 / 2} 0 #{$gl-padding-4 * 3 / 4} $gray-100;
+
+  &.active {
+    background: $blue-50;
+    box-shadow: inset 0 0 0 $gl-padding-4 $white,
+      inset $gl-padding-4 / 2 $gl-padding-4 / 2 0 $gl-padding-4 $blue-500,
+      inset #{-$gl-padding-4 / 2} #{-$gl-padding-4 / 2} 0 $gl-padding-4 $blue-500;
+  }
+}
+
+.table-dropdown .dropdown-menu {
+  min-width: 0;
+  width: auto;
+  white-space: nowrap;
+}
