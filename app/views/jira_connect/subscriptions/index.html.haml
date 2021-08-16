@@ -10,6 +10,7 @@
 
 %main.jira-connect-app.gl-px-5.gl-pt-7.gl-mx-auto
   - if current_user.blank? && @subscriptions.empty?
+    .js-oauth_metadata{ data: { oauth_metadata: jira_connect_oauth_data.to_json } }
     .jira-connect-app-body.gl-px-5.gl-text-center
       %h2= s_('JiraService|GitLab for Jira Configuration')
       %p= s_('JiraService|Sign in to GitLab.com to get started.')
