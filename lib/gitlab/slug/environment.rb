@@ -12,6 +12,10 @@ module Gitlab
     class Environment
       attr_reader :name
 
+      LETTERS = ('a'..'z').freeze
+      NUMBERS = ('0'..'9').freeze
+      SUFFIX_CHARS = LETTERS.to_a + NUMBERS.to_a
+
       def initialize(name)
         @name = name
       end
@@ -26,29 +30,22 @@ module Gitlab
         # Repeated dashes are invalid (OpenShift limitation)
         slugified.squeeze!('-')
 
-        if slugified.size > 24 || slugified != name
-          # Maximum length: 24 characters (OpenShift limitation)
-          shorten_and_add_suffix(slugified)
-        else
-          # Cannot end with a dash (Kubernetes label limitation)
-          slugified.chomp('-')
-        end
+        slugified = slugified[0..16]
+        slugified << '-' unless slugified.end_with?('-')
+        slugified << random_suffix
+
+        slugified
       end
 
       private
 
-      def shorten_and_add_suffix(slug)
-        slug = slug[0..16]
-        slug << '-' unless slug.ends_with?('-')
-        slug << suffix
-      end
-
       # Slugifying a name may remove the uniqueness guarantee afforded by it being
-      # based on name (which must be unique). To compensate, we add a predictable
-      # 6-byte suffix in those circumstances. This is not *guaranteed* uniqueness,
+      # based on name (which must be unique).
+      # Also when environment is renamed slug isn't being changed, which can lead to collisions.
+      # To compensate, we add a random 6-byte suffix. This is not *guaranteed* uniqueness,
       # but the chance of collisions is vanishingly small
-      def suffix
-        Digest::SHA2.hexdigest(name.to_s).to_i(16).to_s(36).last(6)
+      def random_suffix
+        (0..5).map { SUFFIX_CHARS.sample }.join
       end
     end
   end
