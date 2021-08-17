@@ -483,6 +483,10 @@ module EE
       user_cap <= billable_members_count(requested_hosted_plan)
     end
 
+    def wiki_enabled?
+      !!group_feature&.wiki_enabled?
+    end
+
     private
 
     override :post_create_hook

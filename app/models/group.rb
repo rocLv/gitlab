@@ -80,6 +80,8 @@ class Group < Namespace
   # debian_distributions and associated component_files must be destroyed by ruby code in order to properly remove carrierwave uploads
   has_many :debian_distributions, class_name: 'Packages::Debian::GroupDistribution', dependent: :destroy # rubocop:disable Cop/ActiveRecordDependent
 
+  has_one :group_feature, class_name: 'Groups::Feature', inverse_of: :group
+
   delegate :prevent_sharing_groups_outside_hierarchy, :new_user_signups_cap, to: :namespace_settings
 
   accepts_nested_attributes_for :variables, allow_destroy: true
@@ -98,12 +100,15 @@ class Group < Namespace
                       message: Gitlab::Regex.group_name_regex_message },
             if: :name_changed?
 
+  validates :group_feature, presence: true
+
   add_authentication_token_field :runners_token, encrypted: -> { Feature.enabled?(:groups_tokens_optional_encryption, default_enabled: true) ? :optional : :required }
 
   after_create :post_create_hook
   after_destroy :post_destroy_hook
   after_save :update_two_factor_requirement
   after_update :path_changed_hook, if: :saved_change_to_path?
+  after_create -> { create_or_load_association(:group_feature) }
 
   scope :with_users, -> { includes(:users) }
 
@@ -732,6 +737,10 @@ class Group < Namespace
 
   def timelogs
     Timelog.in_group(self)
+  end
+
+  def feature_available?(feature, user)
+    !!group_feature&.feature_available?(feature, user)
   end
 
   private
