@@ -210,9 +210,9 @@ module Banzai
         end
 
         def prepare_doc_for_scan(doc)
-          html = doc.to_html
+          text = doc.text
 
-          filter.requires_unescaping? ? unescape_html_entities(html) : html
+          filter.requires_unescaping? ? unescape_html_entities(text) : text
         end
 
         # Deprecated: https://gitlab.com/gitlab-org/gitlab/-/issues/336268
