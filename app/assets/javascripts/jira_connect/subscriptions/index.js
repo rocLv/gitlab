@@ -19,21 +19,22 @@ const updateSignInLinks = async () => {
 };
 
 async function initJiraConnectWithOAuth(el) {
+  const { oauthMetadata } = el.dataset;
+  const store = createStore();
+
   await updateSignInLinks();
 
   setConfigs();
+  sizeToParent();
+
   Vue.use(Translate);
   Vue.use(GlFeatureFlagsPlugin);
-
-  const { oauthMetadata } = el.dataset;
-  sizeToParent();
-  const store = createStore();
 
   return new Vue({
     el,
     store,
     provide: {
-      oauthMetadata,
+      oauthMetadata: JSON.parse(oauthMetadata),
     },
     render(createElement) {
       return createElement(JiraConnectAppOauth);

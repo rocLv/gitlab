@@ -1,6 +1,4 @@
 <script>
-import axios from '~/lib/utils/axios_utils';
-
 import SignInPage from './sign_in.vue';
 import SubscriptionsPage from './subscriptions.vue';
 
@@ -24,7 +22,7 @@ export default {
 };
 </script>
 <template>
-  <main>
+  <main class="jira-connect-app gl-px-5 gl-pt-7 gl-mx-auto">
     <subscriptions-page v-if="userSignedIn" />
     <sign-in-page v-else @sign-in="onSignIn" />
   </main>

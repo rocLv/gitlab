@@ -3,13 +3,12 @@
  * This component is the new version of the Connect App
  * that leverages the new OAuth flow for authentication.
  *
- * It will eventually replace ./app.vue.
+ * It will eventually replace ./app_legacy.vue.
  */
 import { GlButton } from '@gitlab/ui';
 import axios from '~/lib/utils/axios_utils';
 
 const oauthWindowSize = 800;
-
 const oauthWindowOptions = [
   'resizable=yes',
   'scrollbars=yes',
@@ -25,8 +24,9 @@ export default {
     GlButton,
   },
   inject: {
-    // Eipi: Given we consume it just here, it also could be props
-    oauthConfig: { default: {} },
+    oauthMetadata: {
+      default: {},
+    },
   },
   data() {
     return {
@@ -35,23 +35,23 @@ export default {
     };
   },
   mounted() {
-    window.addEventListener('message', this.eventListner);
+    window.addEventListener('message', this.handleWindowMessage);
   },
   beforeDestroy() {
-    window.removeEventListener('message', this.eventListner);
+    window.removeEventListener('message', this.handleWindowMessage);
   },
   methods: {
     // All the event handling should happen in this component
     startOAuthFlow() {
-      const { oauth_authorize_url } = this.oauthConfig;
+      const { oauth_authorize_url } = this.oauthMetadata;
       window.open(oauth_authorize_url, 'OAuth Login', oauthWindowOptions);
     },
     // All the event handling should happen in this component
-    eventListner(event) {
+    handleWindowMessage(event) {
       if (window.origin === event.origin) {
         const state = event.data?.state;
         // The state should match the OAuth data
-        if (state === this.oauthConfig.state) {
+        if (state === this.oauthMetadata.state) {
           const code = event.data?.code;
           this.getOAuthToken(code);
         }
@@ -59,7 +59,7 @@ export default {
     },
     // This potentially should be moved to the store
     async getOAuthToken(code) {
-      const { oauth_token_payload: oauthTokenPayload, oauth_token_url } = this.oauthConfig;
+      const { oauth_token_payload: oauthTokenPayload, oauth_token_url } = this.oauthMetadata;
       const { data } = await axios.post(oauth_token_url, { ...oauthTokenPayload, code });
 
       this.token = data.access_token;
