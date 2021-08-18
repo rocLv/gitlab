@@ -92,20 +92,6 @@ describe('content_editor/extensions/attachment', () => {
           mock.onPost().reply(httpStatus.OK, successResponse);
         });
 
-        it('inserts an image with src set to the encoded image file and uploading true', (done) => {
-          const expectedDoc = doc(p(image({ uploading: true, src: base64EncodedFile })));
-
-          tiptapEditor.on(
-            'update',
-            once(() => {
-              expect(eq(tiptapEditor.state.doc, expectedDoc)).toBe(true);
-              done();
-            }),
-          );
-
-          tiptapEditor.commands.uploadAttachment({ file: imageFile });
-        });
-
         it('updates the inserted image with canonicalSrc when upload is successful', async () => {
           const expectedDoc = doc(
             p(
