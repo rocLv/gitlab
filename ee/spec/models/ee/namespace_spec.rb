@@ -523,7 +523,11 @@ RSpec.describe Namespace do
         it { is_expected.to eq(default_limits) }
       end
 
-      context 'when "free" plan is defined in the system' do
+      context 'when .com' do
+        before do
+          allow(Gitlab).to receive(:com?).and_return(true)
+        end
+
         let!(:free_plan) { create(:free_plan) }
 
         context 'when no limits are set' do
@@ -640,6 +644,7 @@ RSpec.describe Namespace do
 
         # This should be revisited after https://gitlab.com/gitlab-org/gitlab/-/issues/214434
         expect(namespace.gitlab_subscription).to be_present
+        expect(namespace.gitlab_subscription.hosted_plan).to eq(Plan.default)
       end
     end
 

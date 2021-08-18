@@ -199,7 +199,7 @@ module EE
     end
 
     def plan_name_for_upgrading
-      return ::Plan::FREE if trial_active?
+      return fallback_plan.name if trial_active?
 
       actual_plan_name
     end
@@ -463,7 +463,7 @@ module EE
       return if ::Gitlab::Database.read_only?
 
       create_gitlab_subscription(
-        plan_code: Plan::FREE,
+        plan_code: fallback_plan.name,
         trial: trial_active?,
         start_date: created_at,
         seats: 0
