@@ -1,4 +1,10 @@
 <script>
+/**
+ * This component is the new version of the Connect App
+ * that leverages the new OAuth flow for authentication.
+ *
+ * It will eventually replace ./app.vue.
+ */
 import { GlButton } from '@gitlab/ui';
 import axios from '~/lib/utils/axios_utils';
 
@@ -23,7 +29,10 @@ export default {
     oauthConfig: { default: {} },
   },
   data() {
-    return { token: null, loading: false, user: null };
+    return {
+      token: null,
+      loading: false,
+    };
   },
   mounted() {
     window.addEventListener('message', this.eventListner);
@@ -55,16 +64,15 @@ export default {
 
       this.token = data.access_token;
       this.loading = false;
-      // Eipi: Instead of just loading the user (which we also would need to do, we could load the subscriptions
-      // and other info we need)
-      await this.poc();
+
+      await this.loadUser();
     },
-    // Eipi: This POC function is just to show that the token works!
-    async poc() {
+    async loadUser() {
       const { data } = await axios.get(`${window.origin}/api/v4/user`, {
         headers: { Authorization: `Bearer ${this.token}` },
       });
-      this.user = data;
+
+      this.$emit('sign-in', data);
     },
   },
 };
@@ -84,7 +92,6 @@ export default {
         Sign in to GitLab
       </gl-button>
       <pre v-else-if="user">Token: {{ token }}, User: {{ user.username }}</pre>
-      <!-- Eipi: Add the already existing APP component here! -->
     </div>
     <div class="gl-mt-7">
       <p>Note: this integration only works with accounts on GitLab.com (SaaS).</p>
