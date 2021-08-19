@@ -19,10 +19,10 @@ const updateSignInLinks = async () => {
 };
 
 async function initJiraConnectWithOAuth(el) {
-  const {
+  const { oauthMetadata } = el.dataset;
+  const { groups_path: groupsPath, subscriptions_path: subscriptionsPath } = JSON.parse(
     oauthMetadata,
-    jiraConnectMetadata: { groupsPath, subscriptionsPath, usersPath },
-  } = el.dataset;
+  );
   const store = createStore();
 
   await updateSignInLinks();
@@ -40,7 +40,6 @@ async function initJiraConnectWithOAuth(el) {
       oauthMetadata: JSON.parse(oauthMetadata),
       groupsPath,
       subscriptionsPath,
-      usersPath,
     },
     render(createElement) {
       return createElement(JiraConnectAppOauth);

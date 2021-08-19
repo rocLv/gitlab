@@ -1,5 +1,5 @@
 <script>
-import { GlButton, GlEmptyState, GlTable } from '@gitlab/ui';
+import { GlButton, GlEmptyState, GlTable, GlLoadingIcon } from '@gitlab/ui';
 import { isEmpty } from 'lodash';
 import { mapMutations } from 'vuex';
 import { fetchSubscriptions, removeSubscription } from '~/jira_connect/subscriptions/api';
@@ -13,8 +13,14 @@ export default {
     GlButton,
     GlEmptyState,
     GlTable,
+    GlLoadingIcon,
     GroupItemName,
     TimeagoTooltip,
+  },
+  inject: {
+    subscriptionsPath: {
+      default: '',
+    },
   },
   data() {
     return {
@@ -24,7 +30,7 @@ export default {
     };
   },
   mounted() {
-    fetchSubscriptions();
+    this.loadSubscriptions();
   },
   fields: [
     {
@@ -75,10 +81,11 @@ export default {
           this.loadingItem = null;
         });
     },
-    async fetchSubscriptions() {
+    async loadSubscriptions() {
       this.subscriptionsLoading = true;
-      const { subscriptions } = await fetchSubscriptions(this.subscriptionsPath);
-      this.subscriptions = subscriptions;
+      const subscriptionsData = await fetchSubscriptions(this.subscriptionsPath);
+
+      this.subscriptions = subscriptionsData.subscriptions;
       this.subscriptionsLoading = false;
     },
   },
