@@ -77,8 +77,9 @@ export default {
           category="primary"
           variant="info"
           class="gl-align-self-center"
-          >{{ s__('Integrations|Add namespace') }}</gl-button
         >
+          {{ s__('Integrations|Add namespace') }}
+        </gl-button>
         <gl-modal
           modal-id="add-namespace-modal"
           :title="s__('Integrations|Link namespaces')"

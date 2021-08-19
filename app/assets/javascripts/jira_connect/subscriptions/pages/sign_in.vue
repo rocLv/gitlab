@@ -7,6 +7,7 @@
  */
 import { GlButton } from '@gitlab/ui';
 import axios from '~/lib/utils/axios_utils';
+import { s__ } from '~/locale';
 
 const oauthWindowSize = 800;
 const oauthWindowOptions = [
@@ -44,7 +45,7 @@ export default {
     // All the event handling should happen in this component
     startOAuthFlow() {
       const { oauth_authorize_url } = this.oauthMetadata;
-      window.open(oauth_authorize_url, 'OAuth Login', oauthWindowOptions);
+      window.open(oauth_authorize_url, s__('Integrations|Sign in to GitLab'), oauthWindowOptions);
     },
     // All the event handling should happen in this component
     handleWindowMessage(event) {
@@ -79,22 +80,17 @@ export default {
 </script>
 <template>
   <div class="jira-connect-app-body gl-px-5 gl-text-center">
-    <h2>GitLab for Jira Configuration</h2>
-    <p>Sign in to GitLab.com to get started.</p>
+    <h2>{{ s__('JiraService|GitLab for Jira Configuration') }}</h2>
+    <p>{{ s__('JiraService|Sign in to GitLab.com to get started.') }}</p>
+
     <div class="gl-mt-7">
-      <gl-button
-        v-if="token === null"
-        icon="external-link"
-        variant="confirm"
-        :disabled="loading"
-        @click="startOAuthFlow"
-      >
-        Sign in to GitLab
+      <gl-button icon="external-link" variant="confirm" :loading="loading" @click="startOAuthFlow">
+        {{ s__('Integrations|Sign in to GitLab') }}
       </gl-button>
-      <pre v-else-if="user">Token: {{ token }}, User: {{ user.username }}</pre>
     </div>
-    <div class="gl-mt-7">
-      <p>Note: this integration only works with accounts on GitLab.com (SaaS).</p>
-    </div>
+
+    <p class="gl-mt-7">
+      {{ s__('JiraConnect|Note: this integration only works with accounts on GitLab.com (SaaS).') }}
+    </p>
   </div>
 </template>

@@ -2,7 +2,7 @@
   = link_to brand_header_logo, Gitlab.config.gitlab.url, target: '_blank', rel: 'noopener noreferrer'
 
 - if Feature.enabled?(:jira_connect_oauth)
-  .js-jira-connect-app-oauth{ data: { oauth_metadata: jira_connect_oauth_data.to_json } }
+  .js-jira-connect-app-oauth{ data: { oauth_metadata: jira_connect_oauth_data.to_json, jira_connect_metadata: jira_connect_app_data } }
 - else
   .jira-connect-user.gl-font-base
     - if current_user
