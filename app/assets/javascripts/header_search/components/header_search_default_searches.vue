@@ -7,11 +7,6 @@ export default {
   name: 'HeaderSearchDefaultDropdown',
   i18n: {
     allGitLab: __('All GitLab'),
-    issuesAssignedToMe: __('Issues assigned to me'),
-    issuesIveCreated: __("Issues I've created"),
-    mrAssignedToMe: __('Merge requests assigned to me'),
-    mrImReviewer: __("Merge requests that I'm a reviewer"),
-    mrIveCreated: __("Merge requests I've created"),
   },
   components: {
     GlDropdownSectionHeader,
@@ -19,7 +14,7 @@ export default {
   },
   computed: {
     ...mapState(['searchContext']),
-    ...mapGetters(['scopedIssuesPath', 'scopedMRPath']),
+    ...mapGetters(['scopedIssuesPath', 'scopedMRPath', 'defaultSearchOptions']),
     userName() {
       return gon.current_username;
     },
@@ -33,30 +28,6 @@ export default {
       }
 
       return this.$options.i18n.allGitLab;
-    },
-    defaultSearchOptions() {
-      return [
-        {
-          title: this.$options.i18n.issuesAssignedToMe,
-          url: `${this.scopedIssuesPath}/?assignee_username=${this.userName}`,
-        },
-        {
-          title: this.$options.i18n.issuesIveCreated,
-          url: `${this.scopedIssuesPath}/?author_username=${this.userName}`,
-        },
-        {
-          title: this.$options.i18n.mrAssignedToMe,
-          url: `${this.scopedMRPath}/?assignee_username=${this.userName}`,
-        },
-        {
-          title: this.$options.i18n.mrImReviewer,
-          url: `${this.scopedMRPath}/?reviewer_username=${this.userName}`,
-        },
-        {
-          title: this.$options.i18n.mrIveCreated,
-          url: `${this.scopedMRPath}/?author_username=${this.userName}`,
-        },
-      ];
     },
   },
 };

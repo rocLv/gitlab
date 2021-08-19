@@ -1,9 +1,10 @@
 <script>
 import { GlSearchBoxByType } from '@gitlab/ui';
 import { mapState, mapActions, mapGetters } from 'vuex';
-import { UP_KEY_CODE, DOWN_KEY_CODE, TAB_KEY_CODE } from '~/lib/utils/keycodes';
+import { TAB_KEY_CODE } from '~/lib/utils/keycodes';
 import { visitUrl } from '~/lib/utils/url_utility';
 import { __ } from '~/locale';
+import DropdownKeyboardNavigation from './dropdown_keyboard_navigation.vue';
 import HeaderSearchAutocompleteSearches from './header_search_autocomplete_searches.vue';
 import HeaderSearchDefaultSearches from './header_search_default_searches.vue';
 import HeaderSearchScopedSearches from './header_search_scoped_searches.vue';
@@ -15,6 +16,7 @@ export default {
   },
   components: {
     GlSearchBoxByType,
+    DropdownKeyboardNavigation,
     HeaderSearchDefaultSearches,
     HeaderSearchScopedSearches,
     HeaderSearchAutocompleteSearches,
@@ -27,7 +29,7 @@ export default {
   },
   computed: {
     ...mapState(['search']),
-    ...mapGetters(['searchQuery']),
+    ...mapGetters(['searchQuery', 'defaultSearchOptions', 'searchOptionsLength']),
     searchText: {
       get() {
         return this.search;
@@ -44,6 +46,21 @@ export default {
     },
     showDefaultSearches() {
       return !this.searchText;
+    },
+  },
+  watch: {
+    currentFocusIndex(idx, prevIdx) {
+      const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(
+        '.gl-new-dropdown-item > a',
+      );
+
+      if (!dropdownItemsEl) {
+        return;
+      }
+
+      // -1 Index is the search bar
+      dropdownItemsEl[prevIdx]?.classList.remove('gl-bg-gray-50!');
+      this.focusElement(dropdownItemsEl[idx]);
     },
   },
   beforeDestroy() {
@@ -69,60 +86,8 @@ export default {
       }
     },
     handleKeydown(event) {
-      if (event.keyCode === DOWN_KEY_CODE) {
-        // Prevents moving cursor on focused input
-        event.preventDefault();
-        event.stopPropagation();
-        this.handleArrowDown();
-      } else if (event.keyCode === UP_KEY_CODE) {
-        // Prevents moving cursor on focused input
-        event.preventDefault();
-        event.stopPropagation();
-        this.handleArrowUp();
-      } else if (event.keyCode === TAB_KEY_CODE) {
+      if (event.keyCode === TAB_KEY_CODE) {
         this.closeDropdown();
-      }
-    },
-    handleArrowDown() {
-      const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(
-        '.gl-new-dropdown-item > a',
-      );
-
-      if (!dropdownItemsEl) {
-        return;
-      }
-
-      // -1 Index is the search bar
-      if (this.currentFocusIndex >= 0) {
-        dropdownItemsEl[this.currentFocusIndex].classList.remove('gl-bg-gray-50!');
-      }
-
-      this.currentFocusIndex = Math.min(this.currentFocusIndex + 1, dropdownItemsEl.length - 1);
-      this.focusElement(dropdownItemsEl[this.currentFocusIndex]);
-    },
-    handleArrowUp() {
-      const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(
-        '.gl-new-dropdown-item > a',
-      );
-
-      if (!dropdownItemsEl) {
-        return;
-      }
-
-      // -1 Index is the search bar
-      if (this.currentFocusIndex >= 0) {
-        dropdownItemsEl[this.currentFocusIndex].classList.remove('gl-bg-gray-50!');
-      }
-
-      this.currentFocusIndex = Math.max(-1, this.currentFocusIndex - 1);
-
-      if (this.currentFocusIndex === -1) {
-        const searchBoxInputEl = this.$refs.searchBox.$el.querySelector('input');
-
-        searchBoxInputEl.focus();
-        searchBoxInputEl.removeAttribute('aria-activedescendant');
-      } else {
-        this.focusElement(dropdownItemsEl[this.currentFocusIndex]);
       }
     },
     focusElement(element) {
@@ -209,6 +174,7 @@ export default {
         ref="headerDropdown"
         class="header-search-dropdown-content gl-overflow-y-auto gl-pt-2 gl-pb-5"
       >
+        <dropdown-keyboard-navigation v-model="currentFocusIndex" :max="searchOptionsLength - 1" />
         <header-search-default-searches v-if="showDefaultSearches" />
         <template v-else>
           <header-search-scoped-searches />
