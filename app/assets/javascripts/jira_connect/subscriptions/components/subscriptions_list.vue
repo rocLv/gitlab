@@ -1,9 +1,8 @@
 <script>
-import { GlButton, GlEmptyState, GlTable } from '@gitlab/ui';
+import { GlButton, GlEmptyState, GlTable, GlLoadingIcon } from '@gitlab/ui';
 import { isEmpty } from 'lodash';
 import { mapMutations } from 'vuex';
-import { removeSubscription } from '~/jira_connect/subscriptions/api';
-import { reloadPage } from '~/jira_connect/subscriptions/utils';
+import { fetchSubscriptions, removeSubscription } from '~/jira_connect/subscriptions/api';
 import { __, s__ } from '~/locale';
 import TimeagoTooltip from '~/vue_shared/components/time_ago_tooltip.vue';
 import { SET_ALERT } from '../store/mutation_types';
@@ -14,18 +13,24 @@ export default {
     GlButton,
     GlEmptyState,
     GlTable,
+    GlLoadingIcon,
     GroupItemName,
     TimeagoTooltip,
   },
   inject: {
-    subscriptions: {
-      default: [],
+    subscriptionsPath: {
+      default: '',
     },
   },
   data() {
     return {
       loadingItem: null,
+      subscriptions: [],
+      subscriptionsLoading: true,
     };
+  },
+  mounted() {
+    this.loadSubscriptions();
   },
   fields: [
     {
@@ -66,7 +71,7 @@ export default {
 
       removeSubscription(item.unlink_path)
         .then(() => {
-          reloadPage();
+          this.$emit('');
         })
         .catch((error) => {
           this.setAlert({
@@ -76,14 +81,23 @@ export default {
           this.loadingItem = null;
         });
     },
+    async loadSubscriptions() {
+      this.subscriptionsLoading = true;
+      const subscriptionsData = await fetchSubscriptions(this.subscriptionsPath);
+
+      this.subscriptions = subscriptionsData.subscriptions;
+      this.subscriptionsLoading = false;
+    },
   },
 };
 </script>
 
 <template>
   <div>
+    <gl-loading-icon v-if="subscriptionsLoading" size="lg" />
+
     <gl-empty-state
-      v-if="isEmpty(subscriptions)"
+      v-else-if="isEmpty(subscriptions)"
       :title="$options.i18n.emptyTitle"
       :description="$options.i18n.emptyDescription"
     />
