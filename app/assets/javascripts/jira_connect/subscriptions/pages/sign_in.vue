@@ -8,7 +8,7 @@
 import { GlButton } from '@gitlab/ui';
 import axios from '~/lib/utils/axios_utils';
 import { s__ } from '~/locale';
-// import { setAuthorizationHeader } from '../api';
+import { setAuthorizationHeader } from '../api';
 
 const oauthWindowSize = 800;
 const oauthWindowOptions = [
@@ -62,7 +62,7 @@ export default {
 
       const code = event.data?.code;
       this.token = await this.getOAuthToken(code);
-      // setAuthorizationHeader(token);
+      setAuthorizationHeader(this.token);
 
       this.loading = false;
 

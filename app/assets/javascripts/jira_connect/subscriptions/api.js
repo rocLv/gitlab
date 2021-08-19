@@ -31,7 +31,13 @@ export const fetchGroups = async (groupsPath, { page, perPage, search }) => {
 };
 
 export const fetchSubscriptions = async (subscriptionsPath) => {
-  return axios.get(subscriptionsPath);
+  const jwt = await getJwt();
+
+  return axios.get(subscriptionsPath, {
+    params: {
+      jwt,
+    },
+  });
 };
 
 export const setAuthorizationHeader = (token) => {
