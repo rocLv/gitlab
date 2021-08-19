@@ -15,14 +15,24 @@ export default {
       type: Number,
       required: true,
     },
+    min: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    defaultIndex: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
   },
   watch: {
     max() {
-      this.$emit('change', 0);
+      this.$emit('change', this.defaultIndex);
     },
   },
   created() {
-    this.$emit('change', 0);
+    this.$emit('change', this.defaultIndex);
     document.addEventListener('keydown', this.handleKeydown);
   },
   beforeDestroy() {
@@ -47,7 +57,7 @@ export default {
         return;
       }
 
-      const nextIndex = Math.max(0, Math.min(this.index + val, this.max));
+      const nextIndex = Math.max(this.min, Math.min(this.index + val, this.max));
 
       if (nextIndex === this.index) {
         return;

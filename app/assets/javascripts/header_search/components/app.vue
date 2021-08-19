@@ -4,6 +4,7 @@ import { mapState, mapActions, mapGetters } from 'vuex';
 import { TAB_KEY_CODE } from '~/lib/utils/keycodes';
 import { visitUrl } from '~/lib/utils/url_utility';
 import { __ } from '~/locale';
+import { FIRST_DROPDOWN_INDEX, SEARCH_BOX_INDEX, DROPDOWN_SELECTOR } from '../constants';
 import DropdownKeyboardNavigation from './dropdown_keyboard_navigation.vue';
 import HeaderSearchAutocompleteSearches from './header_search_autocomplete_searches.vue';
 import HeaderSearchDefaultSearches from './header_search_default_searches.vue';
@@ -24,12 +25,12 @@ export default {
   data() {
     return {
       showDropdown: false,
-      currentFocusIndex: -1,
+      currentFocusIndex: SEARCH_BOX_INDEX,
     };
   },
   computed: {
     ...mapState(['search']),
-    ...mapGetters(['searchQuery', 'defaultSearchOptions', 'searchOptionsLength']),
+    ...mapGetters(['searchQuery', 'searchOptionsLength']),
     searchText: {
       get() {
         return this.search;
@@ -38,29 +39,38 @@ export default {
         this.setSearch(value);
       },
     },
-    userName() {
-      return gon.current_username;
-    },
     showSearchDropdown() {
-      return this.showDropdown && this.userName;
+      return this.showDropdown && gon?.current_username;
     },
     showDefaultSearches() {
       return !this.searchText;
     },
+    defaultIndex() {
+      if (this.showDefaultSearches) {
+        return SEARCH_BOX_INDEX;
+      }
+
+      return FIRST_DROPDOWN_INDEX;
+    },
   },
   watch: {
     currentFocusIndex(idx, prevIdx) {
-      const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(
-        '.gl-new-dropdown-item > a',
-      );
+      const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(DROPDOWN_SELECTOR);
+
+      const searchBoxInputEl = this.$refs.searchBox.$el.querySelector('input');
 
       if (!dropdownItemsEl) {
         return;
       }
 
-      // -1 Index is the search bar
       dropdownItemsEl[prevIdx]?.classList.remove('gl-bg-gray-50!');
-      this.focusElement(dropdownItemsEl[idx]);
+
+      if (idx === SEARCH_BOX_INDEX) {
+        searchBoxInputEl.focus();
+        searchBoxInputEl.removeAttribute('aria-activedescendant');
+      } else {
+        this.focusElement(dropdownItemsEl[idx]);
+      }
     },
   },
   beforeDestroy() {
@@ -86,6 +96,7 @@ export default {
       }
     },
     handleKeydown(event) {
+      // Otherwise the dropdown stays open when tab away from it.
       if (event.keyCode === TAB_KEY_CODE) {
         this.closeDropdown();
       }
@@ -96,7 +107,6 @@ export default {
       // Simulates :focus
       element.classList.add('gl-bg-gray-50!');
       // This ensures the items stays in the viewport if we arrow down past the overflow
-
       element.scrollIntoView(false);
       // This tells assistive technology what is focused in a menu
       searchBoxInputEl.setAttribute('aria-activedescendant', element.id);
@@ -106,7 +116,6 @@ export default {
         return;
       }
 
-      this.currentFocusIndex = -1;
       this.showDropdown = true;
       this.addDropdownEventListeners();
     },
@@ -124,10 +133,8 @@ export default {
         return null;
       }
 
-      if (this.currentFocusIndex >= 0) {
-        const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(
-          '.gl-new-dropdown-item > a',
-        );
+      if (this.currentFocusIndex >= FIRST_DROPDOWN_INDEX) {
+        const dropdownItemsEl = this.$refs.headerDropdown.querySelectorAll(DROPDOWN_SELECTOR);
 
         return dropdownItemsEl[this.currentFocusIndex].click();
       }
@@ -135,20 +142,14 @@ export default {
       return visitUrl(this.searchQuery);
     },
     getAutocompleteOptions() {
-      this.currentFocusIndex = -1;
-
       if (!this.searchText) {
         return;
       }
 
       this.fetchAutocompleteOptions();
-
-      this.$nextTick(() => {
-        // We focus the first element when a search term is present
-        this.handleArrowDown();
-      });
     },
   },
+  SEARCH_BOX_INDEX,
 };
 </script>
 
@@ -168,13 +169,15 @@ export default {
     />
     <div
       v-if="showSearchDropdown"
-      class="header-search-dropdown-menu dropdown-content-faded-mask gl-overflow-y-auto gl-absolute gl-left-0 gl-z-index-1 gl-w-full gl-bg-white gl-border-1 gl-rounded-base gl-border-solid gl-border-gray-200 gl-shadow-x0-y2-b4-s0"
+      class="header-search-dropdown-menu gl-overflow-y-auto gl-absolute gl-left-0 gl-z-index-1 gl-w-full gl-bg-white gl-border-1 gl-rounded-base gl-border-solid gl-border-gray-200 gl-shadow-x0-y2-b4-s0"
     >
-      <div
-        ref="headerDropdown"
-        class="header-search-dropdown-content gl-overflow-y-auto gl-pt-2 gl-pb-5"
-      >
-        <dropdown-keyboard-navigation v-model="currentFocusIndex" :max="searchOptionsLength - 1" />
+      <div ref="headerDropdown" class="header-search-dropdown-content gl-overflow-y-auto gl-py-2">
+        <dropdown-keyboard-navigation
+          v-model="currentFocusIndex"
+          :max="searchOptionsLength - 1"
+          :min="$options.SEARCH_BOX_INDEX"
+          :default-index="defaultIndex"
+        />
         <header-search-default-searches v-if="showDefaultSearches" />
         <template v-else>
           <header-search-scoped-searches />

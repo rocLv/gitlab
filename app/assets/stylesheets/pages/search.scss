@@ -318,7 +318,7 @@ input[type='checkbox']:hover {
 }
 
 .header-search-dropdown-content {
-  max-height: $dropdown-max-height - $dropdown-fade-mask-height;
+  max-height: $dropdown-max-height;
 }
 
 // Disable webkit input icons, link to solution: https://stackoverflow.com/questions/9421551/how-do-i-remove-all-default-webkit-search-field-styling

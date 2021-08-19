@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     ...mapState(['searchContext']),
-    ...mapGetters(['scopedIssuesPath', 'scopedMRPath', 'defaultSearchOptions']),
+    ...mapGetters(['defaultSearchOptions']),
     userName() {
       return gon.current_username;
     },
@@ -40,7 +40,7 @@ export default {
       v-for="(option, index) in defaultSearchOptions"
       :id="`default-${index}`"
       :key="index"
-      tabindex="0"
+      tabindex="-1"
       :href="option.url"
     >
       {{ option.title }}

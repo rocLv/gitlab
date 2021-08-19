@@ -1,46 +1,14 @@
 import { objectToQuery } from '~/lib/utils/url_utility';
-import { __ } from '~/locale';
-
-const MSG_ISSUES_ASSIGNED_TO_ME = __('Issues assigned to me');
-const MSG_ISSUES_IVE_CREATED = __("Issues I've created");
-const MSG_MR_ASSIGNED_TO_ME = __('Merge requests assigned to me');
-const MSG_MR_IM_REVIEWER = __("Merge requests that I'm a reviewer");
-const MSG_MR_IVE_CREATED = __("Merge requests I've created");
-
-export const searchOptionsLength = (state, getters) => {
-  if (!state.search) {
-    return getters.defaultSearchOptions.length;
-  }
-  // TODO!
-  return 0;
-};
-
-export const defaultSearchOptions = (state, { scopedIssuesPath, scopedMRPath }) => {
-  const userName = gon.current_username;
-
-  return [
-    {
-      title: MSG_ISSUES_ASSIGNED_TO_ME,
-      url: `${scopedIssuesPath}/?assignee_username=${userName}`,
-    },
-    {
-      title: MSG_ISSUES_IVE_CREATED,
-      url: `${scopedIssuesPath}/?author_username=${userName}`,
-    },
-    {
-      title: MSG_MR_ASSIGNED_TO_ME,
-      url: `${scopedMRPath}/?assignee_username=${userName}`,
-    },
-    {
-      title: MSG_MR_IM_REVIEWER,
-      url: `${scopedMRPath}/?reviewer_username=${userName}`,
-    },
-    {
-      title: MSG_MR_IVE_CREATED,
-      url: `${scopedMRPath}/?author_username=${userName}`,
-    },
-  ];
-};
+import {
+  MSG_ISSUES_ASSIGNED_TO_ME,
+  MSG_ISSUES_IVE_CREATED,
+  MSG_MR_ASSIGNED_TO_ME,
+  MSG_MR_IM_REVIEWER,
+  MSG_MR_IVE_CREATED,
+  MSG_IN_ALL_GITLAB,
+  MSG_IN_GROUP,
+  MSG_IN_PROJECT,
+} from '../constants';
 
 export const searchQuery = (state) => {
   const query = {
@@ -127,4 +95,86 @@ export const allUrl = (state) => {
   };
 
   return `${state.searchPath}?${objectToQuery(query)}`;
+};
+
+export const defaultSearchOptions = (state, getters) => {
+  const userName = gon.current_username;
+
+  return [
+    {
+      title: MSG_ISSUES_ASSIGNED_TO_ME,
+      url: `${getters.scopedIssuesPath}/?assignee_username=${userName}`,
+    },
+    {
+      title: MSG_ISSUES_IVE_CREATED,
+      url: `${getters.scopedIssuesPath}/?author_username=${userName}`,
+    },
+    {
+      title: MSG_MR_ASSIGNED_TO_ME,
+      url: `${getters.scopedMRPath}/?assignee_username=${userName}`,
+    },
+    {
+      title: MSG_MR_IM_REVIEWER,
+      url: `${getters.scopedMRPath}/?reviewer_username=${userName}`,
+    },
+    {
+      title: MSG_MR_IVE_CREATED,
+      url: `${getters.scopedMRPath}/?author_username=${userName}`,
+    },
+  ];
+};
+
+export const scopedSearchOptions = (state, getters) => {
+  const options = [];
+
+  if (state.searchContext.project) {
+    options.push({
+      scope: state.searchContext.project.name,
+      description: MSG_IN_PROJECT,
+      url: getters.projectUrl,
+    });
+  }
+
+  if (state.searchContext.group) {
+    options.push({
+      scope: state.searchContext.group.name,
+      description: MSG_IN_GROUP,
+      url: getters.groupUrl,
+    });
+  }
+
+  options.push({
+    description: MSG_IN_ALL_GITLAB,
+    url: getters.allUrl,
+  });
+
+  return options;
+};
+
+export const autocompleteSearchOptions = (state) => {
+  const groupedOptions = [];
+
+  state.autocompleteOptions.forEach((option) => {
+    const existingCategory = groupedOptions.find(({ category }) => category === option.category);
+
+    if (existingCategory) {
+      existingCategory.data.push(option);
+    } else {
+      groupedOptions.push({
+        category: option.category,
+        data: [option],
+      });
+    }
+  });
+
+  return groupedOptions;
+};
+
+export const searchOptionsLength = (state, getters) => {
+  if (!state.search) {
+    return getters.defaultSearchOptions.length;
+  }
+
+  // We use state.autocompleteOptions as that is the raw list of options and not grouped
+  return getters.scopedSearchOptions.length + state.autocompleteOptions.length;
 };

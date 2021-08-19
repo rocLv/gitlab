@@ -7,7 +7,7 @@ import {
   GlLoadingIcon,
   GlSafeHtmlDirective as SafeHtml,
 } from '@gitlab/ui';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import highlight from '~/lib/utils/highlight';
 
 const GROUPS = 'Groups';
@@ -26,27 +26,8 @@ export default {
     SafeHtml,
   },
   computed: {
-    ...mapState(['search', 'autocompleteOptions', 'loading']),
-    autocompleteSearchOptions() {
-      const groupedOptions = [];
-
-      this.autocompleteOptions.forEach((option) => {
-        const existingCategory = groupedOptions.find(
-          ({ category }) => category === option.category,
-        );
-
-        if (existingCategory) {
-          existingCategory.data.push(option);
-        } else {
-          groupedOptions.push({
-            category: option.category,
-            data: [option],
-          });
-        }
-      });
-
-      return groupedOptions;
-    },
+    ...mapState(['search', 'loading']),
+    ...mapGetters(['autocompleteSearchOptions']),
   },
   methods: {
     highlightedName(val) {
@@ -76,6 +57,7 @@ export default {
           v-for="(data, index) in option.data"
           :id="`autocomplete-${option.category}-${index}`"
           :key="index"
+          tabindex="-1"
           :href="data.url"
         >
           <div class="gl-display-flex gl-align-items-center">
