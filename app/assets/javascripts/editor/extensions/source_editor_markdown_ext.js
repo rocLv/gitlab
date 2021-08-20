@@ -76,6 +76,18 @@ export class EditorMarkdownExtension extends SourceEditorExtension {
     });
   }
 
+  updateDimensions() {
+    if (this.preview.shown) {
+      const parentEl = this.getDomNode().parentElement;
+      const parentWidth = parentEl.offsetWidth;
+      const { height } = this.getLayoutInfo();
+      const newWidth = parentWidth * EXTENSION_MARKDOWN_PREVIEW_PANEL_WIDTH;
+      this.layout({ width: newWidth, height });
+    } else {
+      this.layout();
+    }
+  }
+
   static togglePreviewLayout() {
     const { width, height } = this.getLayoutInfo();
     const newWidth = this.preview.shown

@@ -1,4 +1,3 @@
-import { debounce } from 'lodash';
 import { KeyCode, KeyMod, Range } from 'monaco-editor';
 import { EDITOR_TYPE_DIFF } from '~/editor/constants';
 import { SourceEditorExtension } from '~/editor/extensions/source_editor_extension_base';
@@ -10,8 +9,6 @@ const isDiffEditorType = (instance) => {
   return instance.getEditorType() === EDITOR_TYPE_DIFF;
 };
 
-export const UPDATE_DIMENSIONS_DELAY = 200;
-
 export class EditorWebIdeExtension extends SourceEditorExtension {
   constructor({ instance, modelManager, ...options } = {}) {
     super({
@@ -19,16 +16,9 @@ export class EditorWebIdeExtension extends SourceEditorExtension {
       ...options,
       modelManager,
       disposable: new Disposable(),
-      debouncedUpdate: debounce(() => {
-        instance.updateDimensions();
-      }, UPDATE_DIMENSIONS_DELAY),
     });
 
-    window.addEventListener('resize', instance.debouncedUpdate, false);
-
     instance.onDidDispose(() => {
-      window.removeEventListener('resize', instance.debouncedUpdate);
-
       // catch any potential errors with disposing the error
       // this is mainly for tests caused by elements not existing
       try {

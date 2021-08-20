@@ -1,6 +1,11 @@
+import { debounce } from 'lodash';
 import { Range } from 'monaco-editor';
 import { waitForCSSLoaded } from '~/helpers/startup_css_helper';
-import { ERROR_INSTANCE_REQUIRED_FOR_EXTENSION, EDITOR_TYPE_CODE } from '../constants';
+import {
+  ERROR_INSTANCE_REQUIRED_FOR_EXTENSION,
+  EDITOR_TYPE_CODE,
+  EDITOR_UPDATE_DIMENSIONS_DELAY,
+} from '../constants';
 
 const hashRegexp = new RegExp('#?L', 'g');
 
@@ -19,12 +24,23 @@ const createAnchor = (href) => {
 export class SourceEditorExtension {
   constructor({ instance, ...options } = {}) {
     if (instance) {
-      Object.assign(instance, options);
+      Object.assign(instance, options, {
+        updateDimensions: () => {
+          instance.layout();
+        },
+        debouncedLayoutUpdate: debounce(() => {
+          instance.updateDimensions();
+        }, EDITOR_UPDATE_DIMENSIONS_DELAY),
+      });
       SourceEditorExtension.highlightLines(instance);
       if (instance.getEditorType && instance.getEditorType() === EDITOR_TYPE_CODE) {
         SourceEditorExtension.setupLineLinking(instance);
       }
       SourceEditorExtension.deferRerender(instance);
+      window.addEventListener('resize', instance.debouncedLayoutUpdate, false);
+      instance.onDidDispose(() => {
+        window.removeEventListener('resize', instance.debouncedLayoutUpdate);
+      });
     } else if (Object.entries(options).length) {
       throw new Error(ERROR_INSTANCE_REQUIRED_FOR_EXTENSION);
     }
