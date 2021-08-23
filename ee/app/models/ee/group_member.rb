@@ -76,7 +76,7 @@ module EE
     end
 
     def execute_hooks_for(event)
-      return unless self.source.feature_available?(:group_webhooks)
+      return unless self.source.licensed_feature_available?(:group_webhooks)
       return unless GroupHook.where(group_id: self.source.self_and_ancestors).exists?
 
       run_after_commit do
