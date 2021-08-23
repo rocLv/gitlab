@@ -10,35 +10,35 @@ module EE
 
       with_scope :subject
       condition(:ldap_synced) { @subject.ldap_synced? }
-      condition(:epics_available) { @subject.feature_available?(:epics) }
-      condition(:iterations_available) { @subject.feature_available?(:iterations) }
-      condition(:subepics_available) { @subject.feature_available?(:subepics) }
+      condition(:epics_available) { @subject.licensed_feature_available?(:epics) }
+      condition(:iterations_available) { @subject.licensed_feature_available?(:iterations) }
+      condition(:subepics_available) { @subject.licensed_feature_available?(:subepics) }
       condition(:contribution_analytics_available) do
-        @subject.feature_available?(:contribution_analytics)
+        @subject.licensed_feature_available?(:contribution_analytics)
       end
 
       condition(:cycle_analytics_available) do
-        @subject.feature_available?(:cycle_analytics_for_groups)
+        @subject.licensed_feature_available?(:cycle_analytics_for_groups)
       end
 
       condition(:group_ci_cd_analytics_available) do
-        @subject.feature_available?(:group_ci_cd_analytics)
+        @subject.licensed_feature_available?(:group_ci_cd_analytics)
       end
 
       condition(:group_merge_request_analytics_available) do
-        @subject.feature_available?(:group_merge_request_analytics)
+        @subject.licensed_feature_available?(:group_merge_request_analytics)
       end
 
       condition(:group_repository_analytics_available) do
-        @subject.feature_available?(:group_repository_analytics)
+        @subject.licensed_feature_available?(:group_repository_analytics)
       end
 
       condition(:group_activity_analytics_available) do
-        @subject.feature_available?(:group_activity_analytics)
+        @subject.licensed_feature_available?(:group_activity_analytics)
       end
 
       condition(:group_devops_adoption_available) do
-        @subject.feature_available?(:group_level_devops_adoption)
+        @subject.licensed_feature_available?(:group_level_devops_adoption)
       end
 
       condition(:group_devops_adoption_enabled) do
@@ -46,11 +46,11 @@ module EE
       end
 
       condition(:dora4_analytics_available) do
-        @subject.feature_available?(:dora4_analytics)
+        @subject.licensed_feature_available?(:dora4_analytics)
       end
 
       condition(:group_membership_export_available) do
-        @subject.feature_available?(:export_user_permissions) && ::Feature.enabled?(:ff_group_membership_export, @subject, default_enabled: :yaml)
+        @subject.licensed_feature_available?(:export_user_permissions) && ::Feature.enabled?(:ff_group_membership_export, @subject, default_enabled: :yaml)
       end
 
       condition(:can_owners_manage_ldap, scope: :global) do
@@ -66,11 +66,11 @@ module EE
       end
 
       condition(:security_dashboard_enabled) do
-        @subject.feature_available?(:security_dashboard)
+        @subject.licensed_feature_available?(:security_dashboard)
       end
 
       condition(:prevent_group_forking_available) do
-        @subject.feature_available?(:group_forking_protection)
+        @subject.licensed_feature_available?(:group_forking_protection)
       end
 
       condition(:needs_new_sso_session) do
@@ -86,7 +86,7 @@ module EE
       end
 
       condition(:cluster_deployments_available) do
-        @subject.feature_available?(:cluster_deployments)
+        @subject.licensed_feature_available?(:cluster_deployments)
       end
 
       condition(:group_saml_config_enabled, scope: :global) do
@@ -94,7 +94,7 @@ module EE
       end
 
       condition(:group_saml_available, scope: :subject) do
-        !@subject.subgroup? && @subject.feature_available?(:group_saml)
+        !@subject.subgroup? && @subject.licensed_feature_available?(:group_saml)
       end
 
       condition(:group_saml_enabled, scope: :subject) do
@@ -106,19 +106,19 @@ module EE
       end
 
       condition(:commit_committer_check_available) do
-        @subject.feature_available?(:commit_committer_check)
+        @subject.licensed_feature_available?(:commit_committer_check)
       end
 
       condition(:reject_unsigned_commits_available) do
-        @subject.feature_available?(:reject_unsigned_commits)
+        @subject.licensed_feature_available?(:reject_unsigned_commits)
       end
 
       condition(:push_rules_available) do
-        @subject.feature_available?(:push_rules)
+        @subject.licensed_feature_available?(:push_rules)
       end
 
       condition(:group_merge_request_approval_settings_enabled) do
-        @subject.feature_available?(:group_merge_request_approval_settings) && @subject.root?
+        @subject.licensed_feature_available?(:group_merge_request_approval_settings) && @subject.root?
       end
 
       condition(:over_storage_limit, scope: :subject) { @subject.over_storage_limit? }
@@ -126,11 +126,11 @@ module EE
       condition(:eligible_for_trial, scope: :subject) { @subject.eligible_for_trial? }
 
       condition(:compliance_framework_available) do
-        @subject.feature_available?(:custom_compliance_frameworks)
+        @subject.licensed_feature_available?(:custom_compliance_frameworks)
       end
 
       condition(:group_level_compliance_pipeline_available) do
-        @subject.feature_available?(:evaluate_group_level_compliance_pipeline)
+        @subject.licensed_feature_available?(:evaluate_group_level_compliance_pipeline)
       end
 
       rule { public_group | logged_in_viewable }.policy do
@@ -325,7 +325,7 @@ module EE
       end
 
       desc "Group has wiki disabled"
-      condition(:wiki_disabled, score: 32) { !@subject.feature_available?(:group_wikis) }
+      condition(:wiki_disabled, score: 32) { !@subject.licensed_feature_available?(:group_wikis) }
 
       rule { wiki_disabled }.policy do
         prevent(*create_read_update_admin_destroy(:wiki))

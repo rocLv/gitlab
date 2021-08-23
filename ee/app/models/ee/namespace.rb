@@ -344,14 +344,14 @@ module EE
     end
 
     def store_security_reports_available?
-      feature_available?(:sast) ||
-      feature_available?(:secret_detection) ||
-      feature_available?(:dependency_scanning) ||
-      feature_available?(:container_scanning) ||
-      feature_available?(:cluster_image_scanning) ||
-      feature_available?(:dast) ||
-      feature_available?(:coverage_fuzzing) ||
-      feature_available?(:api_fuzzing)
+      licensed_feature_available?(:sast) ||
+      licensed_feature_available?(:secret_detection) ||
+      licensed_feature_available?(:dependency_scanning) ||
+      licensed_feature_available?(:container_scanning) ||
+      licensed_feature_available?(:cluster_image_scanning) ||
+      licensed_feature_available?(:dast) ||
+      licensed_feature_available?(:coverage_fuzzing) ||
+      licensed_feature_available?(:api_fuzzing)
     end
 
     def free_plan?
