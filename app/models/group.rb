@@ -740,7 +740,7 @@ class Group < Namespace
   end
 
   def feature_available?(feature, user = nil)
-    if Groups::Feature.available_features.include?(feature)
+    if GroupFeature.available_features.include?(feature)
       group_feature&.feature_available?(feature, user)
     else
       licensed_feature_available?(feature)
