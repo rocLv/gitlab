@@ -739,8 +739,12 @@ class Group < Namespace
     Timelog.in_group(self)
   end
 
-  def feature_available?(feature, user)
-    !!group_feature&.feature_available?(feature, user)
+  def feature_available?(feature, user = nil)
+    if Groups::Feature.available_features.include?(feature)
+      group_feature&.feature_available?(feature, user)
+    else
+      licensed_feature_available?(feature)
+    end
   end
 
   private
