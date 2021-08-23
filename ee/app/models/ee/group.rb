@@ -234,24 +234,24 @@ module EE
     end
 
     def saml_group_sync_available?
-      feature_available?(:group_saml_group_sync) && root_ancestor.saml_enabled?
+      licensed_feature_available?(:group_saml_group_sync) && root_ancestor.saml_enabled?
     end
 
     override :multiple_issue_boards_available?
     def multiple_issue_boards_available?
-      feature_available?(:multiple_group_issue_boards)
+      licensed_feature_available?(:multiple_group_issue_boards)
     end
 
     def multiple_iteration_cadences_available?
-      feature_available?(:multiple_iteration_cadences)
+      licensed_feature_available?(:multiple_iteration_cadences)
     end
 
     def group_project_template_available?
-      feature_available?(:group_project_templates)
+      licensed_feature_available?(:group_project_templates)
     end
 
     def scoped_variables_available?
-      feature_available?(:group_scoped_ci_variables)
+      licensed_feature_available?(:group_scoped_ci_variables)
     end
 
     def actual_size_limit
@@ -290,10 +290,10 @@ module EE
 
       # The license check would normally be the cheapest to perform, so would
       # come first. In this case, the method is carefully designed to perform
-      # no SQL at all, but `feature_available?` will cause an ApplicationSetting
+      # no SQL at all, but `licensed_feature_available?` will cause an ApplicationSetting
       # to be created if it doesn't already exist! This is mostly a problem in
       # the specs, but best avoided in any case.
-      return unless feature_available?(:custom_file_templates_for_namespace)
+      return unless licensed_feature_available?(:custom_file_templates_for_namespace)
 
       project
     end
@@ -319,16 +319,16 @@ module EE
 
     override :supports_events?
     def supports_events?
-      feature_available?(:epics)
+      licensed_feature_available?(:epics)
     end
 
     def marked_for_deletion?
       marked_for_deletion_on.present? &&
-        feature_available?(:adjourned_deletion_for_projects_and_groups)
+      licensed_feature_available?(:adjourned_deletion_for_projects_and_groups)
     end
 
     def self_or_ancestor_marked_for_deletion
-      return unless feature_available?(:adjourned_deletion_for_projects_and_groups)
+      return unless licensed_feature_available?(:adjourned_deletion_for_projects_and_groups)
 
       self_and_ancestors(hierarchy_order: :asc)
         .joins(:deletion_schedule).first
@@ -336,7 +336,7 @@ module EE
 
     override :adjourned_deletion?
     def adjourned_deletion?
-      feature_available?(:adjourned_deletion_for_projects_and_groups) &&
+      licensed_feature_available?(:adjourned_deletion_for_projects_and_groups) &&
         ::Gitlab::CurrentSettings.deletion_adjourned_period > 0
     end
 
@@ -401,7 +401,7 @@ module EE
     end
 
     def minimal_access_role_allowed?
-      feature_available?(:minimal_access_role) && !has_parent?
+      licensed_feature_available?(:minimal_access_role) && !has_parent?
     end
 
     override :member?
@@ -453,7 +453,7 @@ module EE
     def execute_hooks(data, hooks_scope)
       super
 
-      return unless feature_available?(:group_webhooks)
+      return unless licensed_feature_available?(:group_webhooks)
 
       self_and_ancestor_hooks = GroupHook.where(group_id: self_and_ancestors)
       self_and_ancestor_hooks.hooks_for(hooks_scope).each do |hook|
@@ -501,7 +501,7 @@ module EE
 
     def execute_subgroup_hooks(event)
       return unless subgroup?
-      return unless feature_available?(:group_webhooks)
+      return unless licensed_feature_available?(:group_webhooks)
 
       run_after_commit do
         data = ::Gitlab::HookData::SubgroupBuilder.new(self).build(event)
