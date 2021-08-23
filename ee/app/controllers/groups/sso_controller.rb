@@ -128,7 +128,7 @@ class Groups::SsoController < Groups::ApplicationController
   end
 
   def require_licensed_group!
-    route_not_found unless unauthenticated_group&.feature_available?(:group_saml)
+    route_not_found unless unauthenticated_group&.licensed_feature_available?(:group_saml)
   end
 
   def require_saml_provider!

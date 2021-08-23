@@ -40,13 +40,13 @@ module EE
       }
       base.validates :list_type,
         exclusion: { in: %w[assignee], message: -> (_object, _data) { _('Assignee lists not available with your current license') } },
-        unless: -> { board&.resource_parent&.feature_available?(:board_assignee_lists) }
+        unless: -> { board&.resource_parent&.licensed_feature_available?(:board_assignee_lists) }
       base.validates :list_type,
         exclusion: { in: %w[milestone], message: -> (_object, _data) { _('Milestone lists not available with your current license') } },
-        unless: -> { board&.resource_parent&.feature_available?(:board_milestone_lists) }
+        unless: -> { board&.resource_parent&.licensed_feature_available?(:board_milestone_lists) }
       base.validates :list_type,
         exclusion: { in: %w[iteration], message: -> (_object, _data) { _('Iteration lists not available with your current license') } },
-        unless: -> { board&.resource_parent&.feature_available?(:board_iteration_lists) }
+        unless: -> { board&.resource_parent&.licensed_feature_available?(:board_iteration_lists) }
     end
 
     def assignee=(user)
@@ -55,7 +55,7 @@ module EE
 
     def wip_limits_available?
       strong_memoize(:wip_limits_available) do
-        board.resource_parent.feature_available?(:wip_limits)
+        board.resource_parent.licensed_feature_available?(:wip_limits)
       end
     end
 

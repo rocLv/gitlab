@@ -1,4 +1,4 @@
-- show_label_epics_link = defined?(@group) && @group&.feature_available?(:epics)
+- show_label_epics_link = defined?(@group) && @group&.licensed_feature_available?(:epics)
 
 - if show_label_epics_link
   &middot;

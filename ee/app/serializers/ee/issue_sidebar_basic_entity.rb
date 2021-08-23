@@ -15,7 +15,7 @@ module EE
         end
 
         expose :epics do |issuable|
-          issuable.project&.group&.feature_available?(:epics)
+          issuable.project&.group&.licensed_feature_available?(:epics)
         end
       end
 

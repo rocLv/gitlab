@@ -58,7 +58,7 @@ module EE
       end
 
       def epics_available?
-        group&.feature_available?(:epics)
+        group&.licensed_feature_available?(:epics)
       end
 
       def group

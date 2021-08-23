@@ -25,7 +25,7 @@ module EE
 
       def epics_available?
         strong_memoize(:epics_available) do
-          project.group&.feature_available?(:epics)
+          project.group&.licensed_feature_available?(:epics)
         end
       end
     end

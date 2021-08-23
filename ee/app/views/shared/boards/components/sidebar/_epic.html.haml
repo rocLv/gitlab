@@ -1,4 +1,4 @@
-- return unless @group&.feature_available?(:epics) || @project&.group&.feature_available?(:epics)
+- return unless @group&.licensed_feature_available?(:epics) || @project&.group&.licensed_feature_available?(:epics)
 
 %sidebar-epics-select{ ":sidebar-store" => "issue",
   ":group-id": "#{@project&.group&.id || @group&.id}",

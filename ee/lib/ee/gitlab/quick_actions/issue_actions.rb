@@ -13,7 +13,7 @@ module EE
           types Issue
           condition do
             quick_action_target.supports_epic? &&
-              quick_action_target.project.group&.feature_available?(:epics) &&
+              quick_action_target.project.group&.licensed_feature_available?(:epics) &&
               current_user.can?(:"admin_#{quick_action_target.to_ability_name}", quick_action_target)
           end
           params '<&epic | group&epic | Epic URL>'
@@ -44,7 +44,7 @@ module EE
           condition do
             quick_action_target.persisted? &&
               quick_action_target.supports_epic? &&
-              quick_action_target.project.group&.feature_available?(:epics) &&
+              quick_action_target.project.group&.licensed_feature_available?(:epics) &&
               current_user.can?(:"admin_#{quick_action_target.to_ability_name}", quick_action_target)
           end
           command :remove_epic do
@@ -80,7 +80,7 @@ module EE
           condition do
             quick_action_target.supports_iterations? &&
               current_user.can?(:"admin_#{quick_action_target.to_ability_name}", project) &&
-              quick_action_target.project.group&.feature_available?(:iterations) &&
+              quick_action_target.project.group&.licensed_feature_available?(:iterations) &&
               find_iterations(project, state: 'opened').any?
           end
           parse_params do |iteration_param|
@@ -103,7 +103,7 @@ module EE
             quick_action_target.supports_iterations? &&
               quick_action_target.persisted? &&
               quick_action_target.sprint_id? &&
-              quick_action_target.project.group&.feature_available?(:iterations) &&
+              quick_action_target.project.group&.licensed_feature_available?(:iterations) &&
               current_user.can?(:"admin_#{quick_action_target.to_ability_name}", project)
           end
           command :remove_iteration do

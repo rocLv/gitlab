@@ -94,17 +94,15 @@ module EE
     def autocomplete_data_sources(object, noteable_type)
       return {} unless object && noteable_type
 
-      enabled_for_vulnerabilities = object.feature_available?(:security_dashboard)
-
       if object.is_a?(Group)
         {
           epics: epics_group_autocomplete_sources_path(object),
-          vulnerabilities: enabled_for_vulnerabilities ? vulnerabilities_group_autocomplete_sources_path(object) : nil
+          vulnerabilities: object.licensed_feature_available?(:security_dashboard) ? vulnerabilities_group_autocomplete_sources_path(object) : nil
         }.compact.merge(super)
       else
         {
-          epics: object.group&.feature_available?(:epics) ? epics_project_autocomplete_sources_path(object) : nil,
-          vulnerabilities: enabled_for_vulnerabilities ? vulnerabilities_project_autocomplete_sources_path(object) : nil
+          epics: object.group&.licensed_feature_available?(:epics) ? epics_project_autocomplete_sources_path(object) : nil,
+          vulnerabilities: object.feature_available?(:security_dashboard) ? vulnerabilities_project_autocomplete_sources_path(object) : nil
         }.compact.merge(super)
       end
     end
