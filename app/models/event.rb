@@ -384,8 +384,8 @@ class Event < ApplicationRecord
     {
       download_code: %i[push_action? commit_note?],
       read_project: %i[membership_changed? created_project_action?],
-      read_issue: %i[issue? issue_note?],
-      read_merge_request: %i[merge_request? merge_request_note?],
+      read_issue: %i[issue?],
+      read_merge_request: %i[merge_request?],
       read_snippet: %i[personal_snippet_note? project_snippet_note?],
       read_milestone: %i[milestone?],
       read_wiki: %i[wiki_page?],

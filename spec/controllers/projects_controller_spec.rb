@@ -1496,6 +1496,30 @@ RSpec.describe ProjectsController do
     end
   end
 
+  context 'GET activity.json' do
+    let_it_be(:public_project) { create(:project, :public) }
+    let_it_be(:event) { create(:event, :commented, project: public_project, target: create(:note, project: public_project)) }
+    let_it_be(:invisible_event) { create(:event, :commented, project: public_project, target: create(:note, :confidential, project: public_project)) }
+
+    it 'filters by calling event.visible_to_user?' do
+      expect(EventCollection).to receive_message_chain(:new, :to_a).and_return([event, invisible_event])
+      expect(event).to receive(:visible_to_user?).and_return(true)
+      expect(invisible_event).to receive(:visible_to_user?).and_return(false)
+
+      get :activity, format: :json, params: { id: public_project, namespace_id: public_project.namespace }
+
+      expect(response).to render_template("events/_events")
+      expect(assigns(:events)).to eq([event])
+    end
+
+    it 'filters by calling event.visible_to_user?' do
+      get :activity, format: :json, params: { id: public_project, namespace_id: public_project.namespace }
+
+      expect(response).to render_template("events/_events")
+      expect(assigns(:events)).to eq([event])
+    end
+  end
+
   describe 'GET resolve' do
     shared_examples 'resolvable endpoint' do
       it 'redirects to the project page' do
