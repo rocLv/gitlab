@@ -7,11 +7,7 @@ class GroupFeature < ApplicationRecord # rubocop:disable Gitlab/NamespacedClass
 
   set_available_features(FEATURES)
 
-  PRIVATE_FEATURES_MIN_ACCESS_LEVEL = {
-    merge_requests: Gitlab::Access::REPORTER,
-    metrics_dashboard: Gitlab::Access::REPORTER,
-    container_registry: Gitlab::Access::REPORTER
-  }.freeze
+  PRIVATE_FEATURES_MIN_ACCESS_LEVEL = {}.freeze
 
   class << self
     def required_minimum_access_level(feature)
@@ -58,7 +54,7 @@ class GroupFeature < ApplicationRecord # rubocop:disable Gitlab/NamespacedClass
     return unless user
     return true if user.can_read_all_resources?
 
-    project.team.member?(user, ProjectFeature.required_minimum_access_level(feature))
+    group.member?(user, GroupFeature.required_minimum_access_level(feature))
   end
 end
 
