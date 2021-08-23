@@ -9,7 +9,7 @@ module EE
     def prevent_forking_outside_group?
       saml_setting = root_ancestor.saml_provider&.prohibited_outer_forks?
 
-      return saml_setting unless namespace.feature_available?(:group_forking_protection)
+      return saml_setting unless namespace.licensed_feature_available?(:group_forking_protection)
 
       saml_setting || root_ancestor.namespace_settings&.prevent_forking_outside_group
     end

@@ -44,7 +44,7 @@ class NamespaceStatistics < ApplicationRecord
   private
 
   def group_wiki_available?
-    group? && namespace.feature_available?(:group_wikis)
+    group? && namespace.licensed_feature_available?(:group_wikis)
   end
 
   def update_root_storage_statistics

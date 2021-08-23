@@ -39,20 +39,20 @@ module EE
     def licensed_features
       # These features are available at both project- and group-level
       {
-        multiple_assignees_feature_available: current_board_parent.feature_available?(:multiple_issue_assignees).to_s,
-        weight_feature_available: current_board_parent.feature_available?(:issue_weights).to_s,
-        milestone_lists_available: current_board_parent.feature_available?(:board_milestone_lists).to_s,
-        assignee_lists_available: current_board_parent.feature_available?(:board_assignee_lists).to_s,
-        scoped_labels: current_board_parent.feature_available?(:scoped_labels)&.to_s
+        multiple_assignees_feature_available: current_board_parent.licensed_feature_available?(:multiple_issue_assignees).to_s,
+        weight_feature_available: current_board_parent.licensed_feature_available?(:issue_weights).to_s,
+        milestone_lists_available: current_board_parent.licensed_feature_available?(:board_milestone_lists).to_s,
+        assignee_lists_available: current_board_parent.licensed_feature_available?(:board_assignee_lists).to_s,
+        scoped_labels: current_board_parent.licensed_feature_available?(:scoped_labels)&.to_s
       }
     end
 
     def group_level_features
       {
-        iteration_lists_available: current_board_namespace.feature_available?(:board_iteration_lists).to_s,
-        epic_feature_available: current_board_namespace.feature_available?(:epics).to_s,
-        iteration_feature_available: current_board_namespace.feature_available?(:iterations).to_s,
-        sub_epics_feature_available: current_board_namespace.feature_available?(:subepics).to_s
+        iteration_lists_available: current_board_namespace.licensed_feature_available?(:board_iteration_lists).to_s,
+        epic_feature_available: current_board_namespace.licensed_feature_available?(:epics).to_s,
+        iteration_feature_available: current_board_namespace.licensed_feature_available?(:iterations).to_s,
+        sub_epics_feature_available: current_board_namespace.licensed_feature_available?(:subepics).to_s
       }
     end
     # rubocop:enable Metrics/AbcSize

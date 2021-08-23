@@ -215,7 +215,7 @@ class License < ApplicationRecord
 
   # Global features that cannot be restricted to only a subset of projects or namespaces.
   # Use `License.feature_available?(:feature)` to check if these features are available.
-  # For all other features, use `project.feature_available?` or `namespace.feature_available?` when possible.
+  # For all other features, use `project.feature_available?` or `namespace.licensed_feature_available?` when possible.
   GLOBAL_FEATURES = %i[
     admin_audit_log
     auditor_user
