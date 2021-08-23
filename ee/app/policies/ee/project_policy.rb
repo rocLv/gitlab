@@ -16,7 +16,7 @@ module EE
       condition(:iterations_available) { @subject.feature_available?(:iterations) }
 
       with_scope :subject
-      condition(:requirements_available) { @subject.feature_available?(:requirements) & access_allowed_to?(:requirements) }
+      condition(:requirements_available) { @subject.feature_available?(:requirements, @user) & @subject.licensed_feature_available?(:requirements) & access_allowed_to?(:requirements) }
 
       with_scope :subject
       condition(:quality_management_available) { @subject.feature_available?(:quality_management) }

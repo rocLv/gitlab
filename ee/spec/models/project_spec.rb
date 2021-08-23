@@ -1030,12 +1030,22 @@ RSpec.describe Project do
     end
 
     context 'when feature symbol is not included on Namespace features code' do
-      let(:feature) { :issues }
+      shared_examples 'checks project features' do
+        specify do
+          expect(project.project_feature).to receive(:feature_available?).with(feature, user)
 
-      it 'checks availability of licensed feature' do
-        expect(project.project_feature).to receive(:feature_available?).with(feature, user)
+          subject
+        end
+      end
 
-        subject
+      it_behaves_like 'checks project features' do
+        let(:feature) { :issues }
+      end
+
+      context 'checks for EE features' do
+        it_behaves_like 'checks project features' do
+          let(:feature) { ProjectFeature::EE_FEATURES.first }
+        end
       end
     end
   end

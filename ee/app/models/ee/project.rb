@@ -376,7 +376,7 @@ module EE
 
     override :feature_available?
     def feature_available?(feature, user = nil)
-      if ::ProjectFeature::FEATURES.include?(feature)
+      if ::ProjectFeature.available_features.include?(feature)
         super
       else
         licensed_feature_available?(feature, user)
