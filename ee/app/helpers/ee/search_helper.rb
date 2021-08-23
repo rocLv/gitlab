@@ -167,9 +167,13 @@ module EE
       # this filter for projects under personal namespaces
       return false if @project && @project.namespace.user?
 
-      context = @project.presence || @group.presence
+      result = if @project.presence
+                 @project.feature_available?(:iterations)
+               elsif @group.presence
+                 @group.licensed_feature_available?(:iterations)
+               end
 
-      context&.feature_available?(:iterations)
+      !!result
     end
 
     def gitlab_com_snippet_db_search?
