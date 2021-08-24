@@ -10,6 +10,20 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
+CREATE FUNCTION ci_job_artifacts_locked_from_ci_pipelines() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+UPDATE ci_job_artifacts SET locked = NEW.locked
+FROM ci_builds
+WHERE ci_builds.id = ci_job_artifacts.job_id
+  AND ci_builds.type = 'Ci::Build'
+  AND ci_builds.commit_id = NEW.id;
+RETURN NULL;
+
+END
+$$;
+
 CREATE FUNCTION integrations_set_type_new() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
@@ -10825,6 +10839,7 @@ CREATE TABLE ci_job_artifacts (
     file_location smallint,
     id bigint NOT NULL,
     job_id bigint NOT NULL,
+    locked smallint DEFAULT 1,
     CONSTRAINT check_27f0f6dbab CHECK ((file_store IS NOT NULL))
 );
 
@@ -26195,6 +26210,8 @@ ALTER INDEX product_analytics_events_experimental_pkey ATTACH PARTITION gitlab_p
 ALTER INDEX product_analytics_events_experimental_pkey ATTACH PARTITION gitlab_partitions_static.product_analytics_events_experimental_62_pkey;
 
 ALTER INDEX product_analytics_events_experimental_pkey ATTACH PARTITION gitlab_partitions_static.product_analytics_events_experimental_63_pkey;
+
+CREATE TRIGGER ci_job_artifacts_locked_from_ci_pipelines_update AFTER UPDATE ON ci_pipelines FOR EACH ROW EXECUTE FUNCTION ci_job_artifacts_locked_from_ci_pipelines();
 
 CREATE TRIGGER trigger_07c94931164e BEFORE INSERT OR UPDATE ON push_event_payloads FOR EACH ROW EXECUTE FUNCTION trigger_07c94931164e();
 

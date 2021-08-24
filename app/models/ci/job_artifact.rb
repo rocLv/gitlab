@@ -232,6 +232,10 @@ module Ci
       hashed_path: 2
     }
 
+    # `locked` is propogated by database trigger from Ci::Pipeline in order to
+    # clean up expired job artifacts in a performant way
+    enum locked: Ci::Pipeline.lockeds
+
     def validate_file_format!
       unless TYPE_AND_FORMAT_PAIRS[self.file_type&.to_sym] == self.file_format&.to_sym
         errors.add(:base, _('Invalid file format with specified file type'))
