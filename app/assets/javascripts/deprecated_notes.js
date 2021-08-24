@@ -1725,7 +1725,8 @@ export default class Notes {
       .post(`${formAction}?html=true`, formData)
       .then(({ data }) => {
         // Submission successful! render final note element
-        this.updateNote(data, $editingNote);
+        window.location.hash = data.id;
+        window.location.reload();
       })
       .catch(() => {
         // Submission failed, revert back to original note
