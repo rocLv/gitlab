@@ -10,12 +10,10 @@ RSpec.describe Ci::JobArtifacts::DestroyAllExpiredService, :clean_gitlab_redis_s
   describe '.execute' do
     subject { service.execute }
 
-    let_it_be(:artifact, refind: true) do
-      create(:ci_job_artifact, expire_at: 1.day.ago)
-    end
-
-    before(:all) do
-      artifact.job.pipeline.unlocked!
+    let(:artifact) do
+      create(:ci_job_artifact, expire_at: 1.day.ago).tap do |artifact|
+        artifact.job.pipeline.unlocked!
+      end
     end
 
     context 'when artifact is expired' do
