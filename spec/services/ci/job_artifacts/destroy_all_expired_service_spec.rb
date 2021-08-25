@@ -242,6 +242,8 @@ RSpec.describe Ci::JobArtifacts::DestroyAllExpiredService, :clean_gitlab_redis_s
         pipeline = create(:ci_pipeline, locked: :artifacts_locked)
         job = create(:ci_build, pipeline: pipeline)
         artifact.update!(job: job)
+        # Send an UPDATE to hit our trigger
+        pipeline.touch
       end
 
       it 'destroys no artifacts' do
