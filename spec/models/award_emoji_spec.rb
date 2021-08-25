@@ -198,7 +198,7 @@ RSpec.describe AwardEmoji do
       it_behaves_like 'updates upvotes_count'
     end
 
-    context 'on a merge requests' do
+    context 'on a merge request' do
       let_it_be(:awardable) { create(:merge_request) }
 
       it_behaves_like 'updates upvotes_count'
