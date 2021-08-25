@@ -9,9 +9,9 @@ module EE
 
     override :lock_and_update_upvotes_count
     def lock_and_update_upvotes_count
-      super
+      result = super
 
-      maintain_elasticsearch_update if maintaining_elasticsearch?
+      maintain_elasticsearch_update if result && maintaining_elasticsearch?
     end
   end
 end
