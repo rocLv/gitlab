@@ -9,10 +9,10 @@ module Packages
       CHANNEL = 'channel'
       INDEX_YAML_SUFFIX = "/#{CHANNEL}/index.yaml"
 
-      def initialize(project, project_id_param, package_files)
+      def initialize(project, project_id_param, packages)
         @project = project
         @project_id_param = project_id_param
-        @package_files = package_files
+        @packages = packages
       end
 
       def api_version
@@ -20,10 +20,10 @@ module Packages
       end
 
       def entries
-        files = @package_files.preload_helm_file_metadata
         result = Hash.new { |h, k| h[k] = [] }
 
-        files.find_each do |package_file|
+        # this .each is safe as we have max 300 objects
+        ::Packages::PackageFile.most_recent_for(@packages.select(:id)).preload_helm_file_metadata.each do |package_file|
           name = package_file.helm_metadata['name']
           result[name] << package_file.helm_metadata.merge({
             'created' => package_file.created_at.utc.strftime('%Y-%m-%dT%H:%M:%S.%NZ'),

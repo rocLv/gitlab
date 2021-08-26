@@ -114,6 +114,8 @@ class Packages::Package < ApplicationRecord
     joins(:conan_metadatum).where(packages_conan_metadata: { package_username: package_username })
   end
 
+  scope :with_helm_channel, ->(channel) { joins(package_files: :helm_file_metadatum).where(packages_helm_file_metadata: { channel: channel }) }
+
   scope :with_debian_codename, -> (codename) do
     debian
       .joins(:debian_distribution)

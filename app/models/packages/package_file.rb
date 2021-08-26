@@ -89,6 +89,21 @@ class Packages::PackageFile < ApplicationRecord
   skip_callback :commit, :after, :remove_previously_stored_file, if: :execute_move_in_object_storage?
   after_commit :move_in_object_storage, if: :execute_move_in_object_storage?
 
+  def self.most_recent_for(packages)
+    package_id_column = "#{quoted_table_name}.#{connection.quote_column_name('package_id')}"
+    created_at_column = "#{quoted_table_name}.#{connection.quote_column_name('created_at')}"
+    select_sql = "ROW_NUMBER() OVER (PARTITION BY #{package_id_column} ORDER BY #{created_at_column} DESC) as row_number, #{table_name}.*"
+    package_files_partition = select(select_sql).for_package_ids(packages.select(:id))
+
+    subquery_name = :partitioned_package_files_subquery
+    arel_table = Arel::Table.new(subquery_name)
+    col_names = column_names.map { |cn| "#{subquery_name}.#{connection.quote_column_name(cn)}" }
+
+    select(col_names.join(','))
+      .from(package_files_partition, subquery_name)
+      .where(arel_table[:row_number].eq(1))
+  end
+
   def download_path
     Gitlab::Routing.url_helpers.download_project_package_file_path(project, self)
   end
