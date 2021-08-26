@@ -16,15 +16,13 @@ class BackfillMergeRequestsUpvotesCount < ActiveRecord::Migration[6.1]
   end
 
   def up
-    scope = AwardEmoji.where(awardable_type: 'MergeRequest').where(name: 'thumbsup')
+    merge_request_award_emoji = AwardEmoji.where(awardable_type: 'MergeRequest').where(name: 'thumbsup').select(:awardable_id).distinct
+    merge_request_award_emoji.each_batch(of: BATCH_SIZE, column: :awardable_id) do |batch, index|
+      merge_request_ids = batch.pluck(:awardable_id)
+      delay = index * DELAY_INTERVAL
 
-    queue_background_migration_jobs_by_range_at_intervals(
-      scope,
-      MIGRATION,
-      DELAY_INTERVAL,
-      batch_size: BATCH_SIZE,
-      primary_column_name: :awardable_id
-    )
+      migrate_in(delay.seconds, MIGRATION, merge_request_ids)
+    end
   end
 
   def down
