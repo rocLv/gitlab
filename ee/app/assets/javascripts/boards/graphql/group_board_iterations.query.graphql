@@ -1,0 +1,15 @@
+query GroupBoardIterations($fullPath: ID!, $title: String) {
+  workspace: group(fullPath: $fullPath) {
+    iterations(includeAncestors: true, title: $title) {
+      nodes {
+        id
+        title
+        iterationCadence {
+          id
+          title
+          durationInWeeks
+        }
+      }
+    }
+  }
+}

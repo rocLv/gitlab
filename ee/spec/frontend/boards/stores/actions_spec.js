@@ -1106,7 +1106,7 @@ describe('addListNewEpic', () => {
 describe('fetchIterations', () => {
   const queryResponse = {
     data: {
-      group: {
+      workspace: {
         iterations: {
           nodes: mockMilestones,
         },
@@ -1116,7 +1116,7 @@ describe('fetchIterations', () => {
 
   const queryErrors = {
     data: {
-      group: {
+      workspace: {
         errors: ['You cannot view these iterations'],
         iterations: {},
       },

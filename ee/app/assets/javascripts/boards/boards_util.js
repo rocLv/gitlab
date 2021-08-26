@@ -2,7 +2,8 @@ import {
   FiltersInfo as FiltersInfoCE,
   formatIssueInput as formatIssueInputCe,
 } from '~/boards/boards_util';
-import { getIdFromGraphQLId } from '~/graphql_shared/utils';
+import { TYPE_ITERATION } from '~/graphql_shared/constants';
+import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
 import { objectToQuery, queryToObject } from '~/lib/utils/url_utility';
 import {
   EPIC_LANE_BASE_HEIGHT,
@@ -182,13 +183,18 @@ export function transformBoardConfig(boardConfig) {
     updateScopeObject('milestone_title', milestoneTitle);
   }
 
-  let { iterationTitle } = boardConfig;
-  if (boardConfig.iterationId === IterationIDs.NONE) {
-    iterationTitle = IterationFilterType.none;
+  const { iterationId } = boardConfig;
+  if (iterationId === IterationIDs.NONE) {
+    updateScopeObject('iteration_id', IterationFilterType.none);
+  } else if (iterationId === IterationIDs.CURRENT) {
+    updateScopeObject('iteration_id', IterationFilterType.current);
+  } else if (iterationId) {
+    updateScopeObject('iteration_id', convertToGraphQLId(TYPE_ITERATION, iterationId));
   }
 
-  if (iterationTitle) {
-    updateScopeObject('iteration_id', iterationTitle);
+  const { iterationCadenceId } = boardConfig;
+  if (iterationCadenceId) {
+    updateScopeObject('iteration_cadence_id', iterationCadenceId);
   }
 
   let { weight } = boardConfig;
@@ -250,6 +256,9 @@ export const FiltersInfo = {
       const valList = val.split('/');
       return valList[valList.length - 1].toUpperCase();
     },
+  },
+  iterationCadenceId: {
+    negatedSupport: false,
   },
   weight: {
     negatedSupport: true,

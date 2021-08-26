@@ -2,9 +2,11 @@
 import { mapGetters } from 'vuex';
 import { __ } from '~/locale';
 import { getIdFromGraphQLId } from '~/graphql_shared/utils';
+import glFeatureFlagMixin from '~/vue_shared/mixins/gl_feature_flags_mixin';
 import AssigneeSelect from './assignee_select.vue';
 import BoardScopeCurrentIteration from './board_scope_current_iteration.vue';
 import BoardLabelsSelect from './labels_select.vue';
+import BoardIterationSelect from './iteration_select.vue';
 import BoardMilestoneSelect from './milestone_select.vue';
 import BoardWeightSelect from './weight_select.vue';
 
@@ -12,10 +14,12 @@ export default {
   components: {
     AssigneeSelect,
     BoardLabelsSelect,
+    BoardIterationSelect,
     BoardMilestoneSelect,
     BoardScopeCurrentIteration,
     BoardWeightSelect,
   },
+  mixins: [glFeatureFlagMixin()],
   props: {
     collapseScope: {
       type: Boolean,
@@ -88,8 +92,15 @@ export default {
         @set-milestone="$emit('set-milestone', $event)"
       />
 
+      <board-iteration-select
+        v-if="isIssueBoard && glFeatures.iterationCadences"
+        :board="board"
+        :can-edit="canAdminBoard"
+        @set-iteration="$emit('set-iteration', $event)"
+      />
+
       <board-scope-current-iteration
-        v-if="isIssueBoard"
+        v-if="isIssueBoard && !glFeatures.iterationCadences"
         :can-admin-board="canAdminBoard"
         :iteration-id="iterationId"
         @set-iteration="$emit('set-iteration', $event)"

@@ -42,6 +42,7 @@ function mountBoardApp(el) {
       milestoneTitle: el.dataset.boardMilestoneTitle || '',
       iterationId: parseInt(el.dataset.boardIterationId, 10),
       iterationTitle: el.dataset.boardIterationTitle || '',
+      iterationCadenceId: el.dataset.iterationCadenceId || undefined,
       assigneeId: el.dataset.boardAssigneeId,
       assigneeUsername: el.dataset.boardAssigneeUsername,
       labels: el.dataset.labels ? JSON.parse(el.dataset.labels) : [],

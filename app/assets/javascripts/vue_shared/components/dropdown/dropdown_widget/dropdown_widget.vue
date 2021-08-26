@@ -1,21 +1,25 @@
 <script>
 import {
+  GlIcon,
   GlLoadingIcon,
   GlDropdown,
   GlDropdownForm,
   GlDropdownDivider,
   GlDropdownItem,
+  GlDropdownSectionHeader,
   GlSearchBoxByType,
 } from '@gitlab/ui';
 import { __ } from '~/locale';
 
 export default {
   components: {
+    GlIcon,
     GlLoadingIcon,
     GlDropdown,
     GlDropdownForm,
     GlDropdownDivider,
     GlDropdownItem,
+    GlDropdownSectionHeader,
     GlSearchBoxByType,
   },
   props: {
@@ -35,6 +39,11 @@ export default {
       default: () => [],
     },
     options: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    groupedOptions: {
       type: Array,
       required: false,
       default: () => [],
@@ -79,11 +88,7 @@ export default {
       if (Array.isArray(this.selected)) {
         return this.selected.some((label) => label.title === option.title);
       }
-      return (
-        this.selected &&
-        ((option.name && this.selected.name === option.name) ||
-          (option.title && this.selected.title === option.title))
-      );
+      return this.selected && option.id && this.selected.id === option.id;
     },
     showDropdown() {
       this.$refs.dropdown.show();
@@ -100,6 +105,9 @@ export default {
     secondaryText(option) {
       // TODO: this has some knowledge of the context where the component is used. We could later rework it.
       return option.username || null;
+    },
+    optionKey(option) {
+      return option.key ? option.key : option.id;
     },
   },
   i18n: {
@@ -154,7 +162,7 @@ export default {
           </template>
           <gl-dropdown-item
             v-for="option in options"
-            :key="option.id"
+            :key="optionKey(option)"
             :is-checked="isSelected(option)"
             :is-check-centered="true"
             :is-check-item="true"
@@ -167,6 +175,29 @@ export default {
               {{ option.title }}
             </slot>
           </gl-dropdown-item>
+          <template v-for="(optionGroup, index) in groupedOptions">
+            <gl-dropdown-divider v-if="index !== 0" :key="index" />
+            <gl-dropdown-section-header :key="optionGroup.id">
+              {{ optionGroup.title }}
+              <span v-if="optionGroup.secondaryText" class="gl-float-right gl-font-weight-normal">
+                <gl-icon name="clock" class="gl-mr-2" />
+                {{ optionGroup.secondaryText }}
+              </span>
+            </gl-dropdown-section-header>
+            <gl-dropdown-item
+              v-for="option in optionGroup.options"
+              :key="optionKey(option)"
+              :is-checked="isSelected(option)"
+              :is-check-centered="true"
+              :is-check-item="true"
+              data-testid="unselected-option"
+              @click="selectOption(option)"
+            >
+              <slot name="item" :item="option">
+                {{ option.title }}
+              </slot>
+            </gl-dropdown-item>
+          </template>
           <gl-dropdown-item v-if="noOptionsFound" class="gl-pl-6!">
             {{ $options.i18n.noMatchingResults }}
           </gl-dropdown-item>

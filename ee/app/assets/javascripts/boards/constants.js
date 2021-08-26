@@ -31,6 +31,7 @@ export const FilterFields = {
     'iterationId',
     'iterationTitle',
     'iterationWildcardId',
+    'iterationCadenceId',
   ],
   [issuableTypes.epic]: ['authorUsername', 'labelName', 'search', 'myReactionEmoji'],
 };
@@ -43,8 +44,28 @@ export const IterationFilterType = {
 
 export const IterationIDs = {
   NONE: 0,
+  ANY: -1,
   CURRENT: -4,
 };
+
+export const ANY_ITERATION = {
+  id: 'gid://gitlab/Iteration/-1',
+  title: s__('BoardScope|Any Iteration'),
+  iterationCadenceId: null,
+};
+
+export const NO_ITERATION = {
+  id: 'gid://gitlab/Iteration/0',
+  title: s__('BoardScope|No Iteration'),
+  iterationCadenceId: null,
+};
+
+export const CURRENT_ITERATION = {
+  id: 'gid://gitlab/Iteration/-4',
+  title: s__('BoardScope|Current Iteration'),
+};
+
+export const IterationsPreset = [ANY_ITERATION, NO_ITERATION];
 
 export const MilestoneFilterType = {
   any: 'Any',

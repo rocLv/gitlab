@@ -30,6 +30,7 @@ RSpec.describe 'Scoped issue boards', :js do
     end
 
     stub_licensed_features(scoped_issue_board: true)
+    stub_feature_flags(iteration_cadences: false)
   end
 
   context 'user with edit permissions' do

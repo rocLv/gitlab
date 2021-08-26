@@ -1,0 +1,15 @@
+query ProjectBoardIterations($fullPath: ID!, $title: String) {
+  workspace: project(fullPath: $fullPath) {
+    iterations(includeAncestors: true, title: $title) {
+      nodes {
+        id
+        title
+        iterationCadence {
+          id
+          title
+          durationInWeeks
+        }
+      }
+    }
+  }
+}
