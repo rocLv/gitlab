@@ -8,7 +8,6 @@ RSpec.describe BackfillMergeRequestsUpvotesCount, :migration do
   let_it_be(:award_emoji) { table(:award_emoji) }
   let_it_be(:namespace) { table(:namespaces).create!(name: 'name', path: 'path') }
   let_it_be(:project) { table(:projects).create!(namespace_id: namespace.id) }
-
   let_it_be(:merge_request_1) { merge_requests.create!(target_project_id: project.id, source_branch: 'branch_1', target_branch: 'master') }
   let_it_be(:merge_request_2) { merge_requests.create!(target_project_id: project.id, source_branch: 'branch_2', target_branch: 'master') }
   let_it_be(:merge_request_3) { merge_requests.create!(target_project_id: project.id, source_branch: 'branch_3', target_branch: 'master') }
