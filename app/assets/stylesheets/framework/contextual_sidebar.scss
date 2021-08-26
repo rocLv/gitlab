@@ -246,7 +246,9 @@
   transition: width $sidebar-transition-duration, left $sidebar-transition-duration;
   z-index: 600;
   width: $contextual-sidebar-width;
-  top: $header-height;
+  // Unitless zero values are not allowed in calc
+  // stylelint-disable-next-line length-zero-no-unit
+  top: calc(#{$header-height} + var(--system-header-height, 0px) + var(--performance-bar-height, 0px));
   background-color: $gray-50;
   transform: translate3d(0, 0, 0);
 

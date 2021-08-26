@@ -944,7 +944,9 @@ input {
   left: 0;
   z-index: 600;
   width: 220px;
-  top: 40px;
+  // Unitless zero values are not allowed in calc
+  // stylelint-disable-next-line length-zero-no-unit
+  top: calc(40px + var(--system-header-height, 0px) + var(--performance-bar-height, 0px));
   background-color: #303030;
   transform: translate3d(0, 0, 0);
 }
