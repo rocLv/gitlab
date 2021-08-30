@@ -16,7 +16,7 @@ class BackfillMergeRequestsUpvotesCount < ActiveRecord::Migration[6.1]
   end
 
   def up
-    merge_request_award_emoji = AwardEmoji.where(awardable_type: 'MergeRequest').where(name: 'thumbsup').select(:awardable_id).distinct
+    merge_request_award_emoji = AwardEmoji.where(awardable_type: 'MergeRequest').where(name: 'thumbsup')
     merge_request_award_emoji.each_batch(of: BATCH_SIZE, column: :awardable_id) do |batch, index|
       merge_request_ids = batch.pluck(:awardable_id)
       delay = index * DELAY_INTERVAL
