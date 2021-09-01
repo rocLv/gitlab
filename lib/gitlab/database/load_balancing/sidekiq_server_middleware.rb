@@ -57,16 +57,7 @@ module Gitlab
         end
 
         def get_wal_locations(job)
-          job['wal_locations'] || legacy_wal_location(job)
-        end
-
-        # Already scheduled jobs could still contain legacy database write location.
-        # TODO: remove this in the next iteration
-        # https://gitlab.com/gitlab-org/gitlab/-/issues/338213
-        def legacy_wal_location(job)
-          wal_location = job['database_write_location'] || job['database_replica_location']
-
-          { main: wal_location } if wal_location
+          job['wal_locations']
         end
 
         def load_balancing_available?(worker_class)
