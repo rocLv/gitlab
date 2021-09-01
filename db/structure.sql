@@ -26855,7 +26855,7 @@ CREATE UNIQUE INDEX taggings_idx ON taggings USING btree (tag_id, taggable_id, t
 
 CREATE UNIQUE INDEX term_agreements_unique_index ON term_agreements USING btree (user_id, term_id);
 
-CREATE INDEX tmp_idx_award_emoji_on_merge_requests_with_thumbsup ON award_emoji USING btree (awardable_id) WHERE (((awardable_type)::text = 'MergeRequest'::text) AND ((name)::text = 'thumbsup'::text));
+CREATE INDEX tmp_idx_award_emoji_on_merge_requests_with_thumbsup ON award_emoji USING btree (id, awardable_id) WHERE (((awardable_type)::text = 'MergeRequest'::text) AND ((name)::text = 'thumbsup'::text));
 
 CREATE INDEX tmp_idx_deduplicate_vulnerability_occurrences ON vulnerability_occurrences USING btree (project_id, report_type, location_fingerprint, primary_identifier_id, id);
 
