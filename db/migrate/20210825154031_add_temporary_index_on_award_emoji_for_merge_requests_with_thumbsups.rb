@@ -10,7 +10,7 @@ class AddTemporaryIndexOnAwardEmojiForMergeRequestsWithThumbsups < ActiveRecord:
 
   def up
     # this index is used in db/post_migrate/20210802151803_backfill_merge_requests_upvotes_count
-    add_concurrent_index :award_emoji, :awardable_id, where: INDEX_CONDITION, name: INDEX_NAME
+    add_concurrent_index :award_emoji, [:id, :awardable_id], where: INDEX_CONDITION, name: INDEX_NAME
   end
 
   def down

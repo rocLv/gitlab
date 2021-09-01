@@ -25,14 +25,14 @@ RSpec.describe BackfillMergeRequestsUpvotesCount, :migration do
 
   describe '#up' do
     it 'correctly schedules background migrations', :aggregate_failures do
-      stub_const("#{described_class}::BATCH_SIZE", 2)
+      stub_const("#{described_class}::BATCH_SIZE", 4)
 
       Sidekiq::Testing.fake! do
         freeze_time do
           migrate!
 
-          expect(described_class::MIGRATION).to be_scheduled_migration(merge_request_1.id, merge_request_2.id)
-          expect(described_class::MIGRATION).to be_scheduled_migration(merge_request_3.id, merge_request_5.id)
+          expect(described_class::MIGRATION).to be_scheduled_migration(award_emoji_1_1.id, award_emoji_2_1.id)
+          expect(described_class::MIGRATION).to be_scheduled_migration(award_emoji_2_2.id, award_emoji_5_2.id)
           expect(BackgroundMigrationWorker.jobs.size).to eq(2)
         end
       end
