@@ -10,21 +10,27 @@ RSpec.describe 'jira_connect/subscriptions/index.html.haml' do
     assign(:subscriptions, [])
   end
 
-  context 'when the user is signed in' do
-    it 'shows link to user profile' do
-      render
-
-      expect(rendered).to have_link(user.to_reference)
+  context 'when jira_connect_oauth feature flag is disabled' do
+    before do
+      stub_feature_flags(jira_connect_oauth: false)
     end
-  end
 
-  context 'when the user is not signed in' do
-    let(:user) { nil }
+    context 'when the user is signed in' do
+      it 'shows link to user profile' do
+        render
 
-    it 'shows "Sign in" link' do
-      render
+        expect(rendered).to have_link(user.to_reference)
+      end
+    end
 
-      expect(rendered).to have_link('Sign in to GitLab')
+    context 'when the user is not signed in' do
+      let(:user) { nil }
+
+      it 'shows "Sign in" link' do
+        render
+
+        expect(rendered).to have_link('Sign in to GitLab')
+      end
     end
   end
 end
