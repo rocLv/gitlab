@@ -32,7 +32,7 @@ module DesignManagement
     def init_collection
       return ::DesignManagement::Design.none unless can?(current_user, :read_design, issue)
 
-      issue.designs
+      issue.designs.without_deleted
     end
 
     # Returns all designs that existed at a particular design version,

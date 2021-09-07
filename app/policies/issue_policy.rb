@@ -39,7 +39,7 @@ class IssuePolicy < IssuablePolicy
   rule { ~can?(:read_issue) }.policy do
     prevent :read_design
     prevent :create_design
-    prevent :destroy_design
+    prevent :archive_design
   end
 
   rule { ~can?(:read_design) }.policy do

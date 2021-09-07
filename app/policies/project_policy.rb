@@ -381,7 +381,7 @@ class ProjectPolicy < BasePolicy
     enable :update_alert_management_alert
     enable :create_design
     enable :move_design
-    enable :destroy_design
+    enable :archive_design
     enable :read_terraform_state
     enable :read_pod_logs
     enable :read_feature_flag
@@ -632,7 +632,7 @@ class ProjectPolicy < BasePolicy
     prevent :read_design
     prevent :read_design_activity
     prevent :create_design
-    prevent :destroy_design
+    prevent :archive_design
     prevent :move_design
   end
 

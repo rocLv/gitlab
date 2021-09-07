@@ -13254,6 +13254,7 @@ CREATE TABLE design_management_designs (
     filename character varying NOT NULL,
     relative_position integer,
     iid integer,
+    deleted_at timestamp with time zone,
     CONSTRAINT check_07155e2715 CHECK ((char_length((filename)::text) <= 255)),
     CONSTRAINT check_cfb92df01a CHECK ((iid IS NOT NULL))
 );

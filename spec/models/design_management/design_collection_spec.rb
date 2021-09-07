@@ -146,9 +146,9 @@ RSpec.describe DesignManagement::DesignCollection do
       expect { query }.not_to exceed_query_limit(1)
     end
 
-    context 'some are deleted' do
+    context 'some are archived' do
       before do
-        delete_designs(*designs.sample(2))
+        archive_designs(*designs.sample(2))
       end
 
       it 'takes deletion into account' do

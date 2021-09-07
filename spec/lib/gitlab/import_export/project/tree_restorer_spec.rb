@@ -1013,7 +1013,7 @@ RSpec.describe Gitlab::ImportExport::Project::TreeRestorer do
         let(:issue) { project.issues.offset(index).first }
 
         where(:index, :design_filenames, :version_shas, :events, :author_emails) do
-          0 | %w[chirrido3.jpg jonathan_richman.jpg mariavontrap.jpeg] | %w[27702d08f5ee021ae938737f84e8fe7c38599e85 9358d1bac8ff300d3d2597adaa2572a20f7f8703 e1a4a501bcb42f291f84e5d04c8f927821542fb6] | %w[creation creation creation modification modification deletion] | %w[user_1@gitlabexample.com user_1@gitlabexample.com user_2@gitlabexample.com]
+          0 | %w[chirrido3.jpg jonathan_richman.jpg mariavontrap.jpeg] | %w[27702d08f5ee021ae938737f84e8fe7c38599e85 9358d1bac8ff300d3d2597adaa2572a20f7f8703 e1a4a501bcb42f291f84e5d04c8f927821542fb6] | %w[creation creation creation modification modification archival] | %w[user_1@gitlabexample.com user_1@gitlabexample.com user_2@gitlabexample.com]
           1 | ['1 (1).jpeg', '2099743.jpg', 'a screenshot (1).jpg', 'chirrido3.jpg'] | %w[73f871b4c8c1d65c62c460635e023179fb53abc4 8587e78ab6bda3bc820a9f014c3be4a21ad4fcc8 c9b5f067f3e892122a4b12b0a25a8089192f3ac8] | %w[creation creation creation creation modification] | %w[user_1@gitlabexample.com user_2@gitlabexample.com user_2@gitlabexample.com]
         end
 

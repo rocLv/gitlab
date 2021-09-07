@@ -66,8 +66,8 @@ RSpec.describe DesignManagement::DeleteDesignsService do
     context "when the feature is available" do
       let(:enabled) { true }
 
-      it 'is able to delete designs' do
-        expect(service.send(:can_delete_designs?)).to be true
+      it 'is able to archive designs' do
+        expect(service.send(:can_archive_designs?)).to be true
       end
 
       context 'no designs were passed' do

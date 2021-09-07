@@ -66,6 +66,7 @@ RSpec.describe SystemNotes::DesignManagementService do
         [
           [:creation],
           [:modification],
+          [:archival],
           [:deletion]
         ]
       end
@@ -92,6 +93,7 @@ RSpec.describe SystemNotes::DesignManagementService do
         [
           [:creation,     'designs_added',    'added'],
           [:modification, 'designs_modified', 'updated'],
+          [:archival,     'designs_removed',  'archived'],
           [:deletion,     'designs_removed',  'removed']
         ]
       end

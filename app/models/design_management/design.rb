@@ -44,6 +44,7 @@ module DesignManagement
     # Pre-fetching scope to include the data necessary to construct a
     # reference using `to_reference`.
     scope :for_reference, -> { includes(issue: [{ project: [:route, :namespace] }]) }
+    scope :without_deleted, -> { where(deleted_at: nil) }
 
     # A design can be uniquely identified by issue_id and filename
     # Takes one or more sets of composite IDs of the form:
@@ -78,7 +79,7 @@ module DesignManagement
     # As a query, we ascertain this by finding the last event prior to
     # (or equal to) the cut-off, and seeing whether that version was a deletion.
     scope :visible_at_version, -> (version) do
-      deletion = ::DesignManagement::Action.events[:deletion]
+      archival = ::DesignManagement::Action.events[:archival]
       designs = arel_table
       actions = ::DesignManagement::Action
         .most_recent.up_to_version(version)
@@ -87,7 +88,7 @@ module DesignManagement
       join = designs.join(actions)
         .on(actions[:design_id].eq(designs[:id]))
 
-      joins(join.join_sources).where(actions[:event].not_eq(deletion))
+      joins(join.join_sources).where(actions[:event].not_eq(archival))
     end
 
     scope :ordered, -> do

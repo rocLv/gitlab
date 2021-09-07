@@ -67,6 +67,8 @@ module SystemNotes
         { icon: 'designs_added', past_tense: 'added' }
       when DesignManagement::Action.events[:modification]
         { icon: 'designs_modified', past_tense: 'updated' }
+      when DesignManagement::Action.events[:archival]
+        { icon: 'designs_removed', past_tense: 'archived' }
       when DesignManagement::Action.events[:deletion]
         { icon: 'designs_removed', past_tense: 'removed' }
       else

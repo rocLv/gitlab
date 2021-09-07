@@ -99,7 +99,7 @@ class EventCreateService
     create_record_events(records, current_user)
   end
 
-  def destroy_designs(designs, current_user)
+  def archive_designs(designs, current_user)
     return [] unless designs.present?
 
     create_record_events(designs.zip([:destroyed].cycle), current_user)

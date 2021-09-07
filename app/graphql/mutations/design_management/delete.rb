@@ -18,7 +18,7 @@ module Mutations
             null: true, # null on error
             description: 'New version in which the designs are deleted.'
 
-      authorize :destroy_design
+      authorize :archive_design
 
       def resolve(project_path:, iid:, filenames:)
         issue = authorized_find!(project_path: project_path, iid: iid)

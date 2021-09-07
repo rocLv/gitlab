@@ -16,6 +16,7 @@
 design_attributes:
   - filename
   - relative_position
+  - deleted_at
 
 version_attributes:
   - author_id

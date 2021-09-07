@@ -344,7 +344,7 @@ RSpec.describe EventCreateService, :clean_gitlab_redis_cache, :clean_gitlab_redi
       let_it_be(:designs) { create_list(:design, 5) }
       let_it_be(:author) { create(:user) }
 
-      subject(:result) { service.destroy_designs(designs, author) }
+      subject(:result) { service.archive_designs(designs, author) }
 
       specify { expect { result }.to change { Event.count }.by(5) }
 

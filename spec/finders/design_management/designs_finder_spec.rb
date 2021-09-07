@@ -11,6 +11,7 @@ RSpec.describe DesignManagement::DesignsFinder do
   let_it_be(:design1) { create(:design, :with_file, issue: issue, versions_count: 1, relative_position: 3) }
   let_it_be(:design2) { create(:design, :with_file, issue: issue, versions_count: 1, relative_position: 2) }
   let_it_be(:design3) { create(:design, :with_file, issue: issue, versions_count: 1, relative_position: 1) }
+  let_it_be(:deleted_design) { create(:design, :with_file, issue: issue, versions_count: 1, relative_position: 1, deleted_at: Time.current) }
 
   let(:params) { {} }
 
@@ -70,8 +71,8 @@ RSpec.describe DesignManagement::DesignsFinder do
         end
 
         describe 'returning designs that existed at a particular given version' do
-          let(:all_versions) { issue.design_collection.versions.ordered }
-          let(:first_version) { all_versions.last }
+          let(:all_versions) { issue.design_collection.versions.ordered.reverse }
+          let(:first_version) { all_versions.first }
           let(:second_version) { all_versions.second }
 
           context 'when argument is the first version' do

@@ -12,10 +12,10 @@ module DesignManagement
     end
 
     def execute
-      return error('Forbidden!') unless can_delete_designs?
+      return error('Forbidden!') unless can_archive_designs?
 
-      version = delete_designs!
-      EventCreateService.new.destroy_designs(designs, current_user)
+      version = archive_designs!
+      EventCreateService.new.archive_designs(designs, current_user)
       Gitlab::UsageDataCounters::IssueActivityUniqueCounter.track_issue_designs_removed_action(author: current_user)
       TodosDestroyer::DestroyedDesignsWorker.perform_async(designs.map(&:id))
 
@@ -36,14 +36,14 @@ module DesignManagement
 
     attr_reader :designs
 
-    def delete_designs!
+    def archive_designs!
       DesignManagement::Version.with_lock(project.id, repository) do
         run_actions(build_actions)
       end
     end
 
-    def can_delete_designs?
-      Ability.allowed?(current_user, :destroy_design, issue)
+    def can_archive_designs?
+      Ability.allowed?(current_user, :archive_design, issue)
     end
 
     def build_actions

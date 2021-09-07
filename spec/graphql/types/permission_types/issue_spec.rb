@@ -6,7 +6,7 @@ RSpec.describe Types::PermissionTypes::Issue do
   it do
     expected_permissions = [
       :read_issue, :admin_issue, :update_issue, :reopen_issue,
-      :read_design, :create_design, :destroy_design,
+      :read_design, :create_design, :archive_design,
       :create_note
     ]
 
