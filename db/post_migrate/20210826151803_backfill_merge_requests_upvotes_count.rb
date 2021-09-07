@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class BackfillMergeRequestsUpvotesCount < ActiveRecord::Migration[6.1]
-  include Gitlab::Database::MigrationHelpers
-
+class BackfillMergeRequestsUpvotesCount < Gitlab::Database::Migration[1.0]
   disable_ddl_transaction!
 
   MIGRATION = 'BackfillUpvotesCountOnMergeRequests'

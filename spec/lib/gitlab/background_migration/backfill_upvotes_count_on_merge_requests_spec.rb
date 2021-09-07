@@ -25,8 +25,8 @@ RSpec.describe Gitlab::BackgroundMigration::BackfillUpvotesCountOnMergeRequests 
       add_upvotes(merge_request_4, :thumbsup, 4)
     end
 
-    it 'updates upvotes_count' do
-      subject.perform(merge_request_1.id, merge_request_4.id)
+    it 'updates upvotes_count', :aggregate_failures do
+      subject.perform(award_emoji.first.id, award_emoji.last.id)
 
       expect(merge_request_1.reload.upvotes_count).to eq(0)
       expect(merge_request_2.reload.upvotes_count).to eq(2)

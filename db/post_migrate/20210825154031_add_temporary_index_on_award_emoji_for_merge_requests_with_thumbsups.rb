@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class AddTemporaryIndexOnAwardEmojiForMergeRequestsWithThumbsups < ActiveRecord::Migration[6.1]
-  include Gitlab::Database::MigrationHelpers
-
+class AddTemporaryIndexOnAwardEmojiForMergeRequestsWithThumbsups < Gitlab::Database::Migration[1.0]
   INDEX_NAME = 'tmp_idx_award_emoji_on_merge_requests_with_thumbsup'
   INDEX_CONDITION = "awardable_type = 'MergeRequest' AND name = 'thumbsup'"
 
