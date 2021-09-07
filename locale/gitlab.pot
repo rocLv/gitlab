@@ -18290,6 +18290,9 @@ msgstr ""
 msgid "Integrations|Send notifications about project events to a Unify Circuit conversation. %{docs_link}"
 msgstr ""
 
+msgid "Integrations|Sign in to GitLab"
+msgstr ""
+
 msgid "Integrations|Sign in to add namespaces"
 msgstr ""
 
@@ -19191,6 +19194,9 @@ msgid "JiraConnect|Failed to create branch. Please try again."
 msgstr ""
 
 msgid "JiraConnect|New branch was successfully created."
+msgstr ""
+
+msgid "JiraConnect|Note: this integration only works with GitLab.com (SaaS)."
 msgstr ""
 
 msgid "JiraConnect|You can now close this window and return to Jira."
