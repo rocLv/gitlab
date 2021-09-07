@@ -5,8 +5,6 @@ import Vue from 'vue';
 import GlFeatureFlagsPlugin from '~/vue_shared/gl_feature_flags_plugin';
 import Translate from '~/vue_shared/translate';
 
-import JiraConnectAppLegacy from './pages/app_legacy.vue';
-import JiraConnectAppOauth from './pages/app_oauth.vue';
 import createStore from './store';
 import { getLocation, sizeToParent } from './utils';
 
@@ -30,12 +28,15 @@ async function initJiraConnectWithOAuth(el) {
 
   return new Vue({
     el,
+    components: {
+      JiraConnectAppOauth: () => import('./pages/app_oauth.vue'),
+    },
     store,
     provide: {
       oauthMetadata: JSON.parse(oauthMetadata),
     },
     render(createElement) {
-      return createElement(JiraConnectAppOauth);
+      return createElement('jira-connect-app-oauth');
     },
   });
 }
@@ -51,6 +52,9 @@ async function initJiraConnectLegacy(el) {
 
   return new Vue({
     el,
+    components: {
+      JiraConnectAppLegacy: () => import('./pages/app_legacy.vue'),
+    },
     store,
     provide: {
       groupsPath,
@@ -59,7 +63,7 @@ async function initJiraConnectLegacy(el) {
       usersPath,
     },
     render(createElement) {
-      return createElement(JiraConnectAppLegacy);
+      return createElement('jira-connect-app-legacy');
     },
   });
 }
