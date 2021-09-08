@@ -18,11 +18,11 @@ RSpec.describe Gitlab::BackgroundMigration::BackfillUpvotesCountOnMergeRequests 
 
   describe '#perform' do
     before do
-      add_upvotes(merge_request_1, :thumbsdown, 1)
-      add_upvotes(merge_request_2, :thumbsup, 2)
-      add_upvotes(merge_request_2, :thumbsdown, 1)
-      add_upvotes(merge_request_3, :thumbsup, 3)
-      add_upvotes(merge_request_4, :thumbsup, 4)
+      add_award_emoji(merge_request_1, :thumbsdown, 1)
+      add_award_emoji(merge_request_2, :thumbsup, 2)
+      add_award_emoji(merge_request_2, :thumbsdown, 1)
+      add_award_emoji(merge_request_3, :thumbsup, 3)
+      add_award_emoji(merge_request_4, :thumbsup, 4)
     end
 
     it 'updates upvotes_count', :aggregate_failures do
@@ -37,7 +37,7 @@ RSpec.describe Gitlab::BackgroundMigration::BackfillUpvotesCountOnMergeRequests 
 
   private
 
-  def add_upvotes(merge_request, name, count)
+  def add_award_emoji(merge_request, name, count)
     count.times do
       award_emoji.create!(
         name: name.to_s,

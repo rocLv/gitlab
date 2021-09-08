@@ -7,7 +7,9 @@ class AddTemporaryIndexOnAwardEmojiForMergeRequestsWithThumbsups < Gitlab::Datab
   disable_ddl_transaction!
 
   def up
-    # this index is used in db/post_migrate/20210802151803_backfill_merge_requests_upvotes_count
+    # this index is used in db/post_migrate/20210802151803_backfill_merge_requests_upvotes_count and in
+    # lib/gitlab/background_migration/backfill_upvotes_count_on_merge_requests.rb and will be removed only after the
+    # background migration jobs are complete
     add_concurrent_index :award_emoji, [:id, :awardable_id], where: INDEX_CONDITION, name: INDEX_NAME
   end
 
