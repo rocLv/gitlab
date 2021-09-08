@@ -42,21 +42,18 @@ export default {
     window.removeEventListener('message', this.handleWindowMessage);
   },
   methods: {
-    // All the event handling should happen in this component
     startOAuthFlow() {
       this.loading = true;
 
       const { oauth_authorize_url } = this.oauthMetadata;
       window.open(oauth_authorize_url, s__('Integrations|Sign in to GitLab'), oauthWindowOptions);
     },
-    // All the event handling should happen in this component
     async handleWindowMessage(event) {
       if (window.origin !== event.origin) {
         return;
       }
 
       const state = event.data?.state;
-      // The state should match the OAuth data
       if (state !== this.oauthMetadata.state) {
         return;
       }
@@ -68,7 +65,6 @@ export default {
 
       await this.loadUser();
     },
-    // This potentially should be moved to the store
     async getOAuthToken(code) {
       const { oauth_token_payload: oauthTokenPayload, oauth_token_url } = this.oauthMetadata;
       const { data } = await axios.post(oauth_token_url, { ...oauthTokenPayload, code });
