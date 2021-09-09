@@ -919,6 +919,7 @@ The DAST job does not require the project's repository to be present when runnin
 > - The option to select a branch was [introduced](https://gitlab.com/groups/gitlab-org/-/epics/4847) in GitLab 13.10.
 > - DAST branch selection [feature flag removed](https://gitlab.com/gitlab-org/gitlab/-/issues/322672) in GitLab 13.11.
 > - Auditing for DAST profile management was [introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/217872) in GitLab 14.1.
+> - Scheduling a scan was [introduced](https://gitlab.com/groups/gitlab-org/-/epics/4876) in GitLab 14.3.
 
 An on-demand DAST scan runs outside the DevOps life cycle. Changes in your repository don't trigger
 the scan. You must start it manually.
@@ -971,6 +972,32 @@ To run an on-demand scan, either:
    [run](#run-a-saved-on-demand-scan) it later.
 
 The on-demand DAST scan runs and the project's dashboard shows the results.
+
+### Scheduled on-demand scans
+
+A scan can be scheduled to run at a set date. The schedule can be recurring. The
+following repeating options are available:
+
+- Every day
+- Every week
+- Every month
+- Every 3 months
+- Every 6 months
+- Every year
+
+To schedule a scan, do the following:
+
+1. Fill the on-demand scans form as described in [Create and run an on-demand scan](#create-and-run-an-on-demand-scan).
+1. Check the **Schedule scan** checkbox.
+1. Select a timezone, date and time in the **Start time** section.
+1. Select an option in the **Repeats** dropdown.
+    - Select **Never** to run the scan once.
+    - Select any other option for a recurring scan.
+1. Save the scan.
+
+> **NOTE:**
+> Selecting **Save and run scan** results in the scan running immediately after it is saved _and_
+> at the scheduled time. To only run the scan at the scheduled time, select **Save scan**.
 
 ### List saved on-demand scans
 
