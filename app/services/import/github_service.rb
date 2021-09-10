@@ -14,7 +14,7 @@ module Import
       end
 
       unless authorized?
-        return error(_('This namespace has already been taken! Please choose another one.'), :unprocessable_entity)
+        return error('This namespace has already been taken! Please choose another one.', :unprocessable_entity)
       end
 
       if oversized?
@@ -117,7 +117,7 @@ module Import
         error: exception.response_body
       )
 
-      error(_('Import failed due to a GitHub error: %{original}') % { original: exception.response_body }, :unprocessable_entity)
+      error('Import failed due to a GitHub error: %{original}' % { original: exception.response_body }, :unprocessable_entity)
     end
   end
 end

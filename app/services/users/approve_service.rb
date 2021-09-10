@@ -7,8 +7,8 @@ module Users
     end
 
     def execute(user)
-      return error(_('You are not allowed to approve a user'), :forbidden) unless allowed?
-      return error(_('The user you are trying to approve is not pending approval'), :conflict) if user.active? || !approval_required?(user)
+      return error('You are not allowed to approve a user', :forbidden) unless allowed?
+      return error('The user you are trying to approve is not pending approval', :conflict) if user.active? || !approval_required?(user)
 
       if user.activate
         # Resends confirmation email if the user isn't confirmed yet.

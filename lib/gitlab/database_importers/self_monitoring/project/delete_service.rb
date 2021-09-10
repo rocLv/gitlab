@@ -23,7 +23,7 @@ module Gitlab
 
           def validate_self_monitoring_project_exists(result)
             unless project_created? || self_monitoring_project_id.present?
-              return error(_('Self monitoring project does not exist'))
+              return error('Self monitoring project does not exist')
             end
 
             success(result)
@@ -36,7 +36,7 @@ module Gitlab
               success(result)
             else
               log_error(self_monitoring_project.errors.full_messages)
-              error(_('Error deleting project. Check logs for error details.'))
+              error('Error deleting project. Check logs for error details.')
             end
           end
         end

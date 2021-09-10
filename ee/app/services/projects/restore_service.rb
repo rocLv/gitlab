@@ -3,7 +3,7 @@
 module Projects
   class RestoreService < BaseService
     def execute
-      return error(_('Project already deleted')) if project.pending_delete?
+      return error('Project already deleted') if project.pending_delete?
 
       result = ::Projects::UpdateService.new(
         project,

@@ -52,11 +52,11 @@ module AlertManagement
       end
 
       def error_no_permissions
-        error(_('You have insufficient permissions to create an HTTP integration for this project'))
+        error('You have insufficient permissions to create an HTTP integration for this project')
       end
 
       def error_multiple_integrations
-        error(_('Multiple HTTP integrations are not supported for this project'))
+        error('Multiple HTTP integrations are not supported for this project')
       end
 
       def error_in_create(integration)

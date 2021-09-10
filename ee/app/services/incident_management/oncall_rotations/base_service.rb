@@ -20,7 +20,7 @@ module IncidentManagement
       end
 
       def error_no_license
-        error(_('Your license does not support on-call rotations'))
+        error('Your license does not support on-call rotations')
       end
     end
   end

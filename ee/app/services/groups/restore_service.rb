@@ -3,8 +3,8 @@
 module Groups
   class RestoreService < Groups::BaseService
     def execute
-      return error(_('You are not authorized to perform this action')) unless can?(current_user, :admin_group, group)
-      return error(_('Group has not been marked for deletion')) unless group.marked_for_deletion?
+      return error('You are not authorized to perform this action') unless can?(current_user, :admin_group, group)
+      return error('Group has not been marked for deletion') unless group.marked_for_deletion?
 
       result = remove_deletion_schedule
 
@@ -23,7 +23,7 @@ module Groups
       if deletion_schedule.destroy
         success
       else
-        error(_('Could not restore the group'))
+        error('Could not restore the group')
       end
     end
 

@@ -33,7 +33,7 @@ module Gitlab
             return success if application_settings
 
             log_error('No application_settings found')
-            error(_('No application_settings found'))
+            error('No application_settings found')
           end
 
           def create_group(result)
@@ -62,7 +62,7 @@ module Gitlab
               success(result)
             else
               log_error("Could not create instance administration project. Errors: %{errors}" % { errors: result[:project].errors.full_messages })
-              error(_('Could not create project'))
+              error('Could not create project')
             end
           end
 
@@ -86,7 +86,7 @@ module Gitlab
               success(result)
             else
               log_error("Could not save instance administration project ID, errors: %{errors}" % { errors: application_settings.errors.full_messages })
-              error(_('Could not save project ID'))
+              error('Could not save project ID')
             end
           end
 
@@ -99,7 +99,7 @@ module Gitlab
               success(result)
             else
               log_error("Could not create environment for the Self monitoring project. Errors: %{errors}" % { errors: environment.errors.full_messages })
-              error(_('Could not create environment'))
+              error('Could not create environment')
             end
           end
 
@@ -111,7 +111,7 @@ module Gitlab
 
             unless prometheus.update(prometheus_integration_attributes)
               log_error('Could not save prometheus manual configuration for self-monitoring project. Errors: %{errors}' % { errors: prometheus.errors.full_messages })
-              return error(_('Could not save prometheus manual configuration'))
+              return error('Could not save prometheus manual configuration')
             end
 
             success(result)

@@ -9,9 +9,9 @@ module Security
         return success if res
 
       rescue ActiveRecord::RecordNotFound => _
-        error(_('Policy project doesn\'t exist'))
+        error('Policy project doesn\'t exist')
       rescue ActiveRecord::RecordInvalid => _
-        error(_('Couldn\'t assign policy to project'))
+        error('Couldn\'t assign policy to project')
       end
 
       private

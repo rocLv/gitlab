@@ -66,11 +66,11 @@ module AlertManagement
     end
 
     def error_issue_already_exists
-      error(_('An issue already exists'))
+      error('An issue already exists')
     end
 
     def error_no_permissions
-      error(_('You have no permissions'))
+      error('You have no permissions')
     end
 
     def alert_presenter

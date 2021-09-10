@@ -39,11 +39,11 @@ module AlertManagement
         end
 
         def error_no_permissions
-          error(_('You have insufficient permissions to create a Todo for this alert'))
+          error('You have insufficient permissions to create a Todo for this alert')
         end
 
         def error_existing_todo
-          error(_('You already have pending todo for this alert'))
+          error('You already have pending todo for this alert')
         end
       end
     end

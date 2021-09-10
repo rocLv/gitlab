@@ -89,7 +89,7 @@ module Import
 
     def log_and_return_error(message, error_type)
       log_error(message)
-      error(_(message), error_type)
+      error(message, error_type)
     end
 
     def log_error(message)

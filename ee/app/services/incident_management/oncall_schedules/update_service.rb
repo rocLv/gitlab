@@ -69,7 +69,7 @@ module IncidentManagement
       end
 
       def error_no_permissions
-        error(_('You have insufficient permissions to update an on-call schedule for this project'))
+        error('You have insufficient permissions to update an on-call schedule for this project')
       end
     end
   end

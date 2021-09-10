@@ -541,9 +541,6 @@ msgstr ""
 msgid "%{criticalStart}%{critical} Critical%{criticalEnd} %{highStart}%{high} High%{highEnd} and %{otherStart}%{otherMessage}%{otherEnd}"
 msgstr ""
 
-msgid "%{dashboard_path} could not be found."
-msgstr ""
-
 msgid "%{days} days until tags are automatically removed"
 msgstr ""
 
@@ -716,9 +713,6 @@ msgid "%{listToShow}, and %{awardsListLength} more"
 msgstr ""
 
 msgid "%{location} is missing required keys: %{keys}"
-msgstr ""
-
-msgid "%{lock_path} is locked by GitLab User %{lock_user_id}"
 msgstr ""
 
 msgid "%{markdownDocsLinkStart}Markdown%{markdownDocsLinkEnd} and %{quickActionsDocsLinkStart}quick actions%{quickActionsDocsLinkEnd} are supported"
@@ -1448,9 +1442,6 @@ msgid "A file has been changed."
 msgstr ""
 
 msgid "A file was not found."
-msgstr ""
-
-msgid "A file with '%{file_name}' already exists in %{branch} branch"
 msgstr ""
 
 msgid "A group is a collection of several projects"
@@ -3856,9 +3847,6 @@ msgstr ""
 msgid "An instance-level serverless domain already exists."
 msgstr ""
 
-msgid "An issue already exists"
-msgstr ""
-
 msgid "An unauthenticated user"
 msgstr ""
 
@@ -6159,12 +6147,6 @@ msgstr ""
 msgid "Canary"
 msgstr ""
 
-msgid "Canary Ingress does not exist in the environment."
-msgstr ""
-
-msgid "Canary weight must be specified and valid range (0..100)."
-msgstr ""
-
 msgid "CanaryIngress|%{boldStart}Canary:%{boldEnd} %{canary}"
 msgstr ""
 
@@ -7151,9 +7133,6 @@ msgid "Cluster Health"
 msgstr ""
 
 msgid "Cluster cache cleared."
-msgstr ""
-
-msgid "Cluster does not exist"
 msgstr ""
 
 msgid "Cluster is required for Stages::ClusterEndpointInserter"
@@ -8670,12 +8649,6 @@ msgstr ""
 msgid "Container Scanning"
 msgstr ""
 
-msgid "Container does not exist"
-msgstr ""
-
-msgid "Container must be a project or a group."
-msgstr ""
-
 msgid "Container registry images"
 msgstr ""
 
@@ -9279,9 +9252,6 @@ msgstr ""
 msgid "CorpusMnagement|New corpus"
 msgstr ""
 
-msgid "Could not add admins as members"
-msgstr ""
-
 msgid "Could not apply %{name} command."
 msgstr ""
 
@@ -9309,16 +9279,7 @@ msgstr ""
 msgid "Could not create Wiki Repository at this time. Please try again later."
 msgstr ""
 
-msgid "Could not create environment"
-msgstr ""
-
-msgid "Could not create group"
-msgstr ""
-
 msgid "Could not create issue"
-msgstr ""
-
-msgid "Could not create project"
 msgstr ""
 
 msgid "Could not create wiki page"
@@ -9351,16 +9312,7 @@ msgstr ""
 msgid "Could not load usage counts. Please refresh the page to try again."
 msgstr ""
 
-msgid "Could not remove %{user} from %{group}. Cannot remove last group owner."
-msgstr ""
-
-msgid "Could not remove %{user} from %{group}. User is not a group member."
-msgstr ""
-
 msgid "Could not remove the trigger."
-msgstr ""
-
-msgid "Could not restore the group"
 msgstr ""
 
 msgid "Could not revoke impersonation token %{token_name}."
@@ -9372,15 +9324,6 @@ msgstr ""
 msgid "Could not revoke project access token %{project_access_token_name}."
 msgstr ""
 
-msgid "Could not save group ID"
-msgstr ""
-
-msgid "Could not save project ID"
-msgstr ""
-
-msgid "Could not save prometheus manual configuration"
-msgstr ""
-
 msgid "Could not update the LDAP settings"
 msgstr ""
 
@@ -9388,9 +9331,6 @@ msgid "Could not update wiki page"
 msgstr ""
 
 msgid "Could not upload your designs as one or more files uploaded are not supported."
-msgstr ""
-
-msgid "Couldn't assign policy to project"
 msgstr ""
 
 msgid "Coverage"
@@ -10639,9 +10579,6 @@ msgid "Date picker"
 msgstr ""
 
 msgid "Date range"
-msgstr ""
-
-msgid "Date range must be shorter than %{max_range} days."
 msgstr ""
 
 msgid "Day of month"
@@ -12274,9 +12211,6 @@ msgstr ""
 msgid "Elasticsearch reindexing was not started: %{errors}"
 msgstr ""
 
-msgid "Elasticsearch returned status code: %{status_code}"
-msgstr ""
-
 msgid "Elasticsearch zero-downtime reindexing"
 msgstr ""
 
@@ -13153,9 +13087,6 @@ msgstr ""
 msgid "Error deleting %{issuableType}"
 msgstr ""
 
-msgid "Error deleting project. Check logs for error details."
-msgstr ""
-
 msgid "Error fetching burnup chart data"
 msgstr ""
 
@@ -13379,12 +13310,6 @@ msgid "Escalation Policies"
 msgstr ""
 
 msgid "Escalation policies"
-msgstr ""
-
-msgid "Escalation policies may not have more than %{rule_count} rules"
-msgstr ""
-
-msgid "Escalation policies must have at least one rule"
 msgstr ""
 
 msgid "EscalationPolicies|+ Add an additional rule"
@@ -13818,15 +13743,6 @@ msgstr ""
 msgid "Failed to assign a user because no user was found."
 msgstr ""
 
-msgid "Failed to cancel auto stop because failed to update the environment."
-msgstr ""
-
-msgid "Failed to cancel auto stop because the environment is not set as auto stop."
-msgstr ""
-
-msgid "Failed to cancel auto stop because you do not have permission to update the environment."
-msgstr ""
-
 msgid "Failed to change the owner"
 msgstr ""
 
@@ -14032,9 +13948,6 @@ msgid "Failed to update framework"
 msgstr ""
 
 msgid "Failed to update issue status"
-msgstr ""
-
-msgid "Failed to update the Canary Ingress."
 msgstr ""
 
 msgid "Failed to update."
@@ -15853,12 +15766,6 @@ msgstr ""
 msgid "Group export started. A download link will be sent by email and made available on this page."
 msgstr ""
 
-msgid "Group has been already marked for deletion"
-msgstr ""
-
-msgid "Group has not been marked for deletion"
-msgstr ""
-
 msgid "Group import could not be scheduled"
 msgstr ""
 
@@ -17002,9 +16909,6 @@ msgid "Import an exported GitLab project"
 msgstr ""
 
 msgid "Import and export rate limits"
-msgstr ""
-
-msgid "Import failed due to a GitHub error: %{original}"
 msgstr ""
 
 msgid "Import from"
@@ -18226,15 +18130,6 @@ msgstr ""
 msgid "Invalid URL"
 msgstr ""
 
-msgid "Invalid container_name"
-msgstr ""
-
-msgid "Invalid cursor parameter"
-msgstr ""
-
-msgid "Invalid cursor value provided"
-msgstr ""
-
 msgid "Invalid date"
 msgstr ""
 
@@ -18274,9 +18169,6 @@ msgstr ""
 msgid "Invalid pin code"
 msgstr ""
 
-msgid "Invalid pod_name"
-msgstr ""
-
 msgid "Invalid policy type"
 msgstr ""
 
@@ -18289,13 +18181,7 @@ msgstr ""
 msgid "Invalid repository path"
 msgstr ""
 
-msgid "Invalid search parameter"
-msgstr ""
-
 msgid "Invalid server response"
-msgstr ""
-
-msgid "Invalid start or end time format"
 msgstr ""
 
 msgid "Invalid status"
@@ -19504,9 +19390,6 @@ msgstr ""
 msgid "Kubernetes"
 msgstr ""
 
-msgid "Kubernetes API returned status code: %{error_code}"
-msgstr ""
-
 msgid "Kubernetes Cluster"
 msgstr ""
 
@@ -20322,9 +20205,6 @@ msgid "Lock %{issuableDisplayName}"
 msgstr ""
 
 msgid "Lock memberships to LDAP synchronization"
-msgstr ""
-
-msgid "Lock not found"
 msgstr ""
 
 msgid "Lock the discussion"
@@ -22035,9 +21915,6 @@ msgstr ""
 msgid "Multi-project Runners cannot be removed"
 msgstr ""
 
-msgid "Multiple HTTP integrations are not supported for this project"
-msgstr ""
-
 msgid "Multiple IP address ranges are supported."
 msgstr ""
 
@@ -22096,9 +21973,6 @@ msgid "Namespace"
 msgstr ""
 
 msgid "Namespace ID:"
-msgstr ""
-
-msgid "Namespace is empty"
 msgstr ""
 
 msgid "Namespace:"
@@ -22621,13 +22495,7 @@ msgstr ""
 msgid "No Tag"
 msgstr ""
 
-msgid "No active admin user found"
-msgstr ""
-
 msgid "No activities found"
-msgstr ""
-
-msgid "No application_settings found"
 msgstr ""
 
 msgid "No approvers"
@@ -22679,9 +22547,6 @@ msgid "No confirmation email received? Please check your spam folder or"
 msgstr ""
 
 msgid "No connection could be made to a Gitaly Server, please check your logs!"
-msgstr ""
-
-msgid "No containers available"
 msgstr ""
 
 msgid "No contributions"
@@ -22811,9 +22676,6 @@ msgid "No parent group"
 msgstr ""
 
 msgid "No plan"
-msgstr ""
-
-msgid "No pods available"
 msgstr ""
 
 msgid "No policy matches this license"
@@ -23669,9 +23531,6 @@ msgid "Optimize your workflow with CI/CD Pipelines"
 msgstr ""
 
 msgid "Optional"
-msgstr ""
-
-msgid "Optional parameter \"variables\" must be a Hash. Ex: variables[key1]=value1"
 msgstr ""
 
 msgid "Optionally, you can %{link_to_customize} how FogBugz email addresses and usernames are imported into GitLab."
@@ -25267,12 +25126,6 @@ msgstr ""
 msgid "Please wait while we import the repository for you. Refresh at will."
 msgstr ""
 
-msgid "Pod does not exist"
-msgstr ""
-
-msgid "Pod not found"
-msgstr ""
-
 msgid "Pods in use"
 msgstr ""
 
@@ -25283,9 +25136,6 @@ msgid "Policies"
 msgstr ""
 
 msgid "Policy management project does have any policies in %{policy_path}"
-msgstr ""
-
-msgid "Policy project doesn't exist"
 msgstr ""
 
 msgid "Polling interval multiplier"
@@ -26012,9 +25862,6 @@ msgid "Project access must be granted explicitly to each user. If this project i
 msgstr ""
 
 msgid "Project access token creation is disabled in this group. You can still use and manage existing tokens. %{link_start}Learn more.%{link_end}"
-msgstr ""
-
-msgid "Project already deleted"
 msgstr ""
 
 msgid "Project and wiki repositories"
@@ -27326,9 +27173,6 @@ msgid "Provision instructions"
 msgstr ""
 
 msgid "Provisioned by:"
-msgstr ""
-
-msgid "Proxy support for this API is not available currently"
 msgstr ""
 
 msgid "Pseudonymizer data collection"
@@ -29274,9 +29118,6 @@ msgstr ""
 msgid "Schedule a new pipeline"
 msgstr ""
 
-msgid "Schedule-based escalation rules must have a schedule in the same project as the policy"
-msgstr ""
-
 msgid "Scheduled"
 msgstr ""
 
@@ -30356,9 +30197,6 @@ msgid "Selective synchronization"
 msgstr ""
 
 msgid "Self monitoring"
-msgstr ""
-
-msgid "Self monitoring project does not exist"
 msgstr ""
 
 msgid "Self-monitoring project does not exist. Please check logs for any error messages"
@@ -33384,9 +33222,6 @@ msgstr ""
 msgid "The download link will expire in 24 hours."
 msgstr ""
 
-msgid "The environment tier must be one of %{environment_tiers}."
-msgstr ""
-
 msgid "The errors we encountered were:"
 msgstr ""
 
@@ -33467,9 +33302,6 @@ msgstr ""
 msgid "The group will be placed in 'pending deletion' state"
 msgstr ""
 
-msgid "The group_project_ids parameter is only allowed for a group"
-msgstr ""
-
 msgid "The hostname of your PlantUML server."
 msgstr ""
 
@@ -33477,9 +33309,6 @@ msgid "The hostname of your Snowplow collector."
 msgstr ""
 
 msgid "The import will time out after %{timeout}. For repositories that take longer, use a clone/push combination."
-msgstr ""
-
-msgid "The interval must be one of %{intervals}."
 msgstr ""
 
 msgid "The invitation can not be found with the provided invite token."
@@ -33555,9 +33384,6 @@ msgid "The merge conflicts for this merge request have already been resolved. Pl
 msgstr ""
 
 msgid "The merge request can now be merged."
-msgstr ""
-
-msgid "The metric must be one of %{metrics}."
 msgstr ""
 
 msgid "The name \"%{name}\" is already taken in this directory."
@@ -33689,9 +33515,6 @@ msgstr ""
 msgid "The specified tab is invalid, please select another"
 msgstr ""
 
-msgid "The start date must be ealier than the end date."
-msgstr ""
-
 msgid "The subject will be used as the title of the new issue, and the message will be the description. %{quickActionsLinkStart}Quick actions%{quickActionsLinkEnd} and styling with %{markdownLinkStart}Markdown%{markdownLinkEnd} are supported."
 msgstr ""
 
@@ -33714,9 +33537,6 @@ msgid "The user map has been saved. Continue by selecting the projects you want 
 msgstr ""
 
 msgid "The user map is a mapping of the FogBugz users that participated on your projects to the way their email address and usernames will be imported into GitLab. You can change this by populating the table below."
-msgstr ""
-
-msgid "The user you are trying to approve is not pending approval"
 msgstr ""
 
 msgid "The user you are trying to deactivate has been active in the past %{minimum_inactive_days} days and cannot be deactivated"
@@ -33836,9 +33656,6 @@ msgstr ""
 msgid "There are pending advanced search migrations which require indexing to be paused. Indexing must remain paused until the migrations are completed."
 msgstr ""
 
-msgid "There are running deployments on the environment. Please retry later."
-msgstr ""
-
 msgid "There are several file size limits in place for the Package Registry."
 msgstr ""
 
@@ -33936,12 +33753,6 @@ msgid "There was an error %{message} todo."
 msgstr ""
 
 msgid "There was an error adding a To Do."
-msgstr ""
-
-msgid "There was an error creating the dashboard, branch name is invalid."
-msgstr ""
-
-msgid "There was an error creating the dashboard, branch named: %{branch} already exists."
 msgstr ""
 
 msgid "There was an error creating the issue"
@@ -34053,12 +33864,6 @@ msgid "There was an error updating the Geo Settings"
 msgstr ""
 
 msgid "There was an error updating the Maintenance Mode Settings"
-msgstr ""
-
-msgid "There was an error updating the dashboard, branch name is invalid."
-msgstr ""
-
-msgid "There was an error updating the dashboard, branch named: %{branch} already exists."
 msgstr ""
 
 msgid "There was an error when reseting email token."
@@ -34272,9 +34077,6 @@ msgid "This environment is being deployed"
 msgstr ""
 
 msgid "This environment is being re-deployed"
-msgstr ""
-
-msgid "This environment's canary ingress has been updated recently. Please retry later."
 msgstr ""
 
 msgid "This epic already has the maximum number of child epics."
@@ -34632,9 +34434,6 @@ msgid "This will remove the fork relationship between this project and %{fork_so
 msgstr ""
 
 msgid "This will remove the fork relationship between this project and other projects in the fork network."
-msgstr ""
-
-msgid "Thread to reply to cannot be found"
 msgstr ""
 
 msgid "Threat Monitoring"
@@ -35654,9 +35453,6 @@ msgstr ""
 msgid "Two-factor authentication has been disabled successfully!"
 msgstr ""
 
-msgid "Two-factor authentication is not enabled for this user"
-msgstr ""
-
 msgid "Two-factor grace period"
 msgstr ""
 
@@ -35738,9 +35534,6 @@ msgstr ""
 msgid "Unable to collect memory info"
 msgstr ""
 
-msgid "Unable to connect to Elasticsearch"
-msgstr ""
-
 msgid "Unable to connect to Prometheus server"
 msgstr ""
 
@@ -35748,9 +35541,6 @@ msgid "Unable to connect to server: %{error}"
 msgstr ""
 
 msgid "Unable to connect to the Jira instance. Please check your Jira integration configuration."
-msgstr ""
-
-msgid "Unable to convert Kubernetes logs encoding to UTF-8"
 msgstr ""
 
 msgid "Unable to create link to vulnerability"
@@ -35883,9 +35673,6 @@ msgid "Unknown"
 msgstr ""
 
 msgid "Unknown Error"
-msgstr ""
-
-msgid "Unknown cache key"
 msgstr ""
 
 msgid "Unknown encryption strategy: %{encrypted_strategy}!"
@@ -36566,9 +36353,6 @@ msgstr ""
 msgid "User and IP Rate Limits"
 msgstr ""
 
-msgid "User does not have a pending request"
-msgstr ""
-
 msgid "User identity was successfully created."
 msgstr ""
 
@@ -36576,9 +36360,6 @@ msgid "User identity was successfully removed."
 msgstr ""
 
 msgid "User identity was successfully updated."
-msgstr ""
-
-msgid "User is not allowed to resolve thread"
 msgstr ""
 
 msgid "User key"
@@ -36615,9 +36396,6 @@ msgid "User was successfully removed from project."
 msgstr ""
 
 msgid "User was successfully updated."
-msgstr ""
-
-msgid "User-based escalation rules must have a user with access to the project"
 msgstr ""
 
 msgid "UserAvailability|%{author} %{spanStart}(Busy)%{spanEnd}"
@@ -38194,9 +37972,6 @@ msgstr ""
 msgid "You"
 msgstr ""
 
-msgid "You already have pending todo for this alert"
-msgstr ""
-
 msgid "You are about to add %{usersTag} people to the discussion. They will all receive a notification."
 msgstr ""
 
@@ -38242,28 +38017,13 @@ msgstr ""
 msgid "You are going to turn on confidentiality. Only team members with %{strongStart}at least Reporter access%{strongEnd} will be able to see and leave comments on the %{issuableType}."
 msgstr ""
 
-msgid "You are not allowed to %{action} a user"
-msgstr ""
-
-msgid "You are not allowed to approve a user"
-msgstr ""
-
 msgid "You are not allowed to log in using password"
-msgstr ""
-
-msgid "You are not allowed to push into this branch. Create another branch or open a merge request."
-msgstr ""
-
-msgid "You are not allowed to reject a user"
 msgstr ""
 
 msgid "You are not allowed to unlink your primary login account"
 msgstr ""
 
 msgid "You are not authorized to delete this site profile"
-msgstr ""
-
-msgid "You are not authorized to perform this action"
 msgstr ""
 
 msgid "You are not authorized to update this scanner profile"
@@ -38443,9 +38203,6 @@ msgstr ""
 msgid "You can view the source or %{linkStart}%{cloneIcon} clone the repository%{linkEnd}"
 msgstr ""
 
-msgid "You cannot %{action} %{state} users."
-msgstr ""
-
 msgid "You cannot access the raw file. Please wait a minute."
 msgstr ""
 
@@ -38482,16 +38239,10 @@ msgstr ""
 msgid "You do not have any subscriptions yet"
 msgstr ""
 
-msgid "You do not have permission to access dora metrics."
-msgstr ""
-
 msgid "You do not have permission to leave this %{namespaceType}."
 msgstr ""
 
 msgid "You do not have permission to run the Web Terminal. Please contact a project administrator."
-msgstr ""
-
-msgid "You do not have permission to update the environment."
 msgstr ""
 
 msgid "You do not have permissions to run the import."
@@ -38566,36 +38317,6 @@ msgstr ""
 msgid "You have imported from this project %{numberOfPreviousImports} times before. Each new import will create duplicate issues."
 msgstr ""
 
-msgid "You have insufficient permissions to configure escalation policies for this project"
-msgstr ""
-
-msgid "You have insufficient permissions to create a Todo for this alert"
-msgstr ""
-
-msgid "You have insufficient permissions to create an HTTP integration for this project"
-msgstr ""
-
-msgid "You have insufficient permissions to create an on-call schedule for this project"
-msgstr ""
-
-msgid "You have insufficient permissions to remove an on-call rotation from this project"
-msgstr ""
-
-msgid "You have insufficient permissions to remove an on-call schedule from this project"
-msgstr ""
-
-msgid "You have insufficient permissions to remove this HTTP integration"
-msgstr ""
-
-msgid "You have insufficient permissions to update an on-call schedule for this project"
-msgstr ""
-
-msgid "You have insufficient permissions to update this HTTP integration"
-msgstr ""
-
-msgid "You have insufficient permissions to view shifts for this rotation"
-msgstr ""
-
 msgid "You have no permissions"
 msgstr ""
 
@@ -38627,9 +38348,6 @@ msgid "You must disassociate %{domain} from all clusters it is attached to befor
 msgstr ""
 
 msgid "You must have developer or higher permissions in the associated project to view job logs when debug trace is enabled. To disable debug trace, set the 'CI_DEBUG_TRACE' variable to 'false' in your pipeline configuration or CI/CD settings. If you need to view this job log, a project maintainer must add you to the project with developer permissions or higher."
-msgstr ""
-
-msgid "You must have maintainer access to force delete a lock"
 msgstr ""
 
 msgid "You must have permission to create a project in a group before forking."
@@ -38965,12 +38683,6 @@ msgstr ""
 msgid "Your issues will be imported in the background. Once finished, you'll get a confirmation email."
 msgstr ""
 
-msgid "Your license does not support on-call rotations"
-msgstr ""
-
-msgid "Your license does not support on-call schedules"
-msgstr ""
-
 msgid "Your license is valid from"
 msgstr ""
 
@@ -39106,12 +38818,6 @@ msgid "[No reason]"
 msgstr ""
 
 msgid "[Redacted]"
-msgstr ""
-
-msgid "`end_time` should not exceed one month after `start_time`"
-msgstr ""
-
-msgid "`start_time` should precede `end_time`"
 msgstr ""
 
 msgid "a deleted user"
@@ -39567,12 +39273,6 @@ msgstr ""
 msgid "committed"
 msgstr ""
 
-msgid "container_name can contain only lowercase letters, digits, '-', and '.' and must start and end with an alphanumeric character"
-msgstr ""
-
-msgid "container_name cannot be larger than %{max_length} chars"
-msgstr ""
-
 msgid "contribute to this project."
 msgstr ""
 
@@ -39877,9 +39577,6 @@ msgid "is not in the group enforcing Group Managed Account"
 msgstr ""
 
 msgid "is not valid. The iteration group has to match the iteration cadence group."
-msgstr ""
-
-msgid "is read-only"
 msgstr ""
 
 msgid "is too long (%{current_value}). The maximum size is %{max_size}."
@@ -40427,12 +40124,6 @@ msgid "pipeline"
 msgstr ""
 
 msgid "pipeline schedules documentation"
-msgstr ""
-
-msgid "pod_name can contain only lowercase letters, digits, '-', and '.' and must start and end with an alphanumeric character"
-msgstr ""
-
-msgid "pod_name cannot be larger than %{max_length} chars"
 msgstr ""
 
 msgid "point"

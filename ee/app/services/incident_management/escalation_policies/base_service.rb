@@ -32,23 +32,23 @@ module IncidentManagement
       end
 
       def error_no_permissions
-        error(_('You have insufficient permissions to configure escalation policies for this project'))
+        error('You have insufficient permissions to configure escalation policies for this project')
       end
 
       def error_no_rules
-        error(_('Escalation policies must have at least one rule'))
+        error('Escalation policies must have at least one rule')
       end
 
       def error_too_many_rules
-        error(_('Escalation policies may not have more than %{rule_count} rules') % { rule_count: MAX_RULE_COUNT })
+        error('Escalation policies may not have more than %{rule_count} rules' % { rule_count: MAX_RULE_COUNT })
       end
 
       def error_bad_schedules
-        error(_('Schedule-based escalation rules must have a schedule in the same project as the policy'))
+        error('Schedule-based escalation rules must have a schedule in the same project as the policy')
       end
 
       def error_user_without_permission
-        error(_('User-based escalation rules must have a user with access to the project'))
+        error('User-based escalation rules must have a user with access to the project')
       end
 
       def error_in_save(policy)

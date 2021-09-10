@@ -39,20 +39,20 @@ module Metrics
       private
 
       def check_push_authorized(result)
-        return error(_('You are not allowed to push into this branch. Create another branch or open a merge request.'), :forbidden) unless push_authorized?
+        return error('You are not allowed to push into this branch. Create another branch or open a merge request.', :forbidden) unless push_authorized?
 
         success(result)
       end
 
       def check_branch_name(result)
-        return error(_('There was an error creating the dashboard, branch name is invalid.'), :bad_request) unless valid_branch_name?
-        return error(_('There was an error creating the dashboard, branch named: %{branch} already exists.') % { branch: params[:branch] }, :bad_request) unless new_or_default_branch?
+        return error('There was an error creating the dashboard, branch name is invalid.', :bad_request) unless valid_branch_name?
+        return error('There was an error creating the dashboard, branch named: %{branch} already exists.' % { branch: params[:branch] }, :bad_request) unless new_or_default_branch?
 
         success(result)
       end
 
       def check_file_type(result)
-        return error(_('The file name should have a .yml extension'), :bad_request) unless target_file_type_valid?
+        return error('The file name should have a .yml extension', :bad_request) unless target_file_type_valid?
 
         success(result)
       end
@@ -62,7 +62,7 @@ module Metrics
       # However, only metrics dashboards should be allowed. If any file is
       # allowed to be cloned, this will become a security risk.
       def check_dashboard_template(result)
-        return error(_('Not found.'), :not_found) unless dashboard_service&.out_of_the_box_dashboard?
+        return error('Not found.', :not_found) unless dashboard_service&.out_of_the_box_dashboard?
 
         success(result)
       end
@@ -143,7 +143,7 @@ module Metrics
 
       def wrap_error(result)
         if result[:message] == 'A file with this name already exists'
-          error(_("A file with '%{file_name}' already exists in %{branch} branch") % { file_name: file_name, branch: branch }, :bad_request)
+          error("A file with '%{file_name}' already exists in %{branch} branch" % { file_name: file_name, branch: branch }, :bad_request)
         else
           result
         end

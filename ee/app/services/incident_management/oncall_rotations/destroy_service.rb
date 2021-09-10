@@ -27,7 +27,7 @@ module IncidentManagement
       attr_reader :oncall_rotation, :user, :project
 
       def error_no_permissions
-        error(_('You have insufficient permissions to remove an on-call rotation from this project'))
+        error('You have insufficient permissions to remove an on-call rotation from this project')
       end
     end
   end

@@ -57,7 +57,7 @@ module AlertManagement
       end
 
       def error_no_permissions
-        error(_('You have no permissions'))
+        error('You have no permissions')
       end
 
       def error_invalid_params

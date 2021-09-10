@@ -37,7 +37,7 @@ module AlertManagement
       end
 
       def error_no_permissions
-        error(_('You have insufficient permissions to remove this HTTP integration'))
+        error('You have insufficient permissions to remove this HTTP integration')
       end
     end
   end

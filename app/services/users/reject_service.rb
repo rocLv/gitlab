@@ -7,8 +7,8 @@ module Users
     end
 
     def execute(user)
-      return error(_('You are not allowed to reject a user'), :forbidden) unless allowed?
-      return error(_('User does not have a pending request'), :conflict) unless user.blocked_pending_approval?
+      return error('You are not allowed to reject a user', :forbidden) unless allowed?
+      return error('User does not have a pending request', :conflict) unless user.blocked_pending_approval?
 
       user.delete_async(deleted_by: current_user, params: { hard_delete: true })
 

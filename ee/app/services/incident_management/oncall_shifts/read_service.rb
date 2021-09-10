@@ -86,19 +86,19 @@ module IncidentManagement
       end
 
       def error_no_permissions
-        error(_('You have insufficient permissions to view shifts for this rotation'))
+        error('You have insufficient permissions to view shifts for this rotation')
       end
 
       def error_no_license
-        error(_('Your license does not support on-call rotations'))
+        error('Your license does not support on-call rotations')
       end
 
       def error_invalid_range
-        error(_('`start_time` should precede `end_time`'))
+        error('`start_time` should precede `end_time`')
       end
 
       def error_excessive_range
-        error(_('`end_time` should not exceed one month after `start_time`'))
+        error('`end_time` should not exceed one month after `start_time`')
       end
     end
   end

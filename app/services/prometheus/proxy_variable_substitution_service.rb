@@ -76,7 +76,7 @@ module Prometheus
       return success unless variables
 
       unless variables.is_a?(ActionController::Parameters)
-        return error(_('Optional parameter "variables" must be a Hash. Ex: variables[key1]=value1'))
+        return error('Optional parameter "variables" must be a Hash. Ex: variables[key1]=value1')
       end
 
       success

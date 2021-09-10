@@ -38,20 +38,20 @@ module PodLogs
       result[:pod_name] ||= result[:pods].first
 
       unless result[:pod_name]
-        return error(_('No pods available'))
+        return error('No pods available')
       end
 
       unless result[:pod_name].length.to_i <= K8S_NAME_MAX_LENGTH
-        return error(_('pod_name cannot be larger than %{max_length}'\
-          ' chars' % { max_length: K8S_NAME_MAX_LENGTH }))
+        return error('pod_name cannot be larger than %{max_length}'\
+          ' chars' % { max_length: K8S_NAME_MAX_LENGTH })
       end
 
       unless result[:pod_name] =~ Gitlab::Regex.kubernetes_dns_subdomain_regex
-        return error(_('pod_name can contain only lowercase letters, digits, \'-\', and \'.\' and must start and end with an alphanumeric character'))
+        return error('pod_name can contain only lowercase letters, digits, \'-\', and \'.\' and must start and end with an alphanumeric character')
       end
 
       unless result[:pods].include?(result[:pod_name])
-        return error(_('Pod does not exist'))
+        return error('Pod does not exist')
       end
 
       success(result)
@@ -65,20 +65,20 @@ module PodLogs
       result[:container_name] ||= container_names.first
 
       unless result[:container_name]
-        return error(_('No containers available'))
+        return error('No containers available')
       end
 
       unless result[:container_name].length.to_i <= K8S_NAME_MAX_LENGTH
-        return error(_('container_name cannot be larger than'\
-          ' %{max_length} chars' % { max_length: K8S_NAME_MAX_LENGTH }))
+        return error('container_name cannot be larger than'\
+          ' %{max_length} chars' % { max_length: K8S_NAME_MAX_LENGTH })
       end
 
       unless result[:container_name] =~ Gitlab::Regex.kubernetes_dns_subdomain_regex
-        return error(_('container_name can contain only lowercase letters, digits, \'-\', and \'.\' and must start and end with an alphanumeric character'))
+        return error('container_name can contain only lowercase letters, digits, \'-\', and \'.\' and must start and end with an alphanumeric character')
       end
 
       unless container_names.include?(result[:container_name])
-        return error(_('Container does not exist'))
+        return error('Container does not exist')
       end
 
       success(result)
@@ -95,11 +95,11 @@ module PodLogs
 
       success(result)
     rescue Kubeclient::ResourceNotFoundError
-      error(_('Pod not found'))
+      error('Pod not found')
     rescue Kubeclient::HttpError => e
       ::Gitlab::ErrorTracking.track_exception(e)
 
-      error(_('Kubernetes API returned status code: %{error_code}') % {
+      error('Kubernetes API returned status code: %{error_code}' % {
         error_code: e.error_code
       })
     end
@@ -114,7 +114,7 @@ module PodLogs
 
       success(result)
     rescue EncodingHelperError
-      error(_('Unable to convert Kubernetes logs encoding to UTF-8'))
+      error('Unable to convert Kubernetes logs encoding to UTF-8')
     end
 
     def split_logs(result)

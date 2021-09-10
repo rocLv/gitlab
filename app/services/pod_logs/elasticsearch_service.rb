@@ -25,7 +25,7 @@ module PodLogs
 
     def get_raw_pods(result)
       client = cluster&.elasticsearch_client
-      return error(_('Unable to connect to Elasticsearch')) unless client
+      return error('Unable to connect to Elasticsearch') unless client
 
       result[:raw_pods] = ::Gitlab::Elasticsearch::Logs::Pods.new(client).pods(namespace)
 
@@ -33,7 +33,7 @@ module PodLogs
     rescue Elasticsearch::Transport::Transport::ServerError => e
       ::Gitlab::ErrorTracking.track_exception(e)
 
-      error(_('Elasticsearch returned status code: %{status_code}') % {
+      error('Elasticsearch returned status code: %{status_code}' % {
         # ServerError is the parent class of exceptions named after HTTP status codes, eg: "Elasticsearch::Transport::Transport::Errors::NotFound"
         # there is no method on the exception other than the class name to determine the type of error encountered.
         status_code: e.class.name.split('::').last
@@ -46,13 +46,13 @@ module PodLogs
 
       success(result)
     rescue ArgumentError
-      error(_('Invalid start or end time format'))
+      error('Invalid start or end time format')
     end
 
     def check_search(result)
       result[:search] = params['search'] if params.key?('search')
 
-      return error(_('Invalid search parameter')) if result[:search] && !result[:search].is_a?(String)
+      return error('Invalid search parameter') if result[:search] && !result[:search].is_a?(String)
 
       success(result)
     end
@@ -60,14 +60,14 @@ module PodLogs
     def check_cursor(result)
       result[:cursor] = params['cursor'] if params.key?('cursor')
 
-      return error(_('Invalid cursor parameter')) if result[:cursor] && !result[:cursor].is_a?(String)
+      return error('Invalid cursor parameter') if result[:cursor] && !result[:cursor].is_a?(String)
 
       success(result)
     end
 
     def pod_logs(result)
       client = cluster&.elasticsearch_client
-      return error(_('Unable to connect to Elasticsearch')) unless client
+      return error('Unable to connect to Elasticsearch') unless client
 
       response = ::Gitlab::Elasticsearch::Logs::Lines.new(client).pod_logs(
         namespace,
@@ -86,13 +86,13 @@ module PodLogs
     rescue Elasticsearch::Transport::Transport::ServerError => e
       ::Gitlab::ErrorTracking.track_exception(e)
 
-      error(_('Elasticsearch returned status code: %{status_code}') % {
+      error('Elasticsearch returned status code: %{status_code}' % {
         # ServerError is the parent class of exceptions named after HTTP status codes, eg: "Elasticsearch::Transport::Transport::Errors::NotFound"
         # there is no method on the exception other than the class name to determine the type of error encountered.
         status_code: e.class.name.split('::').last
       })
     rescue ::Gitlab::Elasticsearch::Logs::Lines::InvalidCursor
-      error(_('Invalid cursor value provided'))
+      error('Invalid cursor value provided')
     end
   end
 end

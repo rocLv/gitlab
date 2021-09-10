@@ -20,13 +20,13 @@ module Gitlab
           when DashboardProcessingError
             error(error.message, :unprocessable_entity)
           when NOT_FOUND_ERROR
-            error(_("%{dashboard_path} could not be found.") % { dashboard_path: dashboard_path }, :not_found)
+            error("%{dashboard_path} could not be found." % { dashboard_path: dashboard_path }, :not_found)
           when PanelNotFoundError
             error(error.message, :not_found)
           when ::Grafana::Client::Error
             error(error.message, :service_unavailable)
           when MissingIntegrationError
-            error(_('Proxy support for this API is not available currently'), :bad_request)
+            error('Proxy support for this API is not available currently', :bad_request)
           else
             raise error
           end

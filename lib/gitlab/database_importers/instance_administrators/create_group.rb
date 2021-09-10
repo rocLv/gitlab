@@ -31,13 +31,13 @@ module Gitlab
           return success(result) if application_settings
 
           log_error('No application_settings found')
-          error(_('No application_settings found'))
+          error('No application_settings found')
         end
 
         def validate_admins(result)
           unless instance_admins.any?
             log_error('No active admin user found')
-            return error(_('No active admin user found'))
+            return error('No active admin user found')
           end
 
           success(result)
@@ -56,7 +56,7 @@ module Gitlab
             success(result)
           else
             log_error("Could not create instance administrators group. Errors: %{errors}" % { errors: result[:group].errors.full_messages })
-            error(_('Could not create group'))
+            error('Could not create group')
           end
         end
 
@@ -71,7 +71,7 @@ module Gitlab
             success(result)
           else
             log_error("Could not save instance administrators group ID, errors: %{errors}" % { errors: application_settings.errors.full_messages })
-            error(_('Could not save group ID'))
+            error('Could not save group ID')
           end
         end
 
@@ -82,7 +82,7 @@ module Gitlab
 
           if errors.any?
             log_error('Could not add admins as members to self-monitoring project. Errors: %{errors}' % { errors: errors })
-            error(_('Could not add admins as members'))
+            error('Could not add admins as members')
           else
             success(result)
           end

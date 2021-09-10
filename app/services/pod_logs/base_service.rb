@@ -39,7 +39,7 @@ module PodLogs
       else
         exception = StandardError.new('Unknown reactive cache request')
         Gitlab::ErrorTracking.track_and_raise_for_dev_exception(exception, request: request)
-        error(_('Unknown cache key'))
+        error('Unknown cache key')
       end
     end
 
@@ -54,14 +54,14 @@ module PodLogs
     end
 
     def check_arguments(result)
-      return error(_('Cluster does not exist')) if cluster.nil?
-      return error(_('Namespace is empty')) if namespace.blank?
+      return error('Cluster does not exist') if cluster.nil?
+      return error('Namespace is empty') if namespace.blank?
 
       result[:pod_name] = params['pod_name'].presence
       result[:container_name] = params['container_name'].presence
 
-      return error(_('Invalid pod_name')) if result[:pod_name] && !result[:pod_name].is_a?(String)
-      return error(_('Invalid container_name')) if result[:container_name] && !result[:container_name].is_a?(String)
+      return error('Invalid pod_name') if result[:pod_name] && !result[:pod_name].is_a?(String)
+      return error('Invalid container_name') if result[:container_name] && !result[:container_name].is_a?(String)
 
       success(result)
     end

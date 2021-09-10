@@ -23,39 +23,39 @@ module Dora
 
     def validate
       unless (end_date - start_date) <= MAX_RANGE
-        return error(_("Date range must be shorter than %{max_range} days.") % { max_range: MAX_RANGE },
+        return error("Date range must be shorter than %{max_range} days." % { max_range: MAX_RANGE },
                      :bad_request)
       end
 
       unless start_date < end_date
-        return error(_('The start date must be ealier than the end date.'), :bad_request)
+        return error('The start date must be ealier than the end date.', :bad_request)
       end
 
       unless project? || group?
-        return error(_('Container must be a project or a group.'), :bad_request)
+        return error('Container must be a project or a group.', :bad_request)
       end
 
       if group_project_ids.present? && !group?
-        return error(_('The group_project_ids parameter is only allowed for a group'), :bad_request)
+        return error('The group_project_ids parameter is only allowed for a group', :bad_request)
       end
 
       unless ::Dora::DailyMetrics::AVAILABLE_INTERVALS.include?(interval)
-        return error(_("The interval must be one of %{intervals}.") % { intervals: ::Dora::DailyMetrics::AVAILABLE_INTERVALS.join(',') },
+        return error("The interval must be one of %{intervals}." % { intervals: ::Dora::DailyMetrics::AVAILABLE_INTERVALS.join(',') },
                      :bad_request)
       end
 
       unless ::Dora::DailyMetrics::AVAILABLE_METRICS.include?(metric)
-        return error(_("The metric must be one of %{metrics}.") % { metrics: ::Dora::DailyMetrics::AVAILABLE_METRICS.join(',') },
+        return error("The metric must be one of %{metrics}." % { metrics: ::Dora::DailyMetrics::AVAILABLE_METRICS.join(',') },
                      :bad_request)
       end
 
       unless Environment.tiers[environment_tier]
-        return error(_("The environment tier must be one of %{environment_tiers}.") % { environment_tiers: Environment.tiers.keys.join(',') },
+        return error("The environment tier must be one of %{environment_tiers}." % { environment_tiers: Environment.tiers.keys.join(',') },
                      :bad_request)
       end
 
       unless can?(current_user, :read_dora4_analytics, container)
-        return error(_('You do not have permission to access dora metrics.'), :unauthorized)
+        return error('You do not have permission to access dora metrics.', :unauthorized)
       end
 
       nil

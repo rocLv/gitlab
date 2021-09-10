@@ -27,7 +27,7 @@ module IncidentManagement
       attr_reader :project, :user, :params
 
       def error_no_permissions
-        error(_('You have insufficient permissions to create an on-call schedule for this project'))
+        error('You have insufficient permissions to create an on-call schedule for this project')
       end
 
       def error_in_create(oncall_schedule)
