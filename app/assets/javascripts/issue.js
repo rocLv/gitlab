@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { joinPaths } from '~/lib/utils/url_utility';
-import CreateMergeRequestDropdown from './create_merge_request_dropdown';
+import { initCreateMergeRequestDropdown } from './create_merge_request_dropdown/index';
 import createFlash from './flash';
 import { EVENT_ISSUABLE_VUE_APP_CHANGE } from './issuable/constants';
 import axios from './lib/utils/axios_utils';
@@ -17,11 +17,7 @@ export default class Issue {
       Issue.initRelatedBranches();
     }
 
-    Issue.createMrDropdownWrap = document.querySelector('.create-mr-dropdown-wrap');
-
-    if (Issue.createMrDropdownWrap) {
-      this.createMergeRequestDropdown = new CreateMergeRequestDropdown(Issue.createMrDropdownWrap);
-    }
+    this.createMergeRequestDropdown = initCreateMergeRequestDropdown();
 
     // Listen to state changes in the Vue app
     this.issuableVueAppChangeHandler = (event) =>
