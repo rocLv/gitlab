@@ -8,8 +8,8 @@ module Gitlab
     DEFAULT_PER_PAGE = 20
 
     SCOPE_ONLY_SORT = {
-      popularity_asc: %w[issues],
-      popularity_desc: %w[issues]
+      popularity_asc: %w[issues merge_requests],
+      popularity_desc: %w[issues merge_requests]
     }.freeze
 
     attr_reader :current_user, :query, :order_by, :sort, :filters
@@ -151,9 +151,11 @@ module Gitlab
       when :updated_at_desc
         results.reorder('updated_at DESC')
       when :popularity_asc
-        results.reorder('upvotes_count ASC')
+        # upvotes_count does not exist on the merge_requests table
+        scope == 'issues' ? results.reorder('upvotes_count ASC') : results.sort_by_attribute(sort_by)
       when :popularity_desc
-        results.reorder('upvotes_count DESC')
+        # upvotes_count does not exist on the merge_requests table
+        scope == 'issues' ? results.reorder('upvotes_count DESC') : results.sort_by_attribute(sort_by)
       else
         results.reorder('created_at DESC')
       end

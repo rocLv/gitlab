@@ -129,7 +129,9 @@ module EE
           sortParam: 'relevant'
         }
 
-        unless Elastic::DataMigrationService.migration_has_finished?(:add_upvotes_to_issues)
+        issue_search_by_popularity = search_service.scope == 'issues' && Elastic::DataMigrationService.migration_has_finished?(:add_upvotes_to_issues)
+        merge_request_search_by_popularity = search_service.scope == 'merge_requests' && Elastic::DataMigrationService.migration_has_finished?(:addup_upvotes_to_merge_requests)
+        unless issue_search_by_popularity || merge_request_search_by_popularity
           original_options.delete_if do |option|
             option[:title] == _('Popularity')
           end

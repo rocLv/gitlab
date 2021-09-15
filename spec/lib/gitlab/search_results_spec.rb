@@ -191,9 +191,23 @@ RSpec.describe Gitlab::SearchResults do
         let!(:new_updated) { create(:merge_request, :opened, source_project: project, source_branch: 'updated-new-1', title: 'updated recent', updated_at: 1.day.ago) }
         let!(:very_old_updated) { create(:merge_request, :opened, source_project: project, source_branch: 'updated-very-old-1', title: 'updated very old', updated_at: 1.year.ago) }
 
+        let!(:less_popular_result) { create(:merge_request, :unique_branches, source_project: project, title: 'less popular') }
+        let!(:popular_result) { create(:merge_request, :unique_branches, source_project: project, title: 'popular') }
+        let!(:non_popular_result) { create(:merge_request, :unique_branches, source_project: project, title: 'non popular') }
+
         include_examples 'search results sorted' do
           let(:results_created) { described_class.new(user, 'sorted', Project.order(:id), sort: sort, filters: filters) }
           let(:results_updated) { described_class.new(user, 'updated', Project.order(:id), sort: sort, filters: filters) }
+        end
+
+        include_examples 'search results sorted by popularity' do
+          let(:results_popular) { described_class.new(user, 'popular', Project.order(:id), sort: sort, filters: filters) }
+
+          before do
+            create_list(:award_emoji, 3, :upvote, awardable: less_popular_result)
+            create_list(:award_emoji, 10, :upvote, awardable: popular_result)
+            create_list(:award_emoji, 1, :upvote, awardable: non_popular_result)
+          end
         end
       end
     end

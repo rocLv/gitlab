@@ -12,8 +12,11 @@
     .description.term.gl-px-0
       = highlight_and_truncate_issuable(issuable, @search_term, @search_highlight)
   .col-sm-3.gl-mt-3.gl-sm-mt-0.gl-text-right
-    - if issuable.respond_to?(:upvotes_count) && issuable.upvotes_count > 0
+    - allow_for_issues = issuable.respond_to?(:upvotes_count) && issuable.upvotes_count > 0
+    - allow_for_merge_requests = Feature.enabled?(:search_sort_merge_requests_by_popularity) && issuable.respond_to?(:lazy_upvotes_count) && issuable.lazy_upvotes_count > 0
+    - if allow_for_issues || allow_for_merge_requests
+      - upvotes_count = allow_for_issues ? issuable.upvotes_count : issuable.lazy_upvotes_count
       %li.issuable-upvotes.gl-list-style-none.has-tooltip{ title: _('Upvotes') }
         = sprite_icon('thumb-up', css_class: "gl-vertical-align-middle")
-        = issuable.upvotes_count
+        = upvotes_count
     %span.gl-text-gray-500= sprintf(s_('updated %{time_ago}'), { time_ago: time_ago_with_tooltip(issuable.updated_at, placement: 'bottom') }).html_safe

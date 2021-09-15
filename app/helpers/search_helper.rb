@@ -150,7 +150,7 @@ module SearchHelper
       }
     ]
 
-    if search_service.scope == 'issues'
+    if search_service.scope == 'issues' || (search_service.scope == 'merge_requests' && Feature.enabled?(:search_sort_merge_requests_by_popularity))
       options << {
         title: _('Popularity'),
         sortable: true,

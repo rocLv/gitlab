@@ -3,6 +3,7 @@
 module Elastic
   module Latest
     class MergeRequestClassProxy < ApplicationClassProxy
+      extend ::Gitlab::Utils::Override
       include StateFilter
 
       def elastic_search(query, options: {})
@@ -36,9 +37,30 @@ module Elastic
 
       private
 
+      override :apply_sort
+      def apply_sort(query_hash, options)
+        case ::Gitlab::Search::SortOptions.sort_and_direction(options[:order_by], options[:sort])
+        when :popularity_asc
+          query_hash.merge(sort: {
+            upvotes: {
+              order: 'asc'
+            }
+          })
+        when :popularity_desc
+          query_hash.merge(sort: {
+            upvotes: {
+              order: 'desc'
+            }
+          })
+        else
+          super
+        end
+      end
+
       # Builds an elasticsearch query that will select documents from a
       # set of projects for Group and Project searches, taking user access
       # rules for merge_requests into account. Relies upon super for Global searches
+      override :project_ids_filter
       def project_ids_filter(query_hash, options)
         return super if options[:public_and_internal_projects]
 
