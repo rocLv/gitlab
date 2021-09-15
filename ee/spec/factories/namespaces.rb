@@ -25,12 +25,12 @@ end
 FactoryBot.define do
   factory :namespace_with_plan, parent: :namespace do
     transient do
-      plan { :default_plan }
+      plan { :free_plan }
       trial_ends_on { nil }
     end
 
     after(:create) do |namespace, evaluator|
-      if evaluator.plan
+      if evaluator.plan && evaluator.plan != :default_plan
         create(:gitlab_subscription,
                namespace: namespace,
                hosted_plan: create(evaluator.plan),
