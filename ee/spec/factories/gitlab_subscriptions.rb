@@ -2,6 +2,14 @@
 
 FactoryBot.define do
   factory :gitlab_subscription do
+    transient do
+      build_under_self_managed { false }
+    end
+
+    after(:build) do |record, evaluator|
+      raise 'not under .com' unless Gitlab.com? || evaluator.build_under_self_managed
+    end
+
     namespace
     association :hosted_plan, factory: :ultimate_plan
     seats { 10 }

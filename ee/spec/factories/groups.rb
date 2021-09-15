@@ -73,12 +73,12 @@ FactoryBot.define do
 
   factory :group_with_plan, parent: :group do
     transient do
-      plan { :default_plan }
+      plan { :free_plan }
       trial_ends_on { nil }
     end
 
     after(:create) do |group, evaluator|
-      if evaluator.plan
+      if evaluator.plan && evaluator.plan != :default_plan
         create(:gitlab_subscription,
                namespace: group,
                hosted_plan: create(evaluator.plan),
