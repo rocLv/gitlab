@@ -246,7 +246,7 @@ module Gitlab
 
     # rubocop: disable CodeReuse/ActiveRecord
     def limited_count(relation)
-      relation.reorder(nil).limit(count_limit).size
+      relation.except(:order).except(:group).limit(count_limit).size
     end
     # rubocop: enable CodeReuse/ActiveRecord
   end
