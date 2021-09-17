@@ -1,7 +1,7 @@
 ---
 name: search_sort_merge_requests_by_popularity
 introduced_by_url: https://gitlab.com/gitlab-org/gitlab/-/merge_requests/70441
-rollout_issue_url:
+rollout_issue_url: https://gitlab.com/gitlab-org/gitlab/-/issues/341038
 milestone: '14.3'
 type: development
 group: group::global search
