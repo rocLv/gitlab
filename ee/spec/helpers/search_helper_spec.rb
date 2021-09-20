@@ -249,8 +249,10 @@ RSpec.describe SearchHelper do
     end
   end
 
-  describe '#search_sort_options_json' do
-    let(:user) { create(:user) }
+  describe '#search_sort_options_json', :elastic, :sidekiq_inline do
+    let(:scope) { 'project' }
+
+    let_it_be(:user) { create(:user) }
 
     mock_relevant_sort = {
       title: _('Most relevant'),
@@ -276,17 +278,74 @@ RSpec.describe SearchHelper do
       }
     }
 
+    mock_popularity_sort = {
+      title: _('Popularity'),
+      sortable: true,
+      sortParam: {
+        asc: 'popularity_asc',
+        desc: 'popularity_desc'
+      }
+    }
+
     before do
       allow(self).to receive(:current_user).and_return(user)
+
+      allow(self).to receive(:params).and_return(
+        ActionController::Parameters.new(
+          search: 'hello',
+          scope: scope
+        )
+      )
     end
 
     context 'with advanced search enabled' do
+      using RSpec::Parameterized::TableSyntax
+
       before do
         stub_ee_application_setting(search_using_elasticsearch: true)
       end
 
-      it 'returns the correct data' do
-        expect(search_sort_options).to eq([mock_relevant_sort, mock_created_sort, mock_updated_sort])
+      where(:scope, :include_popularity) do
+        'blobs'          | false
+        'commits'        | false
+        'issues'         | true
+        'merge_requests' | true
+        'milestones'     | false
+        'notes'          | false
+        'projects'       | false
+        'snippet_titles' | false
+        'users'          | false
+        'epics'          | false
+        'wiki_blobs'     | false
+      end
+
+      with_them do
+        it 'returns the correct data' do
+          # users and epics do not support Elasticsearch and will not have the relevant sort
+          expected = if search_service.use_elasticsearch?
+                       [mock_relevant_sort, mock_created_sort, mock_updated_sort]
+                     else
+                       [mock_created_sort, mock_updated_sort]
+                     end
+
+          expected << mock_popularity_sort if include_popularity
+
+          expect(search_sort_options).to eq(expected)
+        end
+      end
+
+      context 'when search_sort_merge_requests_by_popularity is disabled' do
+        let(:scope) { 'merge_requests' }
+
+        before do
+          stub_feature_flags(search_sort_merge_requests_by_popularity: false)
+        end
+
+        it 'returns the correct data' do
+          expected = [mock_relevant_sort, mock_created_sort, mock_updated_sort]
+
+          expect(search_sort_options).to eq(expected)
+        end
       end
     end
 

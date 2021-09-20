@@ -614,109 +614,86 @@ RSpec.describe SearchHelper do
   end
 
   describe '#search_sort_options' do
+    using RSpec::Parameterized::TableSyntax
+
+    let(:scope) { 'projects' }
+
     let_it_be(:user) { create(:user) }
 
     before do
       allow(self).to receive(:current_user).and_return(user)
+
+      allow(self).to receive(:params).and_return(
+        ActionController::Parameters.new(
+          search: 'hello',
+          scope: scope
+        )
+      )
     end
+
+    mock_created_sort = {
+      title: _('Created date'),
+      sortable: true,
+      sortParam: {
+        asc: 'created_asc',
+        desc: 'created_desc'
+      }
+    }
+
+    mock_updated_sort = {
+      title: _('Last updated'),
+      sortable: true,
+      sortParam: {
+        asc: 'updated_asc',
+        desc: 'updated_desc'
+      }
+    }
+
+    mock_popularity_sort = {
+      title: _('Popularity'),
+      sortable: true,
+      sortParam: {
+        asc: 'popularity_asc',
+        desc: 'popularity_desc'
+      }
+    }
 
     subject { search_sort_options }
 
-    context 'when search_sort_merge_requests_by_popularity is enabled' do
-      using RSpec::Parameterized::TableSyntax
+    where(:scope, :include_popularity) do
+      'blobs'          | false
+      'commits'        | false
+      'issues'         | true
+      'merge_requests' | true
+      'milestones'     | false
+      'notes'          | false
+      'projects'       | false
+      'snippet_titles' | false
+      'users'          | false
+      'epics'          | false
+      'wiki_blobs'     | false
+    end
 
-      where(:scope, :include_popularity) do
-        'blobs'          | false
-        'commits'        | false
-        'issues'         | true
-        'merge_requests' | true
-        'milestones'     | false
-        'notes'          | false
-        'projects'       | false
-        'snippet_titles' | false
-        'users'          | false
-        'wiki_blobs'     | false
-      end
+    with_them do
+      it 'returns the correct data' do
+        expected = [mock_created_sort, mock_updated_sort]
+        expected << mock_popularity_sort if include_popularity
 
-      with_them do
-        before do
-          allow(self).to receive(:params).and_return(
-            ActionController::Parameters.new(
-              search: 'hello',
-              scope: scope
-            )
-          )
-        end
-
-        it 'returns the correct data' do
-          mock_created_sort = [
-            {
-              title: _('Created date'),
-              sortable: true,
-              sortParam: {
-                asc: 'created_asc',
-                desc: 'created_desc'
-              }
-            },
-            {
-              title: _('Last updated'),
-              sortable: true,
-              sortParam: {
-                asc: 'updated_asc',
-                desc: 'updated_desc'
-              }
-            }
-          ]
-
-          if include_popularity
-            mock_created_sort << {
-              title: _('Popularity'),
-              sortable: true,
-              sortParam: {
-                asc: 'popularity_asc',
-                desc: 'popularity_desc'
-              }
-            }
-
-          end
-
-          expect(search_sort_options).to eq(mock_created_sort)
-        end
+        expect(search_sort_options).to eq(expected)
       end
     end
 
     context 'when search_sort_merge_requests_by_popularity is disabled' do
+      let(:scope) { 'merge_requests' }
+
       before do
         stub_feature_flags(search_sort_merge_requests_by_popularity: false)
-        allow(self).to receive(:params).and_return(
-          ActionController::Parameters.new(
-            search: 'hello',
-            scope: 'merge_requests'
-          )
-        )
       end
 
       it 'returns the correct data' do
-        mock_created_sort = [
-          {
-            title: _('Created date'),
-            sortable: true,
-            sortParam: {
-              asc: 'created_asc',
-              desc: 'created_desc'
-            }
-          },
-          {
-            title: _('Last updated'),
-            sortable: true,
-            sortParam: {
-              asc: 'updated_asc',
-              desc: 'updated_desc'
-            }
-          }
-        ]
+        expected = [mock_created_sort, mock_updated_sort]
 
-        expect(search_sort_options).to eq(mock_created_sort)
+        expect(search_sort_options).to eq(expected)
       end
     end
   end
