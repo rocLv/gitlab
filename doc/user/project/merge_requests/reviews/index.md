@@ -13,7 +13,7 @@ type: index, reference
 [Merge requests](../index.md) are the primary way to change files in a
 GitLab project. [Create and submit a merge request](../creating_merge_requests.md)
 to propose changes. Your team [comments](../../../discussions/index.md) on
-your merge request, and makes [code suggestions](suggestions.md) you can accept
+your merge request. They [suggest code changes](suggestions.md) you can accept
 from the user interface. When your work is reviewed, your team members can choose
 to accept or reject it.
 
@@ -23,10 +23,9 @@ to accept or reject it.
 > - [Moved](https://gitlab.com/gitlab-org/gitlab/-/issues/28154) to GitLab Free in 13.1.
 
 When you review a merge request, you can create comments that are visible only
-to you. When you're ready, publish them together in a single action.
-To start your review:
+to you. When you're ready, publish them all at once. To start your review:
 
-1. Go to the merge request you want to review, and select the **Changes** tab.
+1. Go to the merge request you want to review. Select the **Changes** tab.
    To learn how to navigate the diffs displayed in this tab, read
    [Changes tab in merge requests](../changes.md).
 1. To expand the diff lines and display a comment box, select **Comment** (**{comment}**)
@@ -58,7 +57,7 @@ To submit your completed review:
 - When you create a review comment, select **Submit review**.
 - Scroll to the bottom of the screen and select **Submit review**.
 
-When you submit your review, GitLab:
+GitLab then:
 
 - Publishes the comments in your review.
 - Sends a single email to every notifiable user of the merge request. Your review comments
@@ -73,8 +72,7 @@ the thread when your comment is published:
 
 ![Resolve checkbox](img/mr_review_resolve.png)
 
-If a particular pending comment resolves or unresolves the thread, this is shown on the pending
-comment itself.
+Pending comments that resolve or unresolve a thread show a check mark (**{check-circle-filled}**) on the comment:
 
 ![Resolve status](img/mr_review_resolve2.png)
 
@@ -84,7 +82,7 @@ comment itself.
 
 > [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/8225) in GitLab 13.10.
 
-If you have a review in progress, you can choose to **Add to review**:
+If you have a review in progress, you can **Add to review**:
 
 ![New thread](img/mr_review_new_comment_v13_11.png)
 
@@ -96,26 +94,23 @@ If you have a review in progress, you can choose to **Add to review**:
 When you edit the **Reviewers** field in a merge request, GitLab
 shows the name of the matching [approval rule](../approvals/rules.md)
 below the name of each suggested reviewer. [Code Owners](../../code_owners.md) are
-displayed as `Codeowner` without group detail.
+displayed as `Codeowner` without group detail:
 
-This example shows reviewers and approval rules when you create a new merge request:
-
-![Reviewer approval rules in new/edit form](img/reviewer_approval_rules_form_v13_8.png)
-
-This example shows reviewers and approval rules in a merge request sidebar:
-
-![Reviewer approval rules in sidebar](img/reviewer_approval_rules_sidebar_v13_8.png)
+- Reviewers and approval rules when you create a new merge request:
+  ![Reviewer approval rules in new or edit form](img/reviewer_approval_rules_form_v13_8.png)
+- Reviewers and approval rules in a merge request sidebar:
+  ![Reviewer approval rules in sidebar](img/reviewer_approval_rules_sidebar_v13_8.png)
 
 ### Request a new review
 
 > [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/293933) in GitLab 13.9.
 
 After a reviewer completes their [merge request reviews](../../../discussions/index.md),
-the author of the merge request can request a new review:
+the merge request author can request a new review:
 
 1. If the right sidebar in the merge request is collapsed, select
    **Expand Sidebar** (**{chevron-double-lg-left}**) to expand it.
-1. Scroll to **Reviewers** and select **Re-request a review** (**{redo}**)
+1. Scroll to **Reviewers**. Select **Re-request a review** (**{redo}**)
    next to the reviewer's name.
 
 GitLab creates a new [to-do item](../../../todos.md) for the reviewer, and sends
@@ -127,7 +122,7 @@ A merge commit is created for every merge. However, the branch merges only if
 a fast-forward merge is possible. This ensures that if the merge request build
 succeeded, the target branch build also succeeds after the merge.
 
-1. Go to your project and select **Settings > General**.
+1. Go to your project. Select **Settings > General**.
 1. Expand **Merge requests**.
 1. In the **Merge method** section, select **Merge commit with semi-linear history**.
 1. Select **Save changes**.
@@ -138,7 +133,7 @@ succeeded, the target branch build also succeeds after the merge.
 > - [Added](https://gitlab.com/gitlab-org/gitlab/-/merge_requests/49875) click-and-drag features in GitLab 13.8.
 > - [Feature flag removed](https://gitlab.com/gitlab-org/gitlab/-/issues/299121) in GitLab 13.9.
 
-When you comment on a diff, you can select which lines of code your comment refers
+When you comment on a diff, you can select the lines of code your comment refers
 to by either:
 
 ![Comment on any diff file line](img/comment-on-any-diff-line_v13_10.png)
@@ -149,10 +144,9 @@ to by either:
   1. Select the **{comment}** **comment** icon in the gutter.
   1. In **Commenting on lines**, select the first line number your comment refers to.
 
-  New comments default to one-line comments, unless you select
-  a different starting line.
+  New comments default to one-line comments, unless you select a different starting line.
 
-Multiline comments display the comment's line numbers above the body of the comment:
+Multi-line comments show the comment's line numbers above the comment body:
 
 ![Line numbers shown above comment](img/multiline-comment-saved.png)
 
@@ -160,21 +154,21 @@ Multiline comments display the comment's line numbers above the body of the comm
 
 Users with permission level of [Developer or higher](../../../permissions.md) can manage merge requests.
 
-When bulk-editing merge requests in a project, you can edit the following attributes:
+When you bulk edit merge requests in a project, you can edit these attributes:
 
-- Status (open/closed)
+- Status (open or closed)
 - Assignee
 - Milestone
 - Labels
 - Subscriptions
 
-To update multiple project merge requests at the same time:
+To update multiple project merge requests at once:
 
 1. In a project, go to **Merge requests**.
 1. Select **Edit merge requests**. A sidebar on the right-hand side of your screen appears with
    editable fields.
 1. Select the checkboxes next to each merge request to edit.
-1. Select the appropriate fields and their values from the sidebar.
+1. Select fields and their values from the sidebar.
 1. Select **Update all**.
 
 ## Bulk edit merge requests at the group level
@@ -193,7 +187,7 @@ To bulk edit merge requests:
 1. Select **Edit merge requests**. A sidebar on the right-hand side of your screen appears with
    editable fields.
 1. Select the checkboxes next to each merge request to edit.
-1. Select the appropriate fields and their values from the sidebar.
+1. Select the fields and their values from the sidebar.
 1. Select **Update all**.
 
 ## Associated features
@@ -201,15 +195,15 @@ To bulk edit merge requests:
 These features are related to merge requests:
 
 - [Cherry-pick changes](../cherry_pick_changes.md):
-  Cherry-pick any commit in the UI by selecting **Cherry-pick** in a merged commit or merge request.
+  Select **Cherry-pick** in a merged commit or merge request to cherry-pick any commit in the UI.
 - [Fast-forward merge requests](../fast_forward_merge.md):
   For a linear Git history. Also provides a way to accept merge requests without creating merge commits.
 - [Find the merge request that introduced a change](../versions.md):
   When you view a commit's Details page, GitLab links to the commit's merge request.
 - [Merge requests versions](../versions.md):
-  Select and compare the different versions of merge request diffs.
+  Compare versions of merge request diffs.
 - [Resolve conflicts](../resolve_conflicts.md):
-  You can resolve some merge request conflicts in the GitLab UI.
+  Resolve some merge request conflicts in the GitLab UI.
 - [Revert changes](../revert_changes.md):
   Revert changes from any commit from a merge request.
 - [Keyboard shortcuts](../../../shortcuts.md#issues-and-merge-requests):
@@ -343,11 +337,3 @@ git checkout origin/merge-requests/1
 ```
 
 The [`git-mr`](https://gitlab.com/glensc/git-mr) script can do all of these commands.
-
-## Cached merge request count
-
-> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/299542) in GitLab 13.11.
-> - [Feature flag removed](https://gitlab.com/gitlab-org/gitlab/-/issues/327319) in GitLab 14.0.
-
-In a group, the sidebar displays the total count of open merge requests. This value is cached if it's greater than
-than 1000. The cached value is rounded to thousands (or millions) and updated every 24 hours.

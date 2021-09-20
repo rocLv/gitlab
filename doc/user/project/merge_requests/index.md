@@ -47,7 +47,7 @@ To view a list of merge requests:
 - **All projects in a group**: Go to your group and select **Merge requests**.
   If your group contains subgroups, this view also displays merge requests from the subgroup projects.
   GitLab displays a count of open merge requests in the left sidebar, but
-  [caches the value](reviews/index.md#cached-merge-request-count) for groups with a large number of
+  [caches the value](#cached-merge-request-count) for groups with a large number of
   open merge requests.
 - **Merge requests assigned to you**: On any GitLab page, select **Merge requests**
   in the top bar, or use the <kbd>Shift</kbd> + <kbd>m</kbd>
@@ -150,6 +150,14 @@ For a web developer writing a webpage for your company's website:
 1. You request the [approval](approvals/index.md) from your manager.
 1. Once approved, your merge request is [squashed and merged](squash_and_merge.md), and [deployed to staging with GitLab Pages](https://about.gitlab.com/blog/2021/02/05/ci-deployment-and-environments/).
 1. Your production team [cherry-picks](cherry_pick_changes.md) the merge commit into production.
+
+## Cached merge request count
+
+> - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/299542) in GitLab 13.11.
+> - [Feature flag removed](https://gitlab.com/gitlab-org/gitlab/-/issues/327319) in GitLab 14.0.
+
+In a group, the sidebar displays the total count of open merge requests. This value is cached if it's greater than
+than 1000. The cached value is rounded to thousands (or millions) and updated every 24 hours.
 
 ## Related topics
 
