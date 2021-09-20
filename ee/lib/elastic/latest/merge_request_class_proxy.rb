@@ -5,6 +5,7 @@ module Elastic
     class MergeRequestClassProxy < ApplicationClassProxy
       extend ::Gitlab::Utils::Override
       include StateFilter
+      include IssuableSort
 
       def elastic_search(query, options: {})
         query_hash =
@@ -36,26 +37,6 @@ module Elastic
       # rubocop: enable CodeReuse/ActiveRecord
 
       private
-
-      override :apply_sort
-      def apply_sort(query_hash, options)
-        case ::Gitlab::Search::SortOptions.sort_and_direction(options[:order_by], options[:sort])
-        when :popularity_asc
-          query_hash.merge(sort: {
-            upvotes: {
-              order: 'asc'
-            }
-          })
-        when :popularity_desc
-          query_hash.merge(sort: {
-            upvotes: {
-              order: 'desc'
-            }
-          })
-        else
-          super
-        end
-      end
 
       # Builds an elasticsearch query that will select documents from a
       # set of projects for Group and Project searches, taking user access

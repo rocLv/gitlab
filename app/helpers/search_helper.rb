@@ -150,7 +150,9 @@ module SearchHelper
       }
     ]
 
-    if search_service.scope == 'issues' || (search_service.scope == 'merge_requests' && Feature.enabled?(:search_sort_merge_requests_by_popularity, default_enabled: :yaml))
+    sort_issues_by_popularity = search_service.scope == 'issues'
+    sort_merge_requests_by_popularity = search_service.scope == 'merge_requests' && Feature.enabled?(:search_sort_merge_requests_by_popularity, default_enabled: :yaml)
+    if sort_issues_by_popularity || sort_merge_requests_by_popularity
       options << {
         title: _('Popularity'),
         sortable: true,
