@@ -35063,9 +35063,6 @@ msgstr ""
 msgid "ThreatMonitoring|Packet Activity"
 msgstr ""
 
-msgid "ThreatMonitoring|Policies"
-msgstr ""
-
 msgid "ThreatMonitoring|Requests"
 msgstr ""
 
