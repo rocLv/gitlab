@@ -37,8 +37,8 @@ RSpec.describe DesignManagement::DesignAction do
       context 'content is forbidden' do
         let(:fail_validation) { raise_error(/forbids content/i) }
 
-        it "must not be nil if the action is delete" do
-          expect { described_class.new(double, :delete, :foo) }.to fail_validation
+        it 'must not be nil if the action is archive' do
+          expect { described_class.new(double, :archive, :foo) }.to fail_validation
         end
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe DesignManagement::DesignAction do
     end
 
     context 'the action forbids content' do
-      let(:action) { :delete }
+      let(:action) { :archive }
       let(:content) { nil }
 
       it 'produces a good gitaly action' do
@@ -77,7 +77,7 @@ RSpec.describe DesignManagement::DesignAction do
     let(:issue_id) { :foo }
     let(:design) { OpenStruct.new(issue_id: issue_id) }
 
-    subject { described_class.new(design, :delete) }
+    subject { described_class.new(design, :archive) }
 
     it 'delegates to the design' do
       expect(subject.issue_id).to eq(issue_id)
@@ -87,7 +87,7 @@ RSpec.describe DesignManagement::DesignAction do
   describe '#performed' do
     let(:design) { double }
 
-    subject { described_class.new(design, :delete) }
+    subject { described_class.new(design, :archive) }
 
     it 'calls design#clear_version_cache when the action has been performed' do
       expect(design).to receive(:clear_version_cache)

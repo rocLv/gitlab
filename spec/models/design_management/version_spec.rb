@@ -79,7 +79,7 @@ RSpec.describe DesignManagement::Version do
 
     def as_actions(designs, action = :create)
       designs.map do |d|
-        DesignManagement::DesignAction.new(d, action, action == :delete ? nil : :content)
+        DesignManagement::DesignAction.new(d, action, action == :archive ? nil : :content)
       end
     end
 
@@ -194,24 +194,24 @@ RSpec.describe DesignManagement::Version do
       expect(designs.map(&:most_recent_action)).to all(be_modification)
     end
 
-    it 'deletes designs when the git action was delete' do
-      actions = as_actions(designs, :delete)
+    it 'archives designs when the git action was archive' do
+      actions = as_actions(designs, :archive)
 
       described_class.create_for_designs(actions, 'def', author)
 
-      expect(designs).to all(be_deleted)
+      expect(designs).to all(be_archived)
     end
 
-    it 're-creates designs if they are deleted' do
+    it 're-creates designs if they are archived' do
       described_class.create_for_designs(as_actions(designs, :create), 'abc', author)
-      described_class.create_for_designs(as_actions(designs, :delete), 'def', author)
+      described_class.create_for_designs(as_actions(designs, :archive), 'def', author)
 
-      expect(designs).to all(be_deleted)
+      expect(designs).to all(be_archived)
 
       described_class.create_for_designs(as_actions(designs, :create), 'ghi', author)
 
       expect(designs.map(&:most_recent_action)).to all(be_creation)
-      expect(designs).not_to include(be_deleted)
+      expect(designs).not_to include(be_archived)
     end
 
     it 'changes the version of the designs' do
@@ -238,7 +238,7 @@ RSpec.describe DesignManagement::Version do
 
       it_behaves_like :a_correctly_categorised_design, :created_designs, 'creation'
       it_behaves_like :a_correctly_categorised_design, :modified_designs, 'modification'
-      it_behaves_like :a_correctly_categorised_design, :deleted_designs, 'deletion'
+      it_behaves_like :a_correctly_categorised_design, :archived_designs, 'archival'
     end
 
     context 'there are a bunch of different designs in a variety of states' do
@@ -246,7 +246,7 @@ RSpec.describe DesignManagement::Version do
         create(:design_version,
                created_designs: create_list(:design, 3),
                modified_designs: create_list(:design, 4),
-               deleted_designs: create_list(:design, 5))
+               archived_designs: create_list(:design, 5))
       end
 
       it 'puts them in the right buckets' do
@@ -254,7 +254,7 @@ RSpec.describe DesignManagement::Version do
           a_hash_including(
             'creation' =>  have_attributes(size: 3),
             'modification' => have_attributes(size: 4),
-            'deletion' => have_attributes(size: 5)
+            'archival' => have_attributes(size: 5)
           )
         )
       end

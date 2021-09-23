@@ -88,11 +88,11 @@ RSpec.describe DesignManagement::DesignAtVersion do
     end
 
     let!(:version_c) do
-      create(:design_version, deleted_designs: [design_a])
+      create(:design_version, archived_designs: [design_a])
     end
 
     let!(:version_d) do
-      create(:design_version, deleted_designs: [design_b])
+      create(:design_version, archived_designs: [design_b])
     end
 
     let!(:version_e) do
@@ -102,8 +102,8 @@ RSpec.describe DesignManagement::DesignAtVersion do
     describe 'a design before it has been created' do
       subject { build(:design_at_version, design: design_b, version: version_a) }
 
-      it 'is not deleted' do
-        expect(subject).not_to be_deleted
+      it 'is not archived' do
+        expect(subject).not_to be_archived
       end
 
       it 'has the status :not_created_yet' do
@@ -114,8 +114,8 @@ RSpec.describe DesignManagement::DesignAtVersion do
     describe 'a design as of its creation' do
       subject { build(:design_at_version, design: design_a, version: version_a) }
 
-      it 'is not deleted' do
-        expect(subject).not_to be_deleted
+      it 'is not archived' do
+        expect(subject).not_to be_archived
       end
 
       it 'has the status :current' do
@@ -123,11 +123,11 @@ RSpec.describe DesignManagement::DesignAtVersion do
       end
     end
 
-    describe 'a design after it has been created, but before deletion' do
+    describe 'a design after it has been created, but before archival' do
       subject { build(:design_at_version, design: design_b, version: version_c) }
 
-      it 'is not deleted' do
-        expect(subject).not_to be_deleted
+      it 'is not archived' do
+        expect(subject).not_to be_archived
       end
 
       it 'has the status :current' do
@@ -138,8 +138,8 @@ RSpec.describe DesignManagement::DesignAtVersion do
     describe 'a design as of its modification' do
       subject { build(:design_at_version, design: design_a, version: version_mod) }
 
-      it 'is not deleted' do
-        expect(subject).not_to be_deleted
+      it 'is not archived' do
+        expect(subject).not_to be_archived
       end
 
       it 'has the status :current' do
@@ -147,35 +147,35 @@ RSpec.describe DesignManagement::DesignAtVersion do
       end
     end
 
-    describe 'a design as of its deletion' do
+    describe 'a design as of its archival' do
       subject { build(:design_at_version, design: design_a, version: version_c) }
 
-      it 'is deleted' do
-        expect(subject).to be_deleted
+      it 'is archived' do
+        expect(subject).to be_archived
       end
 
-      it 'has the status :deleted' do
-        expect(subject).to have_attributes(status: :deleted)
+      it 'has the status :archived' do
+        expect(subject).to have_attributes(status: :archived)
       end
     end
 
-    describe 'a design after its deletion' do
+    describe 'a design after its archival' do
       subject { build(:design_at_version, design: design_b, version: version_e) }
 
-      it 'is deleted' do
-        expect(subject).to be_deleted
+      it 'is archived' do
+        expect(subject).to be_archived
       end
 
-      it 'has the status :deleted' do
-        expect(subject).to have_attributes(status: :deleted)
+      it 'has the status :archived' do
+        expect(subject).to have_attributes(status: :archived)
       end
     end
 
     describe 'a design on its recreation' do
       subject { build(:design_at_version, design: design_a, version: version_e) }
 
-      it 'is not deleted' do
-        expect(subject).not_to be_deleted
+      it 'is not archived' do
+        expect(subject).not_to be_archived
       end
 
       it 'has the status :current' do

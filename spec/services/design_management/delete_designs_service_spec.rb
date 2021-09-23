@@ -183,29 +183,29 @@ RSpec.describe DesignManagement::DeleteDesignsService do
         it_behaves_like "a success"
 
         context 'after executing the service' do
-          let(:deleted_designs) { designs.map(&:reset) }
+          let(:archived_designs) { designs.map(&:reset) }
 
           let!(:version) { run_service[:version] }
 
           it 'removes the removed designs from the current design list' do
-            expect(issue.designs.current).not_to include(*deleted_designs)
+            expect(issue.designs.current).not_to include(*archived_designs)
           end
 
           it 'does not make the designs impossible to find' do
-            expect(issue.designs).to include(*deleted_designs)
+            expect(issue.designs).to include(*archived_designs)
           end
 
           it 'associates the new version with all the designs' do
-            current_versions = deleted_designs.map { |d| d.most_recent_action.version }
+            current_versions = archived_designs.map { |d| d.most_recent_action.version }
             expect(current_versions).to all(eq version)
           end
 
           it 'marks all deleted designs as deleted' do
-            expect(deleted_designs).to all(be_deleted)
+            expect(archived_designs).to all(be_deleted)
           end
 
           it 'marks all deleted designs with the same deletion version' do
-            expect(deleted_designs.map { |d| d.most_recent_action.version_id }.uniq)
+            expect(archived_designs.map { |d| d.most_recent_action.version_id }.uniq)
               .to have_attributes(size: 1)
           end
         end

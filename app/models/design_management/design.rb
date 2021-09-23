@@ -73,12 +73,12 @@ module DesignManagement
     #
     # Restricts to designs
     # - created at least *before* the given version
-    # - not deleted as of the given version.
+    # - not archived as of the given version.
     #
     # As a query, we ascertain this by finding the last event prior to
-    # (or equal to) the cut-off, and seeing whether that version was a deletion.
+    # (or equal to) the cut-off, and seeing whether that version was an archival.
     scope :visible_at_version, -> (version) do
-      deletion = ::DesignManagement::Action.events[:deletion]
+      archival = ::DesignManagement::Action.events[:archival]
       designs = arel_table
       actions = ::DesignManagement::Action
         .most_recent.up_to_version(version)
@@ -87,7 +87,7 @@ module DesignManagement
       join = designs.join(actions)
         .on(actions[:design_id].eq(designs[:id]))
 
-      joins(join.join_sources).where(actions[:event].not_eq(deletion))
+      joins(join.join_sources).where(actions[:event].not_eq(archival))
     end
 
     scope :ordered, -> do
@@ -104,7 +104,7 @@ module DesignManagement
     # Scope called by our REST API to avoid N+1 problems
     scope :with_api_entity_associations, -> { preload(:issue) }
 
-    # A design is current if the most recent event is not a deletion
+    # A design is current if the most recent event is not an archival
     scope :current, -> { visible_at_version(nil) }
 
     def self.relative_positioning_query_base(design)
@@ -118,20 +118,20 @@ module DesignManagement
     def status
       if new_design?
         :new
-      elsif deleted?
-        :deleted
+      elsif archived?
+        :archived
       else
         :current
       end
     end
 
-    def deleted?
-      most_recent_action&.deletion?
+    def archived?
+      most_recent_action&.archival?
     end
 
     # A design is visible_in? a version if:
     #   * it was created before that version
-    #   * the most recent action before the version was not a deletion
+    #   * the most recent action before the version was not an archival
     def visible_in?(version)
       map = strong_memoize(:visible_in) do
         Hash.new do |h, k|

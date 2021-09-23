@@ -9,7 +9,7 @@ RSpec.describe DesignManagement::Design do
   let_it_be(:design1) { create(:design, :with_versions, issue: issue, versions_count: 1) }
   let_it_be(:design2) { create(:design, :with_versions, issue: issue, versions_count: 1) }
   let_it_be(:design3) { create(:design, :with_versions, issue: issue, versions_count: 1) }
-  let_it_be(:deleted_design) { create(:design, :with_versions, deleted: true) }
+  let_it_be(:deleted_design) { create(:design, :with_versions, archived: true) }
 
   it_behaves_like 'AtomicInternalId', validate_presence: true do
     let(:internal_id_attribute) { :iid }
@@ -128,7 +128,7 @@ RSpec.describe DesignManagement::Design do
 
       describe 'one of the designs was deleted before the given version' do
         before do
-          delete_designs(design2)
+          archive_designs(design2)
         end
 
         it 'is not returned' do
@@ -140,7 +140,7 @@ RSpec.describe DesignManagement::Design do
 
       context 'a re-created history' do
         before do
-          delete_designs(design1, design2)
+          archive_designs(design1, design2)
           restore_designs(design1)
         end
 
@@ -155,11 +155,11 @@ RSpec.describe DesignManagement::Design do
         let(:versions) { DesignManagement::Version.where(issue: issue).map { |v| [v, :alive] } }
 
         before do
-          versions << [delete_designs(design1),          :dead]
+          versions << [archive_designs(design1),         :dead]
           versions << [modify_designs(design2),          :dead]
           versions << [restore_designs(design1),         :alive]
           versions << [modify_designs(design3),          :alive]
-          versions << [delete_designs(design1),          :dead]
+          versions << [archive_designs(design1),         :dead]
           versions << [modify_designs(design2, design3), :dead]
           versions << [restore_designs(design1),         :alive]
         end
@@ -219,7 +219,7 @@ RSpec.describe DesignManagement::Design do
 
     describe '.current' do
       it 'returns just the undeleted designs' do
-        delete_designs(design3)
+        archive_designs(design3)
 
         expect(described_class.current).to contain_exactly(design1, design2)
       end
@@ -266,8 +266,8 @@ RSpec.describe DesignManagement::Design do
         v = modify_designs(first_design)
         expected << [v, :unaffected_visible, true]
 
-        v = delete_designs(design)
-        expected << [v, :deleted, false]
+        v = archive_designs(design)
+        expected << [v, :archived, false]
 
         v = modify_designs(first_design)
         expected << [v, :unaffected_nv, false]
@@ -276,7 +276,7 @@ RSpec.describe DesignManagement::Design do
         expected << [v, :restored, true]
       end
 
-      delete_designs(design) # ensure visibility is not corelated with current state
+      archive_designs(design) # ensure visibility is not corelated with current state
 
       got = expected.map do |(v, sym, _)|
         [v, sym, design.visible_in?(v)]
@@ -306,16 +306,16 @@ RSpec.describe DesignManagement::Design do
     context 'the design has been deleted' do
       subject { deleted_design }
 
-      it { is_expected.to have_attributes(status: :deleted) }
+      it { is_expected.to have_attributes(status: :archived) }
     end
   end
 
-  describe '#deleted?' do
+  describe '#archived?' do
     context 'the design is new' do
       let(:design) { build(:design, issue: issue) }
 
       it 'is falsy' do
-        expect(design).not_to be_deleted
+        expect(design).not_to be_archived
       end
     end
 
@@ -323,7 +323,7 @@ RSpec.describe DesignManagement::Design do
       let(:design) { design1 }
 
       it 'is falsy' do
-        expect(design).not_to be_deleted
+        expect(design).not_to be_archived
       end
     end
 
@@ -331,17 +331,17 @@ RSpec.describe DesignManagement::Design do
       let(:design) { deleted_design }
 
       it 'is truthy' do
-        expect(design).to be_deleted
+        expect(design).to be_archived
       end
     end
 
     context 'the design has been deleted, but was then re-created' do
-      let(:design) { create(:design, :with_versions, issue: issue, versions_count: 1, deleted: true) }
+      let(:design) { create(:design, :with_versions, issue: issue, versions_count: 1, archived: true) }
 
       it 'is falsy' do
         restore_designs(design)
 
-        expect(design).not_to be_deleted
+        expect(design).not_to be_archived
       end
     end
   end

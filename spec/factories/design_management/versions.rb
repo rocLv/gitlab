@@ -10,7 +10,7 @@ FactoryBot.define do
       designs_count { 1 }
       created_designs { [] }
       modified_designs { [] }
-      deleted_designs { [] }
+      archived_designs { [] }
     end
 
     trait :importing do
@@ -31,7 +31,7 @@ FactoryBot.define do
       specific_designs = [].concat(
         evaluator.created_designs,
         evaluator.modified_designs,
-        evaluator.deleted_designs
+        evaluator.archived_designs
       )
       version.designs += specific_designs
 
@@ -49,8 +49,8 @@ FactoryBot.define do
         .update_all(event: events[:modification])
 
       version.actions
-        .where(design_id: evaluator.deleted_designs.map(&:id))
-        .update_all(event: events[:deletion])
+        .where(design_id: evaluator.archived_designs.map(&:id))
+        .update_all(event: events[:archival])
 
       version.designs.reload
       # Ensure version.issue == design.issue for all version.designs
@@ -97,7 +97,7 @@ FactoryBot.define do
         designs = version.designs_by_event
         base_change = { content: evaluator.file }
 
-        actions = %w[modification deletion].flat_map { |k| designs.fetch(k, []) }.map do |design|
+        actions = %w[modification archival].flat_map { |k| designs.fetch(k, []) }.map do |design|
           base_change.merge(action: :create, file_path: design.full_path)
         end
 
@@ -113,11 +113,11 @@ FactoryBot.define do
         mapping = {
           'creation' => :create,
           'modification' => :update,
-          'deletion' => :delete
+          'archival' => :archive
         }
 
         version_actions = designs.flat_map do |(event, designs)|
-          base = event == 'deletion' ? {} : base_change
+          base = event == 'archival' ? {} : base_change
           designs.map do |design|
             base.merge(action: mapping[event], file_path: design.full_path)
           end

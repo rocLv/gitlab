@@ -10,7 +10,7 @@ module DesignManagement
     EVENT_FOR_GITALY_ACTION = {
       create: DesignManagement::Action.events[:creation],
       update: DesignManagement::Action.events[:modification],
-      delete: DesignManagement::Action.events[:deletion]
+      archive: DesignManagement::Action.events[:archival]
     }.freeze
 
     attr_reader :design, :action, :content
@@ -52,11 +52,11 @@ module DesignManagement
     private
 
     def needs_content?
-      action != :delete
+      action != :archive
     end
 
     def forbids_content?
-      action == :delete
+      action == :archive
     end
 
     def event

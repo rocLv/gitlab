@@ -5,8 +5,8 @@ module DesignManagementTestHelpers
     stub_lfs_setting(enabled: enabled)
   end
 
-  def delete_designs(*designs)
-    act_on_designs(designs) { ::DesignManagement::Action.deletion }
+  def archive_designs(*designs)
+    act_on_designs(designs) { ::DesignManagement::Action.archival }
   end
 
   def restore_designs(*designs)

@@ -17,10 +17,10 @@ module Todos
       private
 
       def todos
-        Todo.for_target(deleted_designs.select(:design_id)).for_type(DesignManagement::Design)
+        Todo.for_target(archived_designs.select(:design_id)).for_type(DesignManagement::Design)
       end
 
-      def deleted_designs
+      def archived_designs
         DesignManagement::Action.by_design(design_ids).by_event(:deletion)
       end
     end

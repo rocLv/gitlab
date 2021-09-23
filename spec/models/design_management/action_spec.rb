@@ -16,9 +16,9 @@ RSpec.describe DesignManagement::Action do
       let_it_be(:design_c) { create(:design, issue: issue) }
 
       let_it_be(:action_a_1) { create(:design_action, design: design_a) }
-      let_it_be(:action_a_2) { create(:design_action, design: design_a, event: :deletion) }
+      let_it_be(:action_a_2) { create(:design_action, design: design_a, event: :archival) }
       let_it_be(:action_b)   { create(:design_action, design: design_b) }
-      let_it_be(:action_c)   { create(:design_action, design: design_c, event: :deletion) }
+      let_it_be(:action_c)   { create(:design_action, design: design_c, event: :archival) }
 
       describe '.most_recent' do
         let(:designs) { [design_a, design_b, design_c] }
@@ -51,7 +51,7 @@ RSpec.describe DesignManagement::Action do
 
       describe '.by_event' do
         it 'returns the actions by event type' do
-          expect(described_class.by_event(:deletion)).to match_array([action_a_2, action_c])
+          expect(described_class.by_event(:archival)).to match_array([action_a_2, action_c])
         end
       end
     end

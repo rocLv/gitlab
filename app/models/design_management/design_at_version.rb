@@ -74,15 +74,15 @@ module DesignManagement
     def status
       if not_created_yet?
         :not_created_yet
-      elsif deleted?
-        :deleted
+      elsif archived?
+        :archived
       else
         :current
       end
     end
 
-    def deleted?
-      action&.deletion?
+    def archived?
+      action&.archival?
     end
 
     def not_created_yet?

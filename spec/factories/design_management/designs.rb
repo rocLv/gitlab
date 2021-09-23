@@ -33,7 +33,7 @@ FactoryBot.define do
         repository = project.design_repository
         repository.create_if_not_exists
         dv_table_name = DesignManagement::Action.table_name
-        updates = [0, evaluator.versions_count - (evaluator.deleted ? 2 : 1)].max
+        updates = [0, evaluator.versions_count - (evaluator.archived ? 2 : 1)].max
 
         run_action = ->(action) do
           sha = commit_version[action]
@@ -50,8 +50,8 @@ FactoryBot.define do
           run_action[DesignManagement::DesignAction.new(design, :update, evaluator.file)]
         end
 
-        # and maybe a deletion
-        run_action[DesignManagement::DesignAction.new(design, :delete)] if evaluator.deleted
+        # and maybe a archival
+        run_action[DesignManagement::DesignAction.new(design, :archive)] if evaluator.archived
       end
 
       design.clear_version_cache
@@ -78,7 +78,7 @@ FactoryBot.define do
     # want to pay for gitaly calls.
     trait :with_versions do
       transient do
-        deleted { false }
+        archived { false }
         versions_count { 1 }
         sequence(:file) { |n| "some-file-content-#{n}" }
       end
@@ -99,7 +99,7 @@ FactoryBot.define do
     # and files that can be retrieved.
     trait :with_file do
       transient do
-        deleted { false }
+        archived { false }
         versions_count { 1 }
         file { File.join(Rails.root, 'spec/fixtures/dk.png') }
       end
