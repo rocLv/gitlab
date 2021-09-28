@@ -90,6 +90,42 @@ describe('WebIDE', () => {
     // Assert that +test is the only open tab
     const tabs = Array.from(document.querySelectorAll('.multi-file-tab'));
     expect(tabs.map((x) => x.textContent.trim())).toEqual(['+test']);
+
+    await ideHelper.commit();
+  });
+
+  it('user modified files and renames directory', async () => {
+    const NEW_CONTENT = 'console.log("New file!");\n';
+
+    vm = startWebIDE(container);
+
+    await ideHelper.updateFile('files/js/application.js', NEW_CONTENT);
+    await ideHelper.renameFile('files/js', 'files/javascripts', { isFolder: true });
+    await ideHelper.commit();
+
+    // Wait for IDE to load new commit
+    await waitForText('All changes are committed');
+    await waitForText('10000000', document.querySelector('.ide-status-bar'));
+
+    expect(mockServer.db.branches.findBy({ name: 'master' }).commit).toEqual(
+      expect.objectContaining({
+        __actions: [
+          {
+            action: 'move',
+            content: NEW_CONTENT,
+            encoding: 'text',
+            file_path: 'files/javascripts/application.js',
+            previous_path: 'files/js/application.js',
+          },
+          {
+            action: 'move',
+            encoding: 'text',
+            file_path: 'files/javascripts/commit.coffee',
+            previous_path: 'files/js/commit.coffee',
+          },
+        ],
+      }),
+    );
   });
 
   describe('editor info', () => {

@@ -165,11 +165,11 @@ export const deleteFile = async (path) => {
   clickFileRowAction(row, 'Delete');
 };
 
-export const renameFile = async (path, newPath) => {
+export const renameFile = async (path, newPath, { isFolder = false } = {}) => {
   const row = await findAndTraverseToPath(path);
   clickFileRowAction(row, 'Rename/Move');
 
-  await fillFileNameModal(newPath, 'Rename file');
+  await fillFileNameModal(newPath, isFolder ? 'Rename folder' : 'Rename file');
 };
 
 export const closeFile = async (path) => {
