@@ -30,6 +30,22 @@ module Gitlab
           def process
             return [] if locations.empty?
 
+            if ::Feature.enabled?(:ci_parallel_include_fetching, context.project, default_enabled: :yaml)
+              Gitlab::Parallel.execute(processed_locations) do |location|
+                select_first_matching(location)
+              end
+            else
+              processed_locations.map(&method(:select_first_matching))
+            end
+          end
+
+          private
+
+          attr_reader :locations, :context
+
+          delegate :expandset, to: :context
+
+          def processed_locations
             locations
               .compact
               .map(&method(:normalize_location))
@@ -38,14 +54,7 @@ module Gitlab
               .flat_map(&method(:expand_wildcard_paths))
               .map(&method(:expand_variables))
               .each(&method(:verify_duplicates!))
-              .map(&method(:select_first_matching))
           end
-
-          private
-
-          attr_reader :locations, :context
-
-          delegate :expandset, to: :context
 
           # convert location if String to canonical form
           def normalize_location(location)
