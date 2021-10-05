@@ -1456,15 +1456,11 @@ RSpec.describe GroupPolicy do
 
   it_behaves_like 'update namespace limit policy'
 
-  context 'group access tokens' do
+  context 'group access tokens', :saas do
     it_behaves_like 'GitLab.com Core resource access tokens'
 
     context 'on GitLab.com paid' do
       let_it_be(:group) { create(:group_with_plan, plan: :bronze_plan) }
-
-      before do
-        allow(::Gitlab).to receive(:com?).and_return(true)
-      end
 
       context 'with owner' do
         let(:current_user) { owner }

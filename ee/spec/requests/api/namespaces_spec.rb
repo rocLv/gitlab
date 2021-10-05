@@ -10,14 +10,9 @@ RSpec.describe API::Namespaces do
 
   let_it_be(:group1, reload: true) { create(:group, name: 'test.test-group.2') }
   let_it_be(:group2) { create(:group, :nested) }
-  let_it_be(:ultimate_plan) { create(:ultimate_plan) }
 
   describe "GET /namespaces" do
-    context "when authenticated as admin" do
-      before do
-        allow(Gitlab).to receive(:com?).and_return(true)
-      end
-
+    context "when authenticated as admin", :saas do
       it "returns correct attributes" do
         get api("/namespaces", admin)
 
@@ -118,7 +113,7 @@ RSpec.describe API::Namespaces do
       end
     end
 
-    context 'with gitlab subscription' do
+    context 'with gitlab subscription', :saas do
       before do
         group1.add_guest(user)
 
@@ -187,7 +182,7 @@ RSpec.describe API::Namespaces do
     end
   end
 
-  describe 'PUT /namespaces/:id' do
+  describe 'PUT /namespaces/:id', :saas do
     let!(:namespace_statistics) do
       create(:namespace_statistics, namespace: group1, shared_runners_seconds: 1600 * 60)
     end
@@ -201,7 +196,6 @@ RSpec.describe API::Namespaces do
     end
 
     before do
-      allow(Gitlab).to receive(:com?).and_return(true)
       group1.update!(shared_runners_minutes_limit: 1000, extra_shared_runners_minutes_limit: 500)
     end
 
@@ -369,7 +363,9 @@ RSpec.describe API::Namespaces do
       end
     end
 
-    context "when passing attributes for gitlab_subscription" do
+    context "when passing attributes for gitlab_subscription", :saas do
+      let_it_be(:ultimate_plan) { create(:ultimate_plan) }
+
       let(:gitlab_subscription) do
         {
           start_date: '2019-06-01',
@@ -433,7 +429,7 @@ RSpec.describe API::Namespaces do
     end
   end
 
-  describe 'POST :id/gitlab_subscription' do
+  describe 'POST :id/gitlab_subscription', :saas do
     let(:params) do
       { seats: 10,
         plan_code: 'gold',
@@ -491,7 +487,7 @@ RSpec.describe API::Namespaces do
     end
   end
 
-  describe 'GET :id/gitlab_subscription' do
+  describe 'GET :id/gitlab_subscription', :saas do
     def do_get(current_user)
       get api("/namespaces/#{namespace.id}/gitlab_subscription", current_user)
     end
@@ -543,7 +539,7 @@ RSpec.describe API::Namespaces do
     end
   end
 
-  describe 'PUT :id/gitlab_subscription' do
+  describe 'PUT :id/gitlab_subscription', :saas do
     def do_put(namespace_id, current_user, payload)
       put api("/namespaces/#{namespace_id}/gitlab_subscription", current_user), params: payload
     end

@@ -72,9 +72,8 @@ RSpec.shared_examples 'Self-managed Core resource access tokens' do
   end
 end
 
-RSpec.shared_examples 'GitLab.com Core resource access tokens' do
+RSpec.shared_examples 'GitLab.com Core resource access tokens', :saas do
   before do
-    allow(::Gitlab).to receive(:com?).and_return(true)
     stub_ee_application_setting(should_check_namespace_plan: true)
   end
 
