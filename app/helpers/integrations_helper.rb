@@ -37,11 +37,11 @@ module IntegrationsHelper
     end
   end
 
-  def scoped_edit_integration_path(integration)
-    if integration.project_level?
-      edit_project_service_path(integration.project, integration)
-    elsif integration.group_level?
-      edit_group_settings_integration_path(integration.group, integration)
+  def scoped_edit_integration_path(integration, project: nil, group: nil)
+    if project.present?
+      edit_project_service_path(project, integration)
+    elsif group.present?
+      edit_group_settings_integration_path(group, integration)
     else
       edit_admin_application_settings_integration_path(integration)
     end
@@ -51,11 +51,11 @@ module IntegrationsHelper
     overrides_admin_application_settings_integration_path(integration, options)
   end
 
-  def scoped_test_integration_path(integration)
-    if integration.project_level?
-      test_project_service_path(integration.project, integration)
-    elsif integration.group_level?
-      test_group_settings_integration_path(integration.group, integration)
+  def scoped_test_integration_path(integration, project: nil, group: nil)
+    if project.present?
+      test_project_service_path(project, integration)
+    elsif group.present?
+      test_group_settings_integration_path(group, integration)
     else
       test_admin_application_settings_integration_path(integration)
     end
