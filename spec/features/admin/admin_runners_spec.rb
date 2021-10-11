@@ -24,7 +24,7 @@ RSpec.describe "Admin Runners" do
 
         visit admin_runners_path
 
-        expect(page).to have_text "Set up a shared runner manually"
+        expect(page).to have_text "Register an instance runner"
         expect(page).to have_text "Runners currently online: 1"
       end
 
@@ -267,7 +267,7 @@ RSpec.describe "Admin Runners" do
       end
 
       it 'has all necessary texts including no runner message' do
-        expect(page).to have_text "Set up a shared runner manually"
+        expect(page).to have_text "Register an instance runner"
         expect(page).to have_text "Runners currently online: 0"
         expect(page).to have_text 'No runners found'
       end
@@ -278,6 +278,7 @@ RSpec.describe "Admin Runners" do
 
       before do
         visit admin_runners_path
+        click_button 'Register an instance runner'
       end
 
       it 'has a registration token' do

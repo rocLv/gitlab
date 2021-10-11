@@ -148,6 +148,7 @@ export default {
 
     <runner-filtered-search-bar
       v-model="search"
+      class="gl-my-5"
       :tokens="searchTokens"
       :namespace="filteredSearchNamespace"
     >

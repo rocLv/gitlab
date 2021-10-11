@@ -43,6 +43,7 @@ export default {
   },
   data() {
     return {
+      visible: false,
       search: fromUrlQueryToSearch(),
       runners: {
         items: [],
@@ -133,6 +134,7 @@ export default {
 
     <runner-filtered-search-bar
       v-model="search"
+      class="gl-my-5"
       :tokens="searchTokens"
       :namespace="$options.filteredSearchNamespace"
     >

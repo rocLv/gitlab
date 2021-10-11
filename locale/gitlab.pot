@@ -29437,6 +29437,18 @@ msgstr ""
 msgid "Runners|Protected"
 msgstr ""
 
+msgid "Runners|Register a group runner"
+msgstr ""
+
+msgid "Runners|Register a project runner"
+msgstr ""
+
+msgid "Runners|Register a runner"
+msgstr ""
+
+msgid "Runners|Register an instance runner"
+msgstr ""
+
 msgid "Runners|Revision"
 msgstr ""
 
@@ -29462,9 +29474,6 @@ msgid "Runners|Runner registration"
 msgstr ""
 
 msgid "Runners|Runner unassigned from project."
-msgstr ""
-
-msgid "Runners|Runners"
 msgstr ""
 
 msgid "Runners|Runners in this group: %{groupRunnersCount}"
