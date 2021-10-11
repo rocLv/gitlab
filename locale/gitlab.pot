@@ -18191,6 +18191,9 @@ msgstr ""
 msgid "Inline"
 msgstr ""
 
+msgid "Inline math"
+msgstr ""
+
 msgid "Input host keys manually"
 msgstr ""
 
