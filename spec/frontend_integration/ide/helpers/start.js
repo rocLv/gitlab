@@ -1,5 +1,4 @@
-/* global monaco */
-
+import { editor as monacoEditor } from 'monaco-editor';
 import setWindowLocation from 'helpers/set_window_location_helper';
 import { TEST_HOST } from 'helpers/test_constants';
 import { initIde } from '~/ide';
@@ -17,8 +16,8 @@ export default (container, { isRepoEmpty = false, path = '', mrId = '' } = {}) =
   container.appendChild(el);
   const vm = initIde(el, { extendStore });
 
-  // We need to dispose of editor Singleton things or tests will bump into eachother
-  vm.$on('destroy', () => monaco.editor.getModels().forEach((model) => model.dispose()));
+  // We need to dispose of editor Singleton things or tests will bump into each other
+  vm.$on('destroy', () => monacoEditor.getModels().forEach((model) => model.dispose()));
 
   return vm;
 };

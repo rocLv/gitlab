@@ -90,8 +90,6 @@ describe('WebIDE', () => {
     // Assert that +test is the only open tab
     const tabs = Array.from(document.querySelectorAll('.multi-file-tab'));
     expect(tabs.map((x) => x.textContent.trim())).toEqual(['+test']);
-
-    await ideHelper.commit();
   });
 
   it('user modified files and renames directory', async () => {
