@@ -15574,6 +15574,9 @@ msgstr ""
 msgid "GitLab commit"
 msgstr ""
 
+msgid "GitLab events trigger webhooks. Use the request details of a webhook to help troubleshoot problems. %{link_start}How do I troubleshoot?%{link_end}"
+msgstr ""
+
 msgid "GitLab export"
 msgstr ""
 
@@ -23242,6 +23245,9 @@ msgstr ""
 msgid "No vulnerabilities present"
 msgstr ""
 
+msgid "No webhook events"
+msgstr ""
+
 msgid "No webhooks found, add one in the form above."
 msgstr ""
 
@@ -28114,13 +28120,13 @@ msgstr ""
 msgid "Recent"
 msgstr ""
 
-msgid "Recent Deliveries"
-msgstr ""
-
 msgid "Recent Project Activity"
 msgstr ""
 
 msgid "Recent Searches Service is unavailable"
+msgstr ""
+
+msgid "Recent events"
 msgstr ""
 
 msgid "Recent jobs served by this runner"
@@ -37079,6 +37085,7 @@ msgid "Use template"
 msgstr ""
 
 msgid "Use the application only where it can keep the client secret confidential. Native mobile and Single Page applications cannot keep client secrets confidential."
+msgid "Use the %{strongStart}Test%{strongEnd} option above to create an event."
 msgstr ""
 
 msgid "Use the link below to confirm your email address (%{email})"
@@ -38227,6 +38234,9 @@ msgstr ""
 msgid "Webhook Settings"
 msgstr ""
 
+msgid "Webhook events will be displayed here."
+msgstr ""
+
 msgid "Webhook:"
 msgstr ""
 
@@ -38429,9 +38439,6 @@ msgid "When a deployment job is successful, skip older deployment jobs that are 
 msgstr ""
 
 msgid "When a runner is locked, it cannot be assigned to other projects"
-msgstr ""
-
-msgid "When an event in GitLab triggers a webhook, you can use the request details to figure out if something went wrong."
 msgstr ""
 
 msgid "When enabled, existing personal access tokens may be revoked. Leave blank for no limit."
@@ -39127,9 +39134,6 @@ msgid "You don't have any projects available."
 msgstr ""
 
 msgid "You don't have any recent searches"
-msgstr ""
-
-msgid "You don't have any webhooks deliveries"
 msgstr ""
 
 msgid "You don't have sufficient permission to perform this action."
