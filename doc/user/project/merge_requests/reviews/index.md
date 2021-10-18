@@ -169,8 +169,8 @@ To update multiple project merge requests at once:
 1. On the top bar, select **Menu > Projects** and find your project.
 1. On the left sidebar, select ***Merge requests**.
 1. Select **Edit merge requests**. A right sidebar opens.
-1. Select the checkboxes next to each merge request to edit.
-1. Select fields and their values from the sidebar.
+1. Next to each merge request you want to edit, select the checkbox.
+1. From the right sidebar, select fields and their values.
 1. Select **Update all**.
 
 ## Bulk edit merge requests at the group level
@@ -185,14 +185,14 @@ When you bulk edit merge requests in a group, you can edit:
 
 To bulk edit merge requests:
 
-1. In a group, go to **Merge requests**.
-1. Select **Edit merge requests**. A sidebar on the right-hand side of your screen appears with
-   editable fields.
-1. Select the checkboxes next to each merge request to edit.
-1. Select the fields and their values from the sidebar.
+1. On the top bar, select **Menu > Groups** and find your group.
+1. On the left sidebar, select **Merge requests**.
+1. Select **Edit merge requests**. A right sidebar opens.
+1. Next to each merge request you want to edit, select the checkbox.
+1. From the right sidebar, select fields and their values.
 1. Select **Update all**.
 
-## Associated features
+## Related topics
 
 These features are related to merge requests:
 

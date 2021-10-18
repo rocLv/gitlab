@@ -156,7 +156,7 @@ For a web developer writing a webpage for your company's website:
 > - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/299542) in GitLab 13.11.
 > - [Feature flag removed](https://gitlab.com/gitlab-org/gitlab/-/issues/327319) in GitLab 14.0.
 
-In a group, the sidebar displays the total count of open merge requests. This value is cached if it's greater than
+In a group, the sidebar displays the total count of open merge requests. This value is cached if it's greater
 than 1000. The cached value is rounded to thousands (or millions) and updated every 24 hours.
 
 ## Related topics
