@@ -1952,6 +1952,9 @@ msgstr ""
 msgid "Add a link to Grafana"
 msgstr ""
 
+msgid "Add a new application"
+msgstr ""
+
 msgid "Add a new issue"
 msgstr ""
 
@@ -12627,6 +12630,9 @@ msgstr ""
 msgid "Enable access to the performance bar for non-administrators in a given group."
 msgstr ""
 
+msgid "Enable access tokens to expire after 2 hours. You can use a refresh token at any time to generate a new access token. Clear this setting to also enable backward compatibility. Access tokens without an expiration are deprecated. Learn more."
+msgstr ""
+
 msgid "Enable admin mode"
 msgstr ""
 
@@ -20787,7 +20793,7 @@ msgstr ""
 msgid "Manage applications that can use GitLab as an OAuth provider, and applications that you've authorized to use your account."
 msgstr ""
 
-msgid "Manage applications that can use GitLab as an OAuth provider."
+msgid "Manage applications that use GitLab as an OAuth provider."
 msgstr ""
 
 msgid "Manage applications that you've authorized to use your account."
@@ -37063,6 +37069,9 @@ msgid "Use slash commands."
 msgstr ""
 
 msgid "Use template"
+msgstr ""
+
+msgid "Use the application only where it can keep the client secret confidential. Native mobile and Single Page applications cannot keep client secrets confidential."
 msgstr ""
 
 msgid "Use the link below to confirm your email address (%{email})"
