@@ -80,7 +80,7 @@ Many of these options can be set:
 - From the merge request page, with [keyboard shortcuts](../../shortcuts.md#issues-and-merge-requests).
 - When pushing changes from the command line, with [Git push options](../push_options.md).
 
-See also other [features associated to merge requests](reviews/index.md#associated-features).
+See also other [features associated to merge requests](reviews/index.md#related-topics).
 
 ### Assignee
 
