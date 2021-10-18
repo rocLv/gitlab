@@ -43,8 +43,8 @@ to you. When you're ready, publish them all at once. To start your review:
    The comment shows the actions to perform after you publish your review. They are not performed
    until you submit your review.
 1. When your review is complete, you can [submit the review](#submit-a-review):
-   - Your comments are published.
-   - Any [quick actions](../../quick_actions.md) in your comments are performed.
+   - Your pending comments are published.
+   - Any [quick actions](../../quick_actions.md) in your pending comments are performed.
 
 [In GitLab 13.10 and later](https://gitlab.com/gitlab-org/gitlab/-/issues/292936),
 if you [approve a merge request](../approvals/index.md#approve-a-merge-request) and
