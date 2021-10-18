@@ -10,12 +10,14 @@ type: index, reference
 > - [Introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/216054) in GitLab 13.5.
 > - [Feature flag removed](https://gitlab.com/gitlab-org/gitlab/-/issues/245190) in GitLab 13.9.
 
-[Merge requests](../index.md) are the primary way to change files in a
-GitLab project. [Create and submit a merge request](../creating_merge_requests.md)
-to propose changes. Your team [comments](../../../discussions/index.md) on
-your merge request. They [suggest code changes](suggestions.md) you can accept
-from the user interface. When your work is reviewed, your team members can choose
-to accept or reject it.
+When you want to make changes to files in a GitLab repository, you usually open a
+[merge request](../index.md). In the merge request, other users in your project have the opportunity to review
+your proposed changes. When reviewing, these users can:
+
+- Add [comments](../../../discussions/index.md).
+- [Suggest code changes](suggestions.md).
+
+You can then address the feedback.
 
 ## Review a merge request
 
@@ -28,8 +30,8 @@ to you. When you're ready, publish them all at once. To start your review:
 1. Go to the merge request you want to review. Select the **Changes** tab.
    To learn how to navigate the diffs displayed in this tab, read
    [Changes tab in merge requests](../changes.md).
-1. To expand the diff lines and display a comment box, select **Comment** (**{comment}**)
-   in the gutter. In GitLab version 13.2 and later, you can
+1. To expand the diff lines and display a comment box, in the column with the line numbers, select **Comment** (**{comment}**).
+   In GitLab version 13.2 and later, you can
    [select multiple lines](#comment-on-multiple-lines).
 1. Write your first comment. Below your comment, select **Start a review**:
    ![Starting a review](img/mr_review_start.png)
@@ -37,7 +39,7 @@ to you. When you're ready, publish them all at once. To start your review:
    - **Add to review**: Keep this comment private and add to the current review.
      These review comments are marked **Pending**. Only you can see them.
    - **Add comment now**: Submit this comment as a regular comment, and not part of the review.
-1. (Optional) You can use [quick actions](../../quick_actions.md) inside review comments.
+1. Optional. You can use [quick actions](../../quick_actions.md) inside review comments.
    The comment shows the actions to perform after you publish your review. They are not performed
    until you submit your review.
 1. When your review is complete, you can [submit the review](#submit-a-review):
@@ -51,7 +53,7 @@ displays next to your name.
 
 ### Submit a review
 
-To submit your completed review:
+To submit your completed review, do one of the following:
 
 - Use the `/submit_review` [quick action](../../quick_actions.md) in the text of a non-review comment.
 - When you create a review comment, select **Submit review**.
@@ -66,7 +68,7 @@ GitLab then:
 
 ### Resolve or unresolve thread with a comment
 
-Review comments can also resolve or unresolve [discussion threads](../../../discussions/index.md#resolve-a-thread)).
+Review comments can also resolve or unresolve [discussion threads](../../../discussions/index.md#resolve-a-thread).
 When you reply to a comment, you can select a checkbox to resolve or unresolve
 the thread when your comment is published:
 
@@ -110,8 +112,7 @@ the merge request author can request a new review:
 
 1. If the right sidebar in the merge request is collapsed, select
    **Expand Sidebar** (**{chevron-double-lg-left}**) to expand it.
-1. Scroll to **Reviewers**. Select **Re-request a review** (**{redo}**)
-   next to the reviewer's name.
+1. Scroll to **Reviewers**. Next to the reviewer's name, select **Re-request a review** (**{redo}**).
 
 GitLab creates a new [to-do item](../../../todos.md) for the reviewer, and sends
 them a notification email.
@@ -122,7 +123,8 @@ A merge commit is created for every merge. However, the branch merges only if
 a fast-forward merge is possible. This ensures that if the merge request build
 succeeded, the target branch build also succeeds after the merge.
 
-1. Go to your project. Select **Settings > General**.
+1. On the top bar, select **Menu > Projects** and find your project.
+1. On the left sidebar, select **Settings > General**.
 1. Expand **Merge requests**.
 1. In the **Merge method** section, select **Merge commit with semi-linear history**.
 1. Select **Save changes**.
@@ -164,9 +166,9 @@ When you bulk edit merge requests in a project, you can edit these attributes:
 
 To update multiple project merge requests at once:
 
-1. In a project, go to **Merge requests**.
-1. Select **Edit merge requests**. A sidebar on the right-hand side of your screen appears with
-   editable fields.
+1. On the top bar, select **Menu > Projects** and find your project.
+1. On the left sidebar, select ***Merge requests**.
+1. Select **Edit merge requests**. A right sidebar opens.
 1. Select the checkboxes next to each merge request to edit.
 1. Select fields and their values from the sidebar.
 1. Select **Update all**.
