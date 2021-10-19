@@ -8,7 +8,7 @@ RSpec.shared_examples 'manage applications' do
   it 'allows user to manage applications' do
     visit new_application_path
 
-    expect(page).to have_content 'Add new application'
+    expect(page).to have_content 'Add a new application'
     expect(find('#doorkeeper_application_expire_access_tokens')).to be_checked
 
     fill_in :doorkeeper_application_name, with: application_name
@@ -46,7 +46,7 @@ RSpec.shared_examples 'manage applications' do
     it 'returns an error' do
       visit new_application_path
 
-      expect(page).to have_content 'Add new application'
+      expect(page).to have_content 'Add a new application'
 
       fill_in :doorkeeper_application_name, with: application_name
       fill_in :doorkeeper_application_redirect_uri, with: application_redirect_uri
