@@ -132,6 +132,7 @@ export default {
           lastPageSize: this.pagination.lastPageSize,
           prevPageCursor: this.pagination.prevPageCursor,
           nextPageCursor: this.pagination.nextPageCursor,
+          domain: 'operations',
         };
       },
       update(data) {
