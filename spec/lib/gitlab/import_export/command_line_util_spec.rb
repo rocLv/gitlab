@@ -17,6 +17,10 @@ RSpec.describe Gitlab::ImportExport::CommandLineUtil do
       def initialize
         @shared = Gitlab::ImportExport::Shared.new(nil)
       end
+
+      def download(url, upload_path)
+        super(url, upload_path)
+      end
     end.new
   end
 
@@ -98,6 +102,77 @@ RSpec.describe Gitlab::ImportExport::CommandLineUtil do
         end.new
 
         expect { klass.tar_cf(archive: 'test', dir: 'test') }.to raise_error(Gitlab::ImportExport::Error, 'System call failed')
+      end
+    end
+  end
+
+  describe '#download' do
+    before do
+      stub_request(:get, loc)
+        .to_return(
+          status: status,
+          body: content
+        )
+    end
+
+    context 'a non-localhost uri' do
+      let(:loc) { 'https://gitlab.com' }
+      let(:content) { File.open('spec/fixtures/rails_sample.tif') }
+
+      context 'with ok status code' do
+        let_it_be(:status) { HTTP::Status::OK }
+
+        it 'gets the contents' do
+          Tempfile.create('xyz') do |f|
+            subject.download(loc, f.path)
+            expect(f.read).to eq(File.open('spec/fixtures/rails_sample.tif').read)
+          end
+        end
+
+        it 'streams the contents' do
+          expect(Gitlab::HTTP).to receive(:get).with(loc, hash_including(stream_body: true))
+          Tempfile.create('xyz') do |f|
+            subject.download(loc, f.path)
+          end
+        end
+      end
+
+      %w[MOVED_PERMANENTLY FOUND TEMPORARY_REDIRECT].each do |s|
+        context "with a redirect status code #{s}" do
+          let_it_be(:status) { HTTP::Status.const_get(s, false) }
+
+          it 'logs the redirect' do
+            expect(Gitlab::Import::Logger).to receive(:warn)
+            Tempfile.create('xyz') do |f|
+              subject.download(loc, f.path)
+            end
+          end
+        end
+      end
+
+      %w[CREATED ACCEPTED NON_AUTHORITATIVE_INFORMATION RESET_CONTENT PARTIAL_CONTENT SEE_OTHER UNAUTHORIZED PROXY_AUTHENTICATE_REQUIRED BAD_REQUEST INTERNAL].each do |s|
+        context "with an invalid status code #{s}" do
+          let_it_be(:status) { HTTP::Status.const_get(s, false) }
+
+          it 'throws an error' do
+            Tempfile.create('xyz') do |f|
+              expect { subject.download(loc, f.path) }.to raise_error(Gitlab::ImportExport::Error)
+            end
+          end
+        end
+      end
+    end
+
+    context 'a localhost uri' do
+      let(:loc) { 'https://localhost:8081/foo/bar' }
+      let(:content) { 'some sort of content' }
+
+      let_it_be(:status) { HTTP::Status::OK }
+
+      it 'throws a blocked url error' do
+        Tempfile.create('xyz') do |f|
+          expect { subject.download(loc, f.path) }.to raise_error(Gitlab::HTTP::BlockedUrlError)
+        end
       end
     end
   end
