@@ -187,6 +187,26 @@ RSpec.describe Issue do
     end
   end
 
+  describe '.with_alert_monitoring_tools' do
+    let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
+    let_it_be(:alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Cilium') }
+
+    it 'gives incidents with the given alert monitoring tool' do
+      expect(described_class.with_alert_monitoring_tools('Cilium'))
+        .to contain_exactly(alert_incident)
+    end
+  end
+
+  describe '.without_alert_monitoring_tools' do
+    let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
+    let_it_be(:alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Cilium') }
+
+    it 'gives incidents without the given alert monitoring tool' do
+      expect(described_class.without_alert_monitoring_tools('Prometheus'))
+        .to contain_exactly(alert_incident)
+    end
+  end
+
   describe '.order_severity' do
     let_it_be(:issue_high_severity) { create(:issuable_severity, severity: :high).issue }
     let_it_be(:issue_low_severity) { create(:issuable_severity, severity: :low).issue }

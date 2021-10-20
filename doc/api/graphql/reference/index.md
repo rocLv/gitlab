@@ -10650,6 +10650,7 @@ four standard [pagination arguments](#connection-pagination-arguments):
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="groupissuesalertmonitoringtools"></a>`alertMonitoringTools` | [`[String!]`](#string) | Filter issues by the given monitoring tool of the alert associated with given issue. |
 | <a id="groupissuesassigneeid"></a>`assigneeId` | [`String`](#string) | ID of a user assigned to the issues. Wildcard values "NONE" and "ANY" are supported. |
 | <a id="groupissuesassigneeusername"></a>`assigneeUsername` **{warning-solid}** | [`String`](#string) | **Deprecated** in 13.11. Use `assigneeUsernames`. |
 | <a id="groupissuesassigneeusernames"></a>`assigneeUsernames` | [`[String!]`](#string) | Usernames of users assigned to the issue. |
@@ -13193,6 +13194,7 @@ Returns [`Issue`](#issue).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="projectissuealertmonitoringtools"></a>`alertMonitoringTools` | [`[String!]`](#string) | Filter issues by the given monitoring tool of the alert associated with given issue. |
 | <a id="projectissueassigneeid"></a>`assigneeId` | [`String`](#string) | ID of a user assigned to the issues. Wildcard values "NONE" and "ANY" are supported. |
 | <a id="projectissueassigneeusername"></a>`assigneeUsername` **{warning-solid}** | [`String`](#string) | **Deprecated** in 13.11. Use `assigneeUsernames`. |
 | <a id="projectissueassigneeusernames"></a>`assigneeUsernames` | [`[String!]`](#string) | Usernames of users assigned to the issue. |
@@ -13233,6 +13235,7 @@ Returns [`IssueStatusCountsType`](#issuestatuscountstype).
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="projectissuestatuscountsalertmonitoringtools"></a>`alertMonitoringTools` | [`[String!]`](#string) | Filter issues by the given monitoring tool of the alert associated with given issue. |
 | <a id="projectissuestatuscountsassigneeid"></a>`assigneeId` | [`String`](#string) | ID of a user assigned to the issues. Wildcard values "NONE" and "ANY" are supported. |
 | <a id="projectissuestatuscountsassigneeusername"></a>`assigneeUsername` **{warning-solid}** | [`String`](#string) | **Deprecated** in 13.11. Use `assigneeUsernames`. |
 | <a id="projectissuestatuscountsassigneeusernames"></a>`assigneeUsernames` | [`[String!]`](#string) | Usernames of users assigned to the issue. |
@@ -13270,6 +13273,7 @@ four standard [pagination arguments](#connection-pagination-arguments):
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="projectissuesalertmonitoringtools"></a>`alertMonitoringTools` | [`[String!]`](#string) | Filter issues by the given monitoring tool of the alert associated with given issue. |
 | <a id="projectissuesassigneeid"></a>`assigneeId` | [`String`](#string) | ID of a user assigned to the issues. Wildcard values "NONE" and "ANY" are supported. |
 | <a id="projectissuesassigneeusername"></a>`assigneeUsername` **{warning-solid}** | [`String`](#string) | **Deprecated** in 13.11. Use `assigneeUsernames`. |
 | <a id="projectissuesassigneeusernames"></a>`assigneeUsernames` | [`[String!]`](#string) | Usernames of users assigned to the issue. |
@@ -18504,6 +18508,7 @@ Represents an escalation rule.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
+| <a id="negatedissuefilterinputalertmonitoringtools"></a>`alertMonitoringTools` | [`[String!]`](#string) | Filters out issues by the given monitoring tool of the alert associated with given issue. |
 | <a id="negatedissuefilterinputassigneeid"></a>`assigneeId` | [`String`](#string) | ID of a user not assigned to the issues. |
 | <a id="negatedissuefilterinputassigneeusernames"></a>`assigneeUsernames` | [`[String!]`](#string) | Usernames of users not assigned to the issue. |
 | <a id="negatedissuefilterinputauthorusername"></a>`authorUsername` | [`String`](#string) | Username of a user who didn't author the issue. |

@@ -910,6 +910,59 @@ RSpec.describe IssuesFinder do
         end
       end
 
+      context 'filtering by alert monitoring tool' do
+        let_it_be(:alert_incident) { create(:incident, project: project1) }
+        let_it_be(:alert) { create(:alert_management_alert, project: project1, issue: alert_incident, monitoring_tool: 'Cilium') }
+
+        context 'no monitoring tool given' do
+          let(:params) { { alert_monitoring_tools: [] } }
+
+          it 'returns all issues' do
+            expect(issues).to contain_exactly(alert_incident, issue1, issue2, issue3, issue4, issue5)
+          end
+        end
+
+        context 'with associated monitoring tool given' do
+          let(:params) { { alert_monitoring_tools: ['Cilium'] } }
+
+          it 'returns incident issues' do
+            expect(issues).to contain_exactly(alert_incident)
+          end
+        end
+
+        context 'multiple params' do
+          let(:params) { { alert_monitoring_tools: %w(Prometheus Cilium) } }
+
+          it 'returns all issues' do
+            expect(issues).to contain_exactly(alert_incident)
+          end
+        end
+
+        context 'without array' do
+          let(:params) { { alert_monitoring_tools: 'Cilium' } }
+
+          it 'returns incident issues' do
+            expect(issues).to contain_exactly(alert_incident)
+          end
+        end
+
+        context 'invalid params' do
+          let(:params) { { alert_monitoring_tools: ['nonsense'] } }
+
+          it 'returns no issues' do
+            expect(issues).to be_empty
+          end
+        end
+
+        context 'using NOT' do
+          let(:params) { { not: { alert_monitoring_tools: 'nonsense' } } }
+
+          it 'returns issues without selected monitoring tool' do
+            expect(issues).to contain_exactly(alert_incident)
+          end
+        end
+      end
+
       context 'when the user is unauthorized' do
         let(:search_user) { nil }
 

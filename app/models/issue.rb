@@ -128,6 +128,8 @@ class Issue < ApplicationRecord
   }
   scope :with_issue_type, ->(types) { where(issue_type: types) }
   scope :without_issue_type, ->(types) { where.not(issue_type: types) }
+  scope :with_alert_monitoring_tools, ->(tools) { with_alert_management_alerts.where(alert_management_alerts: { monitoring_tool: tools }) }
+  scope :without_alert_monitoring_tools, ->(tools) { with_alert_management_alerts.where.not(alert_management_alerts: { monitoring_tool: tools }) }
 
   scope :public_only, -> {
     without_hidden.where(confidential: false)

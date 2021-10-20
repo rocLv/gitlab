@@ -21,6 +21,7 @@ RSpec.describe Resolvers::IssuesResolver do
   let_it_be(:label1)    { create(:label, project: project) }
   let_it_be(:label2)    { create(:label, project: project) }
   let_it_be(:upvote_award) { create(:award_emoji, :upvote, user: current_user, awardable: issue1) }
+  let_it_be(:alert) { create(:alert_management_alert, project: project, issue: issue1, monitoring_tool: 'Cilium') }
 
   specify do
     expect(described_class).to have_nullable_graphql_type(Types::IssueType.connection_type)
@@ -249,6 +250,24 @@ RSpec.describe Resolvers::IssuesResolver do
         end
       end
 
+      describe 'filters by alert_monitoring_tools' do
+        it 'filters by a single tool' do
+          expect(resolve_issues(alert_monitoring_tools: %w[Cilium])).to contain_exactly(issue1)
+        end
+
+        it 'filters by a single tool, negative assertion' do
+          expect(resolve_issues(alert_monitoring_tools: %w[Prometheus])).not_to include(issue1)
+        end
+
+        it 'filters by more than one tool' do
+          expect(resolve_issues(alert_monitoring_tools: %w[Cilium Prometheus])).to contain_exactly(issue1)
+        end
+
+        it 'ignores the filter if none given' do
+          expect(resolve_issues(alert_monitoring_tools: [])).to contain_exactly(issue1, issue2)
+        end
+      end
+
       context 'filtering by reaction emoji' do
         let_it_be(:downvoted_issue) { create(:issue, project: project) }
         let_it_be(:downvote_award) { create(:award_emoji, :downvote, user: current_user, awardable: downvoted_issue) }
@@ -377,6 +396,10 @@ RSpec.describe Resolvers::IssuesResolver do
 
         it 'returns issues without the specified issue_type' do
           expect(resolve_issues(not: { types: ['issue'] })).to contain_exactly(issue1)
+        end
+
+        it 'returns issues without the specified issue_type' do
+          expect(resolve_issues(not: { alert_monitoring_tools: ['Prometheus'] })).to contain_exactly(issue1)
         end
 
         context 'when filtering by negated author' do
