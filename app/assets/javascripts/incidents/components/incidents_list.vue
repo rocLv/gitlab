@@ -142,6 +142,7 @@ export default {
           lastPageSize: this.pagination.lastPageSize,
           prevPageCursor: this.pagination.prevPageCursor,
           nextPageCursor: this.pagination.nextPageCursor,
+          ignoredAlertMonitoringTools: ['Cilium'], // eslint-disable-line @gitlab/require-i18n-strings
         };
       },
       update({ project: { issues: { nodes = [], pageInfo = {} } = {} } = {} }) {
@@ -163,6 +164,7 @@ export default {
           assigneeUsername: this.assigneeUsername,
           projectPath: this.projectPath,
           issueTypes: ['INCIDENT'],
+          ignoredAlertMonitoringTools: ['Cilium'], // eslint-disable-line @gitlab/require-i18n-strings
         };
       },
       update(data) {

@@ -12,6 +12,7 @@ query getIncidents(
   $searchTerm: String = ""
   $authorUsername: String = ""
   $assigneeUsername: String = ""
+  $ignoredAlertMonitoringTools: [String!] = []
 ) {
   project(fullPath: $projectPath) {
     issues(
@@ -25,6 +26,7 @@ query getIncidents(
       last: $lastPageSize
       after: $nextPageCursor
       before: $prevPageCursor
+      not: { alertMonitoringTools: $ignoredAlertMonitoringTools }
     ) {
       nodes {
         iid
