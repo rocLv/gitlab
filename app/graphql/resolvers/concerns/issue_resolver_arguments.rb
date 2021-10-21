@@ -69,7 +69,7 @@ module IssueResolverArguments
              prepare: ->(negated_args, ctx) { negated_args.to_h },
              required: false
     argument :alert_monitoring_tools, [GraphQL::Types::String],
-             description: 'Filter issues by the given monitoring tool of the alert associated with given issue.',
+             description: 'Filter issues by the given monitoring tool of the alert associated with the given issue.',
              required: false
   end
 

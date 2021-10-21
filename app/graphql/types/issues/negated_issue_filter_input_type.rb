@@ -37,7 +37,7 @@ module Types
                description: 'Filters out issues by the given issue types.',
                required: false
       argument :alert_monitoring_tools, [GraphQL::Types::String],
-               description: 'Filters out issues by the given monitoring tool of the alert associated with given issue.',
+               description: 'Filters out issues by the given monitoring tool of the alert associated with the given issue.',
                required: false
     end
   end
