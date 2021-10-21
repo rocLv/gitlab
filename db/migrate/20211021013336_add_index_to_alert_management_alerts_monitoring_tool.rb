@@ -6,7 +6,7 @@ class AddIndexToAlertManagementAlertsMonitoringTool < Gitlab::Database::Migratio
   INDEX_NAME = 'index_alert_management_alerts_on_monitoring_tool'
 
   def up
-    add_concurrent_index :alert_management_alerts, [:project_id, :monitoring_tool], name: INDEX_NAME
+    add_concurrent_index :alert_management_alerts, :monitoring_tool, name: INDEX_NAME
   end
 
   def down

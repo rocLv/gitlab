@@ -24425,7 +24425,7 @@ CREATE INDEX index_a6c68d16b2 ON gitlab_partitions_static.analytics_cycle_analyt
 
 CREATE INDEX index_a8276a450f ON gitlab_partitions_static.analytics_cycle_analytics_merge_request_stage_events_05 USING btree (stage_event_hash_id, project_id, end_event_timestamp, merge_request_id, start_event_timestamp) WHERE (end_event_timestamp IS NOT NULL);
 
-CREATE INDEX index_alert_management_alerts_on_monitoring_tool ON alert_management_alerts USING btree (project_id, monitoring_tool);
+CREATE INDEX index_alert_management_alerts_on_monitoring_tool ON alert_management_alerts USING btree (monitoring_tool);
 
 CREATE UNIQUE INDEX index_alert_management_alerts_on_project_id_and_iid ON alert_management_alerts USING btree (project_id, iid);
 
