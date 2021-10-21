@@ -17,7 +17,7 @@ RSpec.describe Gitlab::Redis::Queues do
       let(:config) { nil }
 
       it 'has a legacy default URL' do
-        expect(subject.send(:raw_config_hash)).to eq(url: 'redis://localhost:6381' )
+        expect(subject.send(:raw_config_hash)).to eq(url: 'redis://localhost:6381')
       end
     end
 

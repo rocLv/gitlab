@@ -12,7 +12,7 @@ RSpec.describe Gitlab::Redis::Cache do
     it 'has a legacy default URL' do
       expect(subject).to receive(:fetch_config) { false }
 
-      expect(subject.send(:raw_config_hash)).to eq(url: 'redis://localhost:6380' )
+      expect(subject.send(:raw_config_hash)).to eq(url: 'redis://localhost:6380')
     end
   end
 end

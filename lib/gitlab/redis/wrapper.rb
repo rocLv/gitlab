@@ -17,7 +17,7 @@ module Gitlab
   module Redis
     class Wrapper
       class << self
-        delegate :params, :url, to: :new
+        delegate :params, :url, :store, to: :new
 
         def with
           pool.with { |redis| yield redis }
@@ -65,6 +65,10 @@ module Gitlab
         # doesn't load Rails.
         def rails_root
           File.expand_path('../../..', __dir__)
+        end
+
+        def config_fallback?
+          config_file_name == config_fallback&.config_file_name
         end
 
         def config_file_name
@@ -124,6 +128,10 @@ module Gitlab
 
       def sentinels?
         sentinels && !sentinels.empty?
+      end
+
+      def store(extras = {})
+        ::Redis::Store::Factory.create(redis_store_options.merge(extras))
       end
 
       private

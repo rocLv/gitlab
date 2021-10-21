@@ -100,7 +100,7 @@ namespace :gitlab do
     namespace :sessions do
       desc "GitLab | Cleanup | Sessions | Clean ActiveSession lookup keys"
       task active_sessions_lookup_keys: :gitlab_environment do
-        session_key_pattern = "#{Gitlab::Redis::SharedState::USER_SESSIONS_LOOKUP_NAMESPACE}:*"
+        session_key_pattern = "#{Gitlab::Redis::Sessions::USER_SESSIONS_LOOKUP_NAMESPACE}:*"
         last_save_check = Time.at(0)
         wait_time = 10.seconds
         cursor = 0
