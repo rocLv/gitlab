@@ -190,16 +190,18 @@ RSpec.describe Issue do
   describe '.with_alert_monitoring_tools' do
     let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
     let_it_be(:alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Cilium') }
+    let_it_be(:prometheus_alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Prometheus') }
 
     it 'gives incidents with the given alert monitoring tool' do
       expect(described_class.with_alert_monitoring_tools('Cilium'))
-        .to contain_exactly(alert_incident)
+      .to contain_exactly(alert_incident)
     end
   end
 
   describe '.without_alert_monitoring_tools' do
     let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
     let_it_be(:alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Cilium') }
+    let_it_be(:prometheus_alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Prometheus') }
 
     it 'gives incidents without the given alert monitoring tool' do
       expect(described_class.without_alert_monitoring_tools('Prometheus'))
