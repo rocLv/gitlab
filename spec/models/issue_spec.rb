@@ -189,22 +189,22 @@ RSpec.describe Issue do
 
   describe '.with_alert_monitoring_tools' do
     let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
-    let_it_be(:alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Cilium') }
-    let_it_be(:prometheus_alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Prometheus') }
+    let_it_be(:alert) { create(:alert_management_alert, :cilium, project: reusable_project, issue: alert_incident) }
+    let_it_be(:prometheus_alert) { create(:alert_management_alert, :prometheus, :with_incident, project: reusable_project) }
 
     it 'gives incidents with the given alert monitoring tool' do
-      expect(described_class.with_alert_monitoring_tools('Cilium'))
+      expect(described_class.with_alert_monitoring_tools(Gitlab::AlertManagement::Payload::MONITORING_TOOLS[:cilium]))
       .to contain_exactly(alert_incident)
     end
   end
 
   describe '.without_alert_monitoring_tools' do
     let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
-    let_it_be(:alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Cilium') }
-    let_it_be(:prometheus_alert) { create(:alert_management_alert, project: reusable_project, issue: alert_incident, monitoring_tool: 'Prometheus') }
+    let_it_be(:alert) { create(:alert_management_alert, :cilium, project: reusable_project, issue: alert_incident) }
+    let_it_be(:prometheus_alert) { create(:alert_management_alert, :prometheus, :with_incident, project: reusable_project) }
 
     it 'gives incidents without the given alert monitoring tool' do
-      expect(described_class.without_alert_monitoring_tools('Prometheus'))
+      expect(described_class.without_alert_monitoring_tools(Gitlab::AlertManagement::Payload::MONITORING_TOOLS[:prometheus]))
         .to contain_exactly(alert_incident)
     end
   end

@@ -912,7 +912,7 @@ RSpec.describe IssuesFinder do
 
       context 'filtering by alert monitoring tool' do
         let_it_be(:alert_incident) { create(:incident, project: project1) }
-        let_it_be(:alert) { create(:alert_management_alert, project: project1, issue: alert_incident, monitoring_tool: 'Cilium') }
+        let_it_be(:alert) { create(:alert_management_alert, :cilium, project: project1, issue: alert_incident) }
 
         context 'no monitoring tool given' do
           let(:params) { { alert_monitoring_tools: [] } }
