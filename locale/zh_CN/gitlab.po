@@ -4590,6 +4590,10 @@ msgstr "您的个人访问令牌中至少有一个即将过期，但过期强制
 msgid "At risk"
 msgstr "存在风险"
 
+msgctxt "BambooIntegration"
+msgid "Atlassian Bamboo"
+msgstr "Atlassian Bamboo"
+
 msgid "Attach a file"
 msgstr "添加附件"
 
@@ -5008,26 +5012,17 @@ msgstr "您的徽章"
 msgid "Balsamiq file could not be loaded."
 msgstr "无法加载 balsamiq 文件。"
 
-msgid "BambooService|Atlassian Bamboo"
-msgstr "Atlassian Bamboo"
-
-msgid "BambooService|Bamboo URL"
+msgctxt "BambooIntegration"
+msgid "Bamboo URL"
 msgstr "Bamboo URL"
 
-msgid "BambooService|Bamboo build plan key."
+msgctxt "BambooIntegration"
+msgid "Bamboo build plan key."
 msgstr "Bamboo构建计划密钥。"
 
-msgid "BambooService|Bamboo service root URL."
+msgctxt "BambooIntegration"
+msgid "Bamboo service root URL."
 msgstr "Bamboo服务根URL。"
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo."
-msgstr "用Atlassian Bamboo运行CI/CD流水线。"
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
-msgstr "使用Atlassian Bamboo运行CI/CD流水线。您必须在Bamboo中设置自动修订标签和仓库触发器。 %{docs_link}"
-
-msgid "BambooService|The user with API access to the Bamboo server."
-msgstr "对 Bamboo 服务器具有 API 访问权限的用户。"
 
 msgid "Based on"
 msgstr "基于"
@@ -26821,14 +26816,14 @@ msgstr "GitLab示例项目"
 msgid "ProjectTemplates|Serverless Framework/JS"
 msgstr "Serverless Framework/JS"
 
-msgid "ProjectTemplates|Tencent Serverless Framework/NextjsSSR"
-msgstr "Tencent Serverless Framework/NextjsSSR"
-
 msgid "ProjectTemplates|Spring"
 msgstr "Spring"
 
 msgid "ProjectTemplates|Static Site Editor/Middleman"
 msgstr "静态站点编辑器/Middleman"
+
+msgid "ProjectTemplates|Tencent Serverless Framework/NextjsSSR"
+msgstr "Tencent Serverless Framework/NextjsSSR"
 
 msgid "ProjectTemplates|iOS (Swift)"
 msgstr "iOS (Swift)"
@@ -29011,6 +29006,14 @@ msgstr "在所有项目和 wiki 存储库中定期运行 %{code_start}git fsck%{
 
 msgid "Run CI/CD pipelines for external repositories"
 msgstr "使用外部仓库的CI/CD流水线"
+
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo."
+msgstr "用Atlassian Bamboo运行CI/CD流水线。"
+
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
+msgstr "使用Atlassian Bamboo运行CI/CD流水线。您必须在Bamboo中设置自动修订标签和仓库触发器。 %{docs_link}"
 
 msgid "Run CI/CD pipelines with Jenkins when you push to a repository, or when a merge request is created, updated, or merged. %{docs_link}"
 msgstr "当您推送到仓库时，或者当一个合并请求被创建、更新或合并时，使用 Jenkins 运行CI/CD 流水线。 %{docs_link}"
@@ -33908,6 +33911,10 @@ msgstr "用户映射已保存。请选择要导入的项目以继续。"
 
 msgid "The user map is a mapping of the FogBugz users that participated on your projects to the way their email address and usernames will be imported into GitLab. You can change this by populating the table below."
 msgstr "用户映射是参与项目的 FogBugz 用户的电子邮件地址和用户名将被导入 GitLab 的方式。您可以通过以下表格来修改映射关系。"
+
+msgctxt "BambooIntegration"
+msgid "The user with API access to the Bamboo server."
+msgstr "对 Bamboo 服务器具有 API 访问权限的用户。"
 
 msgid "The user you are trying to approve is not pending approval"
 msgstr "您尝试批准的用户不是待批准的用户"

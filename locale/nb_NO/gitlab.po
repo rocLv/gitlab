@@ -4709,6 +4709,10 @@ msgstr ""
 msgid "At risk"
 msgstr "I faresonen"
 
+msgctxt "BambooIntegration"
+msgid "Atlassian Bamboo"
+msgstr ""
+
 msgid "Attach a file"
 msgstr "Legg ved en fil"
 
@@ -5128,25 +5132,16 @@ msgstr "Dine merker"
 msgid "Balsamiq file could not be loaded."
 msgstr "Balsamiq-filen kunne ikke lastes inn."
 
-msgid "BambooService|Atlassian Bamboo"
-msgstr ""
-
-msgid "BambooService|Bamboo URL"
+msgctxt "BambooIntegration"
+msgid "Bamboo URL"
 msgstr "Bamboo-URL"
 
-msgid "BambooService|Bamboo build plan key."
+msgctxt "BambooIntegration"
+msgid "Bamboo build plan key."
 msgstr ""
 
-msgid "BambooService|Bamboo service root URL."
-msgstr ""
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo."
-msgstr ""
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
-msgstr ""
-
-msgid "BambooService|The user with API access to the Bamboo server."
+msgctxt "BambooIntegration"
+msgid "Bamboo service root URL."
 msgstr ""
 
 msgid "Based on"
@@ -29190,6 +29185,14 @@ msgstr ""
 msgid "Run CI/CD pipelines for external repositories"
 msgstr ""
 
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo."
+msgstr ""
+
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
+msgstr ""
+
 msgid "Run CI/CD pipelines with Jenkins when you push to a repository, or when a merge request is created, updated, or merged. %{docs_link}"
 msgstr ""
 
@@ -34105,6 +34108,10 @@ msgstr ""
 
 msgid "The user map is a mapping of the FogBugz users that participated on your projects to the way their email address and usernames will be imported into GitLab. You can change this by populating the table below."
 msgstr "Brukerkartet er en kartlegging av FogBugz-brukerne som deltok på prosjektene dine til måten deres e-postadresse og brukernavn blir importert til GitLab. Du kan endre dette ved å fylle ut tabellen nedenfor."
+
+msgctxt "BambooIntegration"
+msgid "The user with API access to the Bamboo server."
+msgstr ""
 
 msgid "The user you are trying to approve is not pending approval"
 msgstr ""

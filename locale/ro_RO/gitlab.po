@@ -4831,6 +4831,10 @@ msgstr "Cel puțin unul dintre token-urile personale de acces a expirat, dar apl
 msgid "At risk"
 msgstr "În pericol"
 
+msgctxt "BambooIntegration"
+msgid "Atlassian Bamboo"
+msgstr "Atlassian Bamboo"
+
 msgid "Attach a file"
 msgstr "Atașați un fișier"
 
@@ -5251,26 +5255,17 @@ msgstr "Insignele tale"
 msgid "Balsamiq file could not be loaded."
 msgstr "Fișierul Balsamiq nu a putut fi încărcat."
 
-msgid "BambooService|Atlassian Bamboo"
-msgstr "Atlassian Bamboo"
-
-msgid "BambooService|Bamboo URL"
+msgctxt "BambooIntegration"
+msgid "Bamboo URL"
 msgstr "URL Bamboo"
 
-msgid "BambooService|Bamboo build plan key."
+msgctxt "BambooIntegration"
+msgid "Bamboo build plan key."
 msgstr "Cheia planului de construire Bamboo."
 
-msgid "BambooService|Bamboo service root URL."
+msgctxt "BambooIntegration"
+msgid "Bamboo service root URL."
 msgstr "Adresa URL rădăcină a serviciului Bamboo."
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo."
-msgstr "Executați conducte CI/CD cu Atlassian Bamboo."
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
-msgstr "Executați conductele CI / CD cu Atlassian Bamboo. Trebuie să configurați etichetarea automată a revizuirilor și un declanșator de depozit în Bamboo. %{docs_link}"
-
-msgid "BambooService|The user with API access to the Bamboo server."
-msgstr "Utilizatorul cu acces API la serverul Bamboo."
 
 msgid "Based on"
 msgstr "Bazat pe"
@@ -29374,6 +29369,14 @@ msgstr "Executați %{code_start}git fsck%{code_end} periodic în toate proiectel
 msgid "Run CI/CD pipelines for external repositories"
 msgstr ""
 
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo."
+msgstr "Executați conducte CI/CD cu Atlassian Bamboo."
+
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
+msgstr "Executați conductele CI / CD cu Atlassian Bamboo. Trebuie să configurați etichetarea automată a revizuirilor și un declanșator de depozit în Bamboo. %{docs_link}"
+
 msgid "Run CI/CD pipelines with Jenkins when you push to a repository, or when a merge request is created, updated, or merged. %{docs_link}"
 msgstr "Rulați conducte CI / CD cu Jenkins atunci când publicați lîntr-un repozitoriu sau când un merge request este creat, actualizat sau îmbinat. %{docs_link}"
 
@@ -34308,6 +34311,10 @@ msgstr ""
 
 msgid "The user map is a mapping of the FogBugz users that participated on your projects to the way their email address and usernames will be imported into GitLab. You can change this by populating the table below."
 msgstr ""
+
+msgctxt "BambooIntegration"
+msgid "The user with API access to the Bamboo server."
+msgstr "Utilizatorul cu acces API la serverul Bamboo."
 
 msgid "The user you are trying to approve is not pending approval"
 msgstr ""

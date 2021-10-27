@@ -1,0 +1,30 @@
+#!/bin/bash
+
+shopt -s globstar
+
+if [ $# -eq 0 ]; then
+  echo "Usage: $0 NAMESPACE [CONTEXT]"
+  exit 1
+fi
+
+namespace="$1"
+context="${2:-namespace}"
+
+echo "Updating calls in Ruby files..."
+for file in $( grep -Flr --include '*.rb' "$namespace|" ); do
+  sed -ri "s/\\bs_\(([\"'])$namespace\|([^\"']+)/p_('$context', \1\2/g" "$file"
+done
+
+echo "Updating calls in JavaScript files..."
+for file in $( grep -Flr --include '*.js' --include '*.vue' "$namespace|" | grep -v 'app/assets/javascripts/locale' ); do
+  sed -ri "s/\bs__\(([\"'])$namespace\|([^\"']+)/s__('$context', \1\2/g" "$file"
+done
+
+echo "Updating translations..."
+for file in $( grep -Flr "$namespace|" locale/gitlab.pot locale/**/*.po ); do
+  sed -ri "s/^msgid \"$namespace\|(.*)\"$/msgctxt \"$context\"\nmsgid \"\1\"/" "$file"
+  (
+    msgcat --sort-output --no-wrap "$file"
+    [ "${file##*.}" = "po" ] && echo
+  ) | sponge "$file"
+done

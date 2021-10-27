@@ -4709,6 +4709,10 @@ msgstr ""
 msgid "At risk"
 msgstr "En riesgo"
 
+msgctxt "BambooIntegration"
+msgid "Atlassian Bamboo"
+msgstr "Atlassian Bamboo"
+
 msgid "Attach a file"
 msgstr "Adjuntar un archivo"
 
@@ -5128,26 +5132,17 @@ msgstr "Sus insignias"
 msgid "Balsamiq file could not be loaded."
 msgstr "El archivo Balsamiq no se pudo cargar."
 
-msgid "BambooService|Atlassian Bamboo"
-msgstr "Atlassian Bamboo"
-
-msgid "BambooService|Bamboo URL"
+msgctxt "BambooIntegration"
+msgid "Bamboo URL"
 msgstr "URL de Bamboo"
 
-msgid "BambooService|Bamboo build plan key."
+msgctxt "BambooIntegration"
+msgid "Bamboo build plan key."
 msgstr ""
 
-msgid "BambooService|Bamboo service root URL."
+msgctxt "BambooIntegration"
+msgid "Bamboo service root URL."
 msgstr "URL raíz del servicio Bamboo."
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo."
-msgstr ""
-
-msgid "BambooService|Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
-msgstr ""
-
-msgid "BambooService|The user with API access to the Bamboo server."
-msgstr ""
 
 msgid "Based on"
 msgstr "Basado en"
@@ -29190,6 +29185,14 @@ msgstr ""
 msgid "Run CI/CD pipelines for external repositories"
 msgstr "Ejecutar los pipelines de CI/CD para los repositorios externos"
 
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo."
+msgstr ""
+
+msgctxt "BambooIntegration"
+msgid "Run CI/CD pipelines with Atlassian Bamboo. You must set up automatic revision labeling and a repository trigger in Bamboo. %{docs_link}"
+msgstr ""
+
 msgid "Run CI/CD pipelines with Jenkins when you push to a repository, or when a merge request is created, updated, or merged. %{docs_link}"
 msgstr ""
 
@@ -34105,6 +34108,10 @@ msgstr "Se ha guardado el mapa de usuario. Por favor, continue seleccionando los
 
 msgid "The user map is a mapping of the FogBugz users that participated on your projects to the way their email address and usernames will be imported into GitLab. You can change this by populating the table below."
 msgstr "El mapa del usuarios es una asignación de los usuarios de FogBugz que participaron en sus proyectos a la forma en que su dirección de correo electrónico y nombre de usuario se importarán a GitLab. Puede cambiar esto rellenando la tabla a continuación."
+
+msgctxt "BambooIntegration"
+msgid "The user with API access to the Bamboo server."
+msgstr ""
 
 msgid "The user you are trying to approve is not pending approval"
 msgstr ""
