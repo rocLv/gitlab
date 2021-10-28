@@ -6,6 +6,8 @@ module EE
     extend ::Gitlab::Utils::Override
     include ::Gitlab::Utils::StrongMemoize
 
+    ALLOWED_LAST_TEST_REPORT_STATE_VALUES = RequirementsManagement::TestReport.states.keys.push("missing").freeze
+
     class_methods do
       extend ::Gitlab::Utils::Override
 
@@ -24,7 +26,15 @@ module EE
     def filter_items(items)
       issues = by_weight(super)
       issues = by_epic(issues)
+      issues = by_last_test_report_state(issues)
       by_iteration(issues)
+    end
+
+    override :by_iids
+    def by_iids(items)
+      return super unless params.by_requirement_iids?
+
+      items.for_requirement_iid(params[:iids])
     end
 
     private
@@ -118,6 +128,17 @@ module EE
         include_ancestors: true,
         iteration_wildcard_id: ::Iteration::Predefined::Current.title
       }
+    end
+
+    def by_last_test_report_state(items)
+      return items unless params[:last_test_report_state]
+      return items unless ALLOWED_LAST_TEST_REPORT_STATE_VALUES.include?(params[:last_test_report_state])
+
+      if params[:last_test_report_state] == 'missing'
+        items.without_test_reports
+      else
+        items.with_last_test_report_state(params[:last_test_report_state])
+      end
     end
   end
 end

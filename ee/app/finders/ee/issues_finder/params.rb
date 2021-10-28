@@ -57,6 +57,10 @@ module EE
       def filter_by_iteration_title?
         params[:iteration_title].present?
       end
+
+      def by_requirement_iids?
+        params[:iids].present? && Array(params[:issue_types]).map(&:to_s).include?('requirement')
+      end
     end
   end
 end

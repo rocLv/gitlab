@@ -19,6 +19,10 @@ RSpec.describe Resolvers::RequirementsManagement::RequirementsResolver do
     let_it_be(:requirement2) { create(:requirement, project: project, state: :archived, created_at: 3.hours.ago, title: 'it needs to not break', author: other_user) }
     let_it_be(:requirement3) { create(:requirement, project: project, state: :archived, created_at: 4.hours.ago, title: 'do the kubernetes!', author: third_user) }
 
+    let_it_be(:requirement_issue1) { create_requirement_issue(requirement1) }
+    let_it_be(:requirement_issue2) { create_requirement_issue(requirement2) }
+    let_it_be(:requirement_issue3) { create_requirement_issue(requirement3) }
+
     before do
       project.add_developer(current_user)
       stub_licensed_features(requirements: true)
@@ -26,72 +30,72 @@ RSpec.describe Resolvers::RequirementsManagement::RequirementsResolver do
 
     describe '#resolve' do
       it 'finds all requirements' do
-        expect(resolve_requirements).to contain_exactly(requirement1, requirement2, requirement3)
+        expect(resolve_requirements).to contain_exactly(requirement_issue1, requirement_issue2, requirement_issue3)
       end
 
       it 'filters by state' do
-        expect(resolve_requirements(state: 'opened')).to contain_exactly(requirement1)
-        expect(resolve_requirements(state: 'archived')).to contain_exactly(requirement2, requirement3)
+        expect(resolve_requirements(state: 'opened')).to contain_exactly(requirement_issue1)
+        expect(resolve_requirements(state: 'archived')).to contain_exactly(requirement_issue2, requirement_issue3)
       end
 
       it 'filters by iid' do
-        expect(resolve_requirements(iid: requirement1.iid)).to contain_exactly(requirement1)
+        expect(resolve_requirements(iid: requirement1.iid)).to contain_exactly(requirement_issue1)
       end
 
       it 'filters by iids' do
-        expect(resolve_requirements(iids: [requirement1.iid, requirement3.iid])).to contain_exactly(requirement1, requirement3)
+        expect(resolve_requirements(iids: [requirement1.iid, requirement3.iid])).to contain_exactly(requirement_issue1, requirement_issue3)
       end
 
       it 'preloads correct latest test report' do
-        requirement_2_latest_report = create(:test_report, requirement: requirement2, created_at: 1.hour.ago)
-        create(:test_report, requirement: requirement1, created_at: 2.hours.ago)
-        create(:test_report, requirement: requirement2, created_at: 4.hours.ago)
-        requirement_3_latest_report = create(:test_report, requirement: requirement3, created_at: 3.hours.ago)
+        requirement_2_latest_report = create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue2, created_at: 1.hour.ago)
+        create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue1, created_at: 2.hours.ago)
+        create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue2, created_at: 4.hours.ago)
+        requirement_3_latest_report = create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue3, created_at: 3.hours.ago)
 
         requirements = resolve_requirements(sort: 'created_desc').to_a
 
-        expect(requirements[0].latest_report).to eq(requirement_2_latest_report)
-        expect(requirements[1].latest_report).to eq(requirement_3_latest_report)
+        expect(requirements[0].latest_report).to eq(requirement_3_latest_report)
+        expect(requirements[1].latest_report).to eq(requirement_2_latest_report)
       end
 
       context 'when filtering by last test report state' do
         before do
-          create(:test_report, state: :failed)
-          create(:test_report, requirement: requirement1, state: :passed)
-          create(:test_report, requirement: requirement1, state: :failed)
-          create(:test_report, requirement: requirement3, state: :passed)
+          create(:test_report, state: :failed, created_at: 2.hours.ago)
+          create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue1, state: :passed, created_at: 2.hours.ago)
+          create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue1, state: :failed, created_at: 1.hour.ago)
+          create(:test_report, :for_requirement_issue, requirement_issue: requirement_issue3, state: :passed)
         end
 
         it 'filters by failed requirements' do
-          expect(resolve_requirements(last_test_report_state: 'failed')).to contain_exactly(requirement1)
+          expect(resolve_requirements(last_test_report_state: 'failed')).to contain_exactly(requirement_issue1)
         end
 
         it 'filters by passed requirements' do
-          expect(resolve_requirements(last_test_report_state: 'passed')).to contain_exactly(requirement3)
+          expect(resolve_requirements(last_test_report_state: 'passed')).to contain_exactly(requirement_issue3)
         end
 
         it 'filters requirements without test reports' do
-          expect(resolve_requirements(last_test_report_state: 'missing')).to contain_exactly(requirement2)
+          expect(resolve_requirements(last_test_report_state: 'missing')).to contain_exactly(requirement_issue2)
         end
       end
 
       describe 'sorting' do
         context 'when sorting by created_at' do
           it 'sorts requirements ascending' do
-            expect(resolve_requirements(sort: 'created_asc').to_a).to eq([requirement1, requirement3, requirement2])
+            expect(resolve_requirements(sort: 'created_asc').to_a).to eq([requirement_issue1, requirement_issue2, requirement_issue3])
           end
 
           it 'sorts requirements descending' do
-            expect(resolve_requirements(sort: 'created_desc').to_a).to eq([requirement2, requirement3, requirement1])
+            expect(resolve_requirements(sort: 'created_desc').to_a).to eq([requirement_issue3, requirement_issue2, requirement_issue1])
           end
         end
       end
 
       it 'finds only the requirements within the project we are looking at' do
         another_project = create(:project, :public)
-        create(:requirement, project: another_project, iid: requirement1.iid)
+        create(:requirement_issue, project: another_project, iid: requirement1.iid)
 
-        expect(resolve_requirements).to contain_exactly(requirement1, requirement2, requirement3)
+        expect(resolve_requirements).to contain_exactly(requirement_issue1, requirement_issue2, requirement_issue3)
       end
     end
 
@@ -99,13 +103,13 @@ RSpec.describe Resolvers::RequirementsManagement::RequirementsResolver do
       it 'filters requirements by title' do
         requirements = resolve_requirements(search: 'kubernetes')
 
-        expect(requirements).to match_array([requirement3])
+        expect(requirements).to match_array([requirement_issue3])
       end
     end
 
     shared_examples 'returns unfiltered' do
       it 'returns requirements without filtering by author' do
-        expect(subject).to match_array([requirement1, requirement2, requirement3])
+        expect(subject).to match_array([requirement_issue1, requirement_issue2, requirement_issue3])
       end
     end
 
@@ -126,7 +130,7 @@ RSpec.describe Resolvers::RequirementsManagement::RequirementsResolver do
         end
 
         it 'filters requirements by author' do
-          expect(subject).to match_array([requirement2])
+          expect(subject).to match_array([requirement_issue2])
         end
       end
 
@@ -168,7 +172,7 @@ RSpec.describe Resolvers::RequirementsManagement::RequirementsResolver do
         end
 
         it 'filters requirements by author' do
-          expect(subject).to match_array([requirement1, requirement2])
+          expect(subject).to match_array([requirement_issue1, requirement_issue2])
         end
       end
 
@@ -178,13 +182,26 @@ RSpec.describe Resolvers::RequirementsManagement::RequirementsResolver do
         end
 
         it 'filters requirements by author' do
-          expect(subject).to match_array([requirement2])
+          expect(subject).to match_array([requirement_issue2])
         end
       end
     end
 
     def resolve_requirements(args = {}, context = { current_user: current_user })
       resolve(described_class, obj: project, args: args, ctx: context)
+    end
+
+    def create_requirement_issue(requirement)
+      state = requirement.opened? ? :opened : :closed
+      create(
+        :requirement_issue,
+        project: project,
+        requirement: requirement,
+        title: requirement.title,
+        description: requirement.description,
+        state: state,
+        author: requirement.author
+      )
     end
   end
 end

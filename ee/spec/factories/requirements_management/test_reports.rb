@@ -6,5 +6,10 @@ FactoryBot.define do
     requirement
     build factory: :ci_build
     state { :passed }
+
+    trait :for_requirement_issue do
+      requirement { nil }
+      requirement_issue
+    end
   end
 end

@@ -302,6 +302,8 @@ class IssuableFinder
       items.opened
     when 'locked'
       items.with_state(:locked)
+    when 'archived'
+      items.closed
     else
       items
     end
