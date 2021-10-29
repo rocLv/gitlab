@@ -87,7 +87,7 @@ module IntegrationsHelper
       inherit_from_id: integration.inherit_from_id,
       integration_level: integration_level(integration),
       editable: integration.editable?.to_s,
-      cancel_path: scoped_integrations_path,
+      cancel_path: scoped_integrations_path(group: group),
       can_test: integration.testable?.to_s,
       test_path: scoped_test_integration_path(integration),
       reset_path: scoped_reset_integration_path(integration, group: group)
