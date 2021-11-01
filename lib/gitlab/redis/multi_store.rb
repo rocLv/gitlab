@@ -64,21 +64,6 @@ module Gitlab
         end
       end
 
-      private
-
-      def send_command(redis_instance, name, *args, **kwargs, &block)
-        redis_instance.send(name, *args, **kwargs) do # rubocop:disable GitlabSecurity/PublicSend
-          with_instance(redis_instance, &block) if block_given?
-        end
-      end
-
-      def with_instance(instance)
-        @instance = instance
-        yield
-      ensure
-        @instance = nil
-      end
-
       # TEST: try to avoid Deprecation Toolkit issues
       # See the pipelines of the POC for the example
       # We call set there https://github.com/redis-store/redis-rack/blob/v2.1.3/lib/rack/session/redis.rb#L49
@@ -86,11 +71,30 @@ module Gitlab
       # https://github.com/redis/redis-rb/blob/master/lib/redis.rb#L846
       def set(...)
         if @instance
-          send_command(@instance, ...)
+          send_command(@instance, :set, ...)
         else
-          send_command(primary_store, ...)
-          send_command(secondary_store, ...)
+          send_command(primary_store, :set,  ...)
+          send_command(secondary_store, :set, ...)
         end
+      end
+
+      private
+
+      def send_command(redis_instance, name, *args, **kwargs, &block)
+        if block_given?
+          redis_instance.send(name, *args, **kwargs) do |*args| # rubocop:disable GitlabSecurity/PublicSend
+            with_instance(redis_instance, *args, &block)
+          end
+        else
+          redis_instance.send(name, *args, **kwargs) # rubocop:disable GitlabSecurity/PublicSend
+        end
+      end
+
+      def with_instance(instance, *args)
+        @instance = instance
+        yield(*args)
+      ensure
+        @instance = nil
       end
 
       def method_missing(...)
