@@ -73,7 +73,7 @@ module Gitlab
         if @instance
           send_command(@instance, :set, ...)
         else
-          send_command(primary_store, :set,  ...)
+          send_command(primary_store, :set, ...)
           send_command(secondary_store, :set, ...)
         end
       end
