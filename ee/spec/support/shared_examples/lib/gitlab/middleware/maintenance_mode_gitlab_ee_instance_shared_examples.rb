@@ -116,25 +116,46 @@ RSpec.shared_examples 'write access for a read-only GitLab (EE) instance in main
         end
       end
 
-      where(:description, :path) do
-        'sign in route'     | '/users/sign_in'
-        'sign out route'    | '/users/sign_out'
-        'oauth token route' | '/oauth/token'
-      end
+      context 'for sign in/out and OAuth routes' do
+        include LdapHelpers
+        include LoginHelpers
 
-      with_them do
-        it "expects a POST to #{description} URL to be allowed" do
-          response = request.post(path)
+        before do
+          stub_ldap_setting({ enabled: true })
+          Rails.application.reload_routes!
 
-          expect(response).not_to be_redirect
-          expect(subject).not_to disallow_request
+          # SAML draws a custom route, LDAP doesn't, so the reload needs to happen before this
+          # to prevent overwriting the SAML route.
+          stub_omniauth_saml_config(enabled: true, auto_link_saml_user: true, allow_single_sign_on: ['saml'])
         end
 
-        it "expects a POST to #{description} URL with trailing slash to be allowed" do
-          response = request.post("#{path}/")
+        after(:all) do
+          Rails.application.reload_routes!
+        end
 
-          expect(response).not_to be_redirect
-          expect(subject).not_to disallow_request
+        where(:description, :path) do
+          'sign in route'       | '/users/sign_in'
+          'sign out route'      | '/users/sign_out'
+          'oauth token route'   | '/oauth/token'
+          'SSO callback route'  | '/users/auth/gitlab/callback'
+          'LDAP callback route' | '/users/auth/ldapmain/callback'
+          'SAML regular route'  | '/users/auth/saml'
+        end
+
+        with_them do
+          it "expects a POST to #{description} URL to be allowed" do
+            response = request.post(path)
+
+            expect(response).not_to be_redirect
+            expect(subject).not_to disallow_request
+          end
+
+          it "expects a POST to #{description} URL with trailing slash to be allowed" do
+            response = request.post("#{path}/")
+
+            expect(response).not_to be_redirect
+            expect(subject).not_to disallow_request
+          end
         end
       end
     end
