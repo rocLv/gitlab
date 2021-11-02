@@ -6,6 +6,20 @@ module FormHelper
 
     return unless errors.any?
 
+    Feature.enabled?(:new_form_errors, @user, default_enabled: :yaml) ? new_form_errors(model, type, truncate) : form_errors_legacy(model, type, truncate)
+  end
+
+  def new_form_errors(model, type, truncate)
+    truncate = Array.wrap(truncate)
+    errors = model.errors.map do |attribute, message|
+      { attribute: attribute, message: model.errors.full_message(attribute, message) }
+    end
+    content_tag(:div, nil, class: 'js-form-errors-explanation', data: { errors: errors, truncate: truncate, type: type })
+  end
+
+  def form_errors_legacy(model, type, truncate)
+    errors = model.errors
+
     headline = n_(
       'The %{type} contains the following error:',
       'The %{type} contains the following errors:',

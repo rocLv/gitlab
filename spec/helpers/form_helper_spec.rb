@@ -4,57 +4,83 @@ require 'spec_helper'
 
 RSpec.describe FormHelper do
   describe 'form_errors' do
-    it 'returns nil when model has no errors' do
-      model = double(errors: [])
+    describe 'form_errors_legacy' do
+      before do
+        stub_feature_flags(new_form_errors: false)
+      end
 
-      expect(helper.form_errors(model)).to be_nil
-    end
+      it 'returns nil when model has no errors' do
+        model = double(errors: [])
 
-    it 'renders an alert div' do
-      model = double(errors: errors_stub('Error 1'))
+        expect(helper.form_errors(model)).to be_nil
+      end
 
-      expect(helper.form_errors(model))
-        .to include('<div class="alert alert-danger" id="error_explanation">')
-    end
+      it 'calls form_errors_legacy' do
+        model = double(errors: errors_stub('Error 1'))
 
-    it 'contains a summary message' do
-      single_error = double(errors: errors_stub('A'))
-      multi_errors = double(errors: errors_stub('A', 'B', 'C'))
+        expect(helper).to receive(:form_errors_legacy).with(model, 'form', [])
+        helper.form_errors(model)
+      end
 
-      expect(helper.form_errors(single_error))
-        .to include('<h4>The form contains the following error:')
-      expect(helper.form_errors(multi_errors))
-        .to include('<h4>The form contains the following errors:')
-    end
+      it 'renders an alert div' do
+        model = double(errors: errors_stub('Error 1'))
 
-    it 'renders each message' do
-      model = double(errors: errors_stub('Error 1', 'Error 2', 'Error 3'))
+        expect(helper.form_errors(model))
+          .to include('<div class="alert alert-danger" id="error_explanation">')
+      end
 
-      errors = helper.form_errors(model)
+      it 'contains a summary message' do
+        single_error = double(errors: errors_stub('A'))
+        multi_errors = double(errors: errors_stub('A', 'B', 'C'))
 
-      aggregate_failures do
-        expect(errors).to include('<li>Error 1</li>')
-        expect(errors).to include('<li>Error 2</li>')
-        expect(errors).to include('<li>Error 3</li>')
+        expect(helper.form_errors(single_error))
+          .to include('<h4>The form contains the following error:')
+        expect(helper.form_errors(multi_errors))
+          .to include('<h4>The form contains the following errors:')
+      end
+
+      it 'renders each message' do
+        model = double(errors: errors_stub('Error 1', 'Error 2', 'Error 3'))
+
+        errors = helper.form_errors(model)
+
+        aggregate_failures do
+          expect(errors).to include('<li>Error 1</li>')
+          expect(errors).to include('<li>Error 2</li>')
+          expect(errors).to include('<li>Error 3</li>')
+        end
+      end
+
+      it 'renders messages truncated if requested' do
+        model = double(errors: errors_stub('Error 1', 'Error 2'))
+        model.errors.add(:title, 'is truncated')
+        model.errors.add(:base, 'Error 3')
+
+        expect(model.class).to receive(:human_attribute_name) do |attribute|
+          attribute.to_s.capitalize
+        end
+
+        errors = helper.form_errors(model, truncate: :title)
+
+        aggregate_failures do
+          expect(errors).to include('<li>Error 1</li>')
+          expect(errors).to include('<li>Error 2</li>')
+          expect(errors).to include('<li><span class="str-truncated-100">Title is truncated</span></li>')
+          expect(errors).to include('<li>Error 3</li>')
+        end
       end
     end
 
-    it 'renders messages truncated if requested' do
-      model = double(errors: errors_stub('Error 1', 'Error 2'))
-      model.errors.add(:title, 'is truncated')
-      model.errors.add(:base, 'Error 3')
-
-      expect(model.class).to receive(:human_attribute_name) do |attribute|
-        attribute.to_s.capitalize
+    describe 'new_form_errors' do
+      before do
+        stub_feature_flags(new_form_errors: true)
       end
 
-      errors = helper.form_errors(model, truncate: :title)
+      it 'calls new_form_errors' do
+        model = double(errors: errors_stub('Error 1'))
 
-      aggregate_failures do
-        expect(errors).to include('<li>Error 1</li>')
-        expect(errors).to include('<li>Error 2</li>')
-        expect(errors).to include('<li><span class="str-truncated-100">Title is truncated</span></li>')
-        expect(errors).to include('<li>Error 3</li>')
+        expect(helper).to receive(:new_form_errors).with(model, 'form', [])
+        helper.form_errors(model)
       end
     end
 

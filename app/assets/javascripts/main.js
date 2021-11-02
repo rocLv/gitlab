@@ -26,6 +26,7 @@ import { getLocationHash, visitUrl } from './lib/utils/url_utility';
 
 // everything else
 import initFeatureHighlight from './feature_highlight';
+import initFormErrors from './form_errors';
 import LazyLoader from './lazy_loader';
 import initLogoAnimation from './logo';
 import initBreadcrumbs from './breadcrumb';
@@ -97,6 +98,7 @@ function deferredInitialisation() {
   initPersistentUserCallouts();
   initDefaultTrackers();
   initFeatureHighlight();
+  initFormErrors();
 
   if (gon.features?.newHeaderSearch) {
     initHeaderSearchApp();
