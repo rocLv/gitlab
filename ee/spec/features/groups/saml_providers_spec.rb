@@ -75,6 +75,26 @@ RSpec.describe 'SAML provider settings' do
       end
     end
 
+    context '"Enforce SSO-only authentication for API activity for this group" checkbox' do
+      it 'is not checked by default' do
+        visit group_saml_providers_path(group)
+
+        expect(find_field(s_('GroupSAML|Enforce SSO-only authentication for API activity for this group'))).not_to be_checked
+      end
+
+      it 'is disabled and displays warning if uncheck SSO activity for web', :js do
+        visit group_saml_providers_path(group)
+
+        expect(page).to have_field s_('GroupSAML|Enforce SSO-only authentication for API activity for this group')
+        expect(page).not_to have_content s_('GroupSAML|Before enforcing SSO-only authentication for API activity, enable SSO-only authentication for web activity.')
+
+        uncheck s_('GroupSAML|Enforce SSO-only authentication for web activity for this group')
+
+        expect(page).not_to have_field s_('GroupSAML|Enforce SSO-only authentication for API activity for this group')
+        expect(page).to have_content s_('GroupSAML|Before enforcing SSO-only authentication for API activity, enable SSO-only authentication for web activity.')
+      end
+    end
+
     it 'allows creation of new provider' do
       visit group_saml_providers_path(group)
 
@@ -119,6 +139,14 @@ RSpec.describe 'SAML provider settings' do
 
         expect { submit }.to change { saml_provider.reload.enforced_sso }.to(false)
         expect(page).to have_content 'Warning - Enabling SSO enforcement can reduce security risks.'
+      end
+
+      it 'updates api_check_enforced flag', :js do
+        visit group_saml_providers_path(group)
+
+        check s_('GroupSAML|Enforce SSO-only authentication for API activity for this group')
+
+        expect { submit }.to change { saml_provider.reload.api_check_enforced }.to(true)
       end
 
       context 'enforced_group_managed_accounts enabled', :js do

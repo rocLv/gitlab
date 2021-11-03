@@ -16376,6 +16376,9 @@ msgstr ""
 msgid "GroupSAML|Before enforcing SSO, enable SAML authentication."
 msgstr ""
 
+msgid "GroupSAML|Before enforcing SSO-only authentication for API activity, enable SSO-only authentication for web activity."
+msgstr ""
+
 msgid "GroupSAML|Before enforcing SSO-only authentication for Git activity, enable SSO-only authentication for web activity."
 msgstr ""
 
@@ -16395,6 +16398,9 @@ msgid "GroupSAML|Default membership role"
 msgstr ""
 
 msgid "GroupSAML|Enable SAML authentication for this group"
+msgstr ""
+
+msgid "GroupSAML|Enforce SSO-only authentication for API activity for this group"
 msgstr ""
 
 msgid "GroupSAML|Enforce SSO-only authentication for Git and Dependency Proxy activity for this group"

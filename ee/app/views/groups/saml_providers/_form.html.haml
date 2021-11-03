@@ -18,6 +18,13 @@
             = html_escape(s_('GroupSAML|%{strongOpen}Warning%{strongClose} - Enabling %{linkStart}SSO enforcement%{linkEnd} can reduce security risks.')) % { strongOpen: '<strong>'.html_safe, strongClose: '</strong>'.html_safe, linkStart: link_start, linkEnd: '</a>'.html_safe }
     .form-group
       .gl-form-checkbox.custom-control.custom-checkbox
+        = f.check_box :api_check_enforced, { class: 'custom-control-input js-group-saml-enforced-api-check-input' }
+        = f.label :api_check_enforced, { class: 'custom-control-label' } do
+          = s_('GroupSAML|Enforce SSO-only authentication for API activity for this group')
+          %p.help-text.js-helper-text{ class: saml_provider.enabled? && 'gl-display-none' }
+            = s_('GroupSAML|Before enforcing SSO-only authentication for API activity, enable SSO-only authentication for web activity.')
+    .form-group
+      .gl-form-checkbox.custom-control.custom-checkbox
         = f.check_box :git_check_enforced, { class: 'custom-control-input js-group-saml-enforced-git-check-input' }
         = f.label :git_check_enforced, { class: 'custom-control-label' } do
           = s_('GroupSAML|Enforce SSO-only authentication for Git and Dependency Proxy activity for this group')

@@ -122,6 +122,7 @@ RSpec.describe Groups::SamlProvidersController do
             group_id: group,
             saml_provider: {
               enforced_sso: 'true',
+              api_check_enforced: 'true',
               default_membership_role: Gitlab::Access::MAINTAINER
             }
           }
@@ -136,6 +137,7 @@ RSpec.describe Groups::SamlProvidersController do
           subject
           saml_provider.reload
         end.to change { saml_provider.enforced_sso? }.to(true)
+        .and change { saml_provider.api_check_enforced? }.to(true)
         .and change { saml_provider.default_membership_role }.to(Gitlab::Access::MAINTAINER)
       end
 

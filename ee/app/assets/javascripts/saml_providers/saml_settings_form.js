@@ -46,6 +46,11 @@ export default class SamlSettingsForm {
         dependsOn: 'enforced-sso',
       },
       {
+        name: 'enforced-api-activity-check',
+        el: this.form.querySelector('.js-group-saml-enforced-api-check-input'),
+        dependsOn: 'enforced-sso',
+      },
+      {
         name: 'enforced-git-activity-check',
         el: this.form.querySelector('.js-group-saml-enforced-git-check-input'),
         dependsOn: 'enforced-sso',

@@ -99,6 +99,27 @@ RSpec.describe SamlProvider do
       end
     end
 
+    describe 'api_check_enforced' do
+      let_it_be(:group) { create(:group) }
+
+      context 'when sso is enforced' do
+        it 'is valid when set to true or false' do
+          expect(build(:saml_provider, group: group, enabled: true, enforced_sso: true, api_check_enforced: true)).to be_valid
+          expect(build(:saml_provider, group: group, enabled: true, enforced_sso: true, api_check_enforced: false)).to be_valid
+        end
+      end
+
+      context 'when sso is not enforced' do
+        it 'is invalid when set to true' do
+          expect(build(:saml_provider, group: group, enabled: true, enforced_sso: false, api_check_enforced: true)).to be_invalid
+        end
+
+        it 'is valid when set to false' do
+          expect(build(:saml_provider, group: group, enabled: true, enforced_sso: false, api_check_enforced: false)).to be_valid
+        end
+      end
+    end
+
     describe 'git_check_enforced' do
       let_it_be(:group) { create(:group) }
 
@@ -247,6 +268,40 @@ RSpec.describe SamlProvider do
         expect(subject).not_to be_enforced_group_managed_accounts
         subject.enforced_group_managed_accounts = false
         expect(subject).not_to be_enforced_group_managed_accounts
+      end
+    end
+  end
+
+  describe '#api_check_enforced' do
+    it 'is false by default' do
+      expect(subject.api_check_enforced).to eq(false)
+    end
+  end
+
+  describe '#api_check_enforced?' do
+    context 'without enforced sso' do
+      before do
+        allow(subject).to receive(:enforced_sso?).and_return(false)
+      end
+
+      it 'does not enforce api activity check' do
+        subject.api_check_enforced = true
+        expect(subject).not_to be_api_check_enforced
+        subject.git_check_enforced = false
+        expect(subject).not_to be_api_check_enforced
+      end
+    end
+
+    context 'with enforced sso' do
+      before do
+        allow(subject).to receive(:enforced_sso?).and_return(true)
+      end
+
+      it 'enforces api activity check when attribute is set to true' do
+        subject.api_check_enforced = true
+        expect(subject).to be_api_check_enforced
+        subject.api_check_enforced = false
+        expect(subject).not_to be_api_check_enforced
       end
     end
   end
