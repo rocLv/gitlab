@@ -176,6 +176,7 @@ module QA
         autoload :SMTP, 'qa/scenario/test/integration/smtp'
         autoload :SSHTunnel, 'qa/scenario/test/integration/ssh_tunnel'
         autoload :Registry, 'qa/scenario/test/integration/registry'
+        autoload :RegistryTLS, 'qa/scenario/test/integration/registry_tls'
       end
 
       module Sanity
@@ -239,7 +240,6 @@ module QA
       autoload :Menu, 'qa/page/group/menu'
       autoload :Members, 'qa/page/group/members'
       autoload :BulkImport, 'qa/page/group/bulk_import'
-      autoload :DependencyProxy, 'qa/page/group/dependency_proxy'
 
       module Milestone
         autoload :Index, 'qa/page/group/milestone/index'
