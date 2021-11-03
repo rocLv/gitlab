@@ -23,6 +23,7 @@ class MergeRequest < ApplicationRecord
   include ApprovableBase
   include IdInOrdered
   include Todoable
+  include LooseForeignKey
 
   extend ::Gitlab::Utils::Override
 
@@ -86,6 +87,8 @@ class MergeRequest < ApplicationRecord
   end
 
   belongs_to :head_pipeline, foreign_key: "head_pipeline_id", class_name: "Ci::Pipeline"
+  loose_foreign_key :ci_pipelines, :head_pipeline_id, on_delete: :async_nullify
+  #     "fk_fd82eae0b9" FOREIGN KEY (head_pipeline_id) REFERENCES ci_pipelines(id) ON DELETE SET NULL
 
   has_many :events, as: :target, dependent: :delete_all # rubocop:disable Cop/ActiveRecordDependent
 
