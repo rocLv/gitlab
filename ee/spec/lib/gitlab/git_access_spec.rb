@@ -923,7 +923,7 @@ RSpec.describe Gitlab::GitAccess do
 
     context 'with project without group' do
       it 'allows pull and push changes' do
-        expect(Gitlab::Auth::GroupSaml::SessionEnforcer).to receive(:new).with(user, nil).and_return(double(access_restricted?: false))
+        expect(Gitlab::Auth::GroupSaml::SessionEnforcer).to receive(:new).with(user, nil).and_return(double(git_access_restricted?: false))
         pull_changes
       end
     end
@@ -939,7 +939,7 @@ RSpec.describe Gitlab::GitAccess do
         let(:access_restricted?) { false }
 
         it 'allows pull and push changes' do
-          expect(Gitlab::Auth::GroupSaml::SessionEnforcer).to receive(:new).with(user, group).twice.and_return(double(access_restricted?: access_restricted?))
+          expect(Gitlab::Auth::GroupSaml::SessionEnforcer).to receive(:new).with(user, group).twice.and_return(double(git_access_restricted?: access_restricted?))
 
           expect { pull_changes }.not_to raise_error
           expect { push_changes }.not_to raise_error
@@ -950,7 +950,7 @@ RSpec.describe Gitlab::GitAccess do
         let(:access_restricted?) { true }
 
         before do
-          expect(Gitlab::Auth::GroupSaml::SessionEnforcer).to receive(:new).with(user, group).twice.and_return(double(access_restricted?: access_restricted?))
+          expect(Gitlab::Auth::GroupSaml::SessionEnforcer).to receive(:new).with(user, group).twice.and_return(double(git_access_restricted?: access_restricted?))
         end
 
         it 'does not allow pull or push changes with proper url in the message' do

@@ -120,7 +120,7 @@ module EE
       def check_sso_session!
         return true unless user && container
 
-        return unless ::Gitlab::Auth::GroupSaml::SessionEnforcer.new(user, containing_group).access_restricted?
+        return unless ::Gitlab::Auth::GroupSaml::SessionEnforcer.new(user, containing_group).git_access_restricted?
 
         root_group = containing_group.root_ancestor
         group_saml_url = Rails.application.routes.url_helpers.sso_group_saml_providers_url(root_group, token: root_group.saml_discovery_token)

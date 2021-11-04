@@ -425,7 +425,7 @@ module EE
       return false unless subject.persisted?
       return false if user&.auditor? || user&.can_read_all_resources?
 
-      ::Gitlab::Auth::GroupSaml::SessionEnforcer.new(user, subject).access_restricted?
+      ::Gitlab::Auth::GroupSaml::SessionEnforcer.new(user, subject).dependency_proxy_access_restricted?
     end
 
     # Available in Core for self-managed but only paid, non-trial for .com to prevent abuse
