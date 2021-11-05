@@ -107,9 +107,9 @@ module IntegrationsHelper
     }
   end
 
-  def integration_list_data(integrations)
+  def integration_list_data(integrations, group: nil, project: nil)
     {
-      integrations: integrations.map { |i| serialize_integration(i) }.to_json
+      integrations: integrations.map { |i| serialize_integration(i, group: group, project: project) }.to_json
     }
   end
 
