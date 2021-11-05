@@ -221,7 +221,7 @@ module IntegrationsHelper
       title: integration.title,
       description: integration.description,
       updated_at: integration.updated_at,
-      edit_path: scoped_edit_integration_path(integration),
+      edit_path: scoped_edit_integration_path(integration, group: group, project: project),
       name: integration.to_param
     }
   end
