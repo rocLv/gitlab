@@ -215,13 +215,13 @@ module IntegrationsHelper
     end
   end
 
-  def serialize_integration(integration)
+  def serialize_integration(integration, group: nil, project: nil)
     {
       active: integration.operating?,
       title: integration.title,
       description: integration.description,
       updated_at: integration.updated_at,
-      edit_path: scoped_edit_integration_path(integration),
+      edit_path: scoped_edit_integration_path(integration, group: group, project: project),
       name: integration.to_param
     }
   end
