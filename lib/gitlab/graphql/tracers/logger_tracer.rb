@@ -16,12 +16,27 @@ module Gitlab
           case key
           when "execute_query"
             log_execute_query(**data)
+          when "execute_field"
+            log_execute_field(**data)
           end
 
           result
         end
 
         private
+
+        def log_execute_field(context: nil, duration_s: 0)
+          query = context.query
+          field = context.field
+
+          max_duration = query.context[:gl_max_field_duration] || 0
+
+          if duration_s > max_duration
+            query.context[:gl_max_field_duration] = duration_s
+            query.context[:gl_max_field_path] = context.path
+            query.context[:gl_max_field_type] = field.type.to_s
+          end
+        end
 
         def log_execute_query(query: nil, duration_s: 0)
           # execute_query should always have :query, but we're just being defensive
@@ -36,7 +51,10 @@ module Gitlab
             operation_fingerprint: query.operation_fingerprint,
             is_mutation: query.mutation?,
             variables: clean_variables(query.provided_variables),
-            query_string: query.query_string
+            query_string: query.query_string,
+            'max_field.duration': query.context[:gl_max_field_duration],
+            'max_field.path': query.context[:gl_max_field_path],
+            'max_field.type': query.context[:gl_max_field_type],
           }
 
           info.merge!(::Gitlab::ApplicationContext.current)
