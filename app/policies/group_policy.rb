@@ -52,7 +52,7 @@ class GroupPolicy < BasePolicy
 
   condition(:dependency_proxy_access_allowed) do
     if Feature.enabled?(:dependency_proxy_for_private_groups, default_enabled: true)
-      access_level(for_any_session: true) >= GroupMember::GUEST || valid_dependency_proxy_deploy_token
+      access_level(sso_check_for: :dependency_proxy) >= GroupMember::GUEST || valid_dependency_proxy_deploy_token
     else
       can?(:read_group)
     end
@@ -261,14 +261,14 @@ class GroupPolicy < BasePolicy
     prevent :admin_crm_organization
   end
 
-  def access_level(for_any_session: false)
+  def access_level(sso_check_for: nil)
     return GroupMember::NO_ACCESS if @user.nil?
     return GroupMember::NO_ACCESS unless user_is_user?
 
-    @access_level ||= lookup_access_level!(for_any_session: for_any_session)
+    @access_level ||= lookup_access_level!(sso_check_for: sso_check_for)
   end
 
-  def lookup_access_level!(for_any_session: false)
+  def lookup_access_level!(sso_check_for: nil)
     @subject.max_member_access_for_user(@user)
   end
 
