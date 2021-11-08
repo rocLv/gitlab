@@ -50,7 +50,7 @@ export default () => {
         new Vue(vueOptions);
       } else {
         const tabClickHandler = (e) => {
-          if (e.target.className === 'codequality-tab') {
+          if (e.target.classList.contains('codequality-tab')) {
             // eslint-disable-next-line no-new
             new Vue(vueOptions);
             tabsElement.removeEventListener('click', tabClickHandler);
@@ -70,7 +70,7 @@ export default () => {
         store.dispatch(fetchReportAction);
       } else {
         const tabClickHandler = (e) => {
-          if (e.target.className === 'codequality-tab') {
+          if (e.target.classList.contains('codequality-tab')) {
             store.dispatch(fetchReportAction);
             tabsElement.removeEventListener('click', tabClickHandler);
           }

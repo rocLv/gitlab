@@ -1,26 +1,19 @@
 - return if pipeline_has_errors
 
 .tabs-holder
-  %ul.pipelines-tabs.nav-links.no-top.no-bottom.mobile-separator.nav.nav-tabs
-    %li.js-pipeline-tab-link
-      = link_to project_pipeline_path(@project, @pipeline), data: { target: '#js-tab-pipeline', action: 'pipelines', toggle: 'tab' }, class: 'pipeline-tab' do
-        = _('Pipeline')
-    %li.js-dag-tab-link
-      = link_to dag_project_pipeline_path(@project, @pipeline), data: { target: '#js-tab-dag', action: 'dag', toggle: 'tab' }, class: 'dag-tab' do
-        = _('Needs')
-    %li.js-builds-tab-link
-      = link_to builds_project_pipeline_path(@project, @pipeline), data: { target: '#js-tab-builds', action: 'builds', toggle: 'tab' }, class: 'builds-tab' do
-        = _('Jobs')
-        %span.badge.badge-pill.gl-badge.badge-muted.sm.js-builds-counter= pipeline.total_size
+  = gl_tabs_nav({ class: 'pipelines-tabs nav-links'}) do
+    = gl_tab_link_to _('Pipeline'), project_pipeline_path(@project, @pipeline), { item_active: false, tab_class: 'js-pipeline-tab-link', class: 'pipeline-tab gl-shadow-none!', data: { target: '#js-tab-pipeline', action: 'pipelines', toggle: 'tab' } }
+    = gl_tab_link_to _('Needs'), dag_project_pipeline_path(@project, @pipeline), { item_active: false, tab_class: 'js-dag-tab-link', class: 'dag-tab gl-shadow-none!', data: { target: '#js-tab-dag', action: 'dag', toggle: 'tab' } }
+    = gl_tab_link_to builds_project_pipeline_path(@project, @pipeline), { item_active: false, tab_class: 'js-builds-tab-link', class: 'builds-tab gl-shadow-none!', data: { target: '#js-tab-builds', action: 'builds', toggle: 'tab' } } do
+      = _('Jobs')
+      = gl_tab_counter_badge(@pipeline.total_size, { class: 'js-builds-counter' })
     - if @pipeline.failed_builds.present?
-      %li.js-failures-tab-link
-        = link_to failures_project_pipeline_path(@project, @pipeline), data: { target: '#js-tab-failures', action: 'failures', toggle: 'tab' }, class: 'failures-tab' do
-          = _('Failed Jobs')
-          %span.badge.badge-pill.gl-badge.badge-muted.sm.js-failures-counter= @pipeline.failed_builds.count
-    %li.js-tests-tab-link
-      = link_to test_report_project_pipeline_path(@project, @pipeline), data: { target: '#js-tab-tests', action: 'test_report', toggle: 'tab' }, class: 'test-tab' do
-        = s_('TestReports|Tests')
-        %span.badge.badge-pill.gl-badge.badge-muted.sm.js-test-report-badge-counter= @pipeline.test_report_summary.total[:count]
+      = gl_tab_link_to failures_project_pipeline_path(@project, @pipeline), { item_active: false, tab_class: 'js-failures-tab-link', class: 'failures-tab gl-shadow-none!', data: { target: '#js-tab-failures', action: 'failures', toggle: 'tab' } } do
+        = _('Failed Jobs')
+        = gl_tab_counter_badge(@pipeline.failed_builds.count, { class: 'js-failures-counter' })
+    = gl_tab_link_to test_report_project_pipeline_path(@project, @pipeline), { item_active: false, tab_class: 'js-tests-tab-link', class: 'test-tab gl-shadow-none!', data: { target: '#js-tab-tests', action: 'test_report', toggle: 'tab' } } do
+      = s_('TestReports|Tests')
+      = gl_tab_counter_badge(@pipeline.test_report_summary.total[:count], { class: 'js-test-report-badge-counter' })
     = render_if_exists "projects/pipelines/tabs_holder", pipeline: @pipeline, project: @project
 
 .tab-content
