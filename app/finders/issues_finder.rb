@@ -88,8 +88,7 @@ class IssuesFinder < IssuableFinder
     issues = super
     issues = by_due_date(issues)
     issues = by_confidential(issues)
-    issues = by_issue_types(issues)
-    by_alert_monitoring_tools(issues)
+    by_issue_types(issues)
   end
 
   # Negates all params found in `negatable_params`
@@ -136,13 +135,6 @@ class IssuesFinder < IssuableFinder
     return items if issue_type_params.blank?
 
     items.without_issue_type(issue_type_params)
-  end
-
-  def by_alert_monitoring_tools(items)
-    alert_monitoring_tool_params = Array(params[:alert_monitoring_tools]).map(&:to_s)
-    return items if alert_monitoring_tool_params.blank?
-
-    items.with_alert_monitoring_tools(alert_monitoring_tool_params)
   end
 
   def by_negated_alert_monitoring_tools(items)

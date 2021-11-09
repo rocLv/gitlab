@@ -250,24 +250,6 @@ RSpec.describe Resolvers::IssuesResolver do
         end
       end
 
-      describe 'filters by alert_monitoring_tools' do
-        it 'filters by a single tool' do
-          expect(resolve_issues(alert_monitoring_tools: %w[Cilium])).to contain_exactly(issue1)
-        end
-
-        it 'filters by a single tool, negative assertion' do
-          expect(resolve_issues(alert_monitoring_tools: %w[Prometheus])).not_to include(issue1)
-        end
-
-        it 'filters by more than one tool' do
-          expect(resolve_issues(alert_monitoring_tools: %w[Cilium Prometheus])).to contain_exactly(issue1)
-        end
-
-        it 'ignores the filter if none given' do
-          expect(resolve_issues(alert_monitoring_tools: [])).to contain_exactly(issue1, issue2)
-        end
-      end
-
       context 'filtering by reaction emoji' do
         let_it_be(:downvoted_issue) { create(:issue, project: project) }
         let_it_be(:downvote_award) { create(:award_emoji, :downvote, user: current_user, awardable: downvoted_issue) }

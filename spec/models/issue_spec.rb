@@ -187,17 +187,6 @@ RSpec.describe Issue do
     end
   end
 
-  describe '.with_alert_monitoring_tools' do
-    let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
-    let_it_be(:alert) { create(:alert_management_alert, :cilium, project: reusable_project, issue: alert_incident) }
-    let_it_be(:prometheus_alert) { create(:alert_management_alert, :prometheus, :with_incident, project: reusable_project) }
-
-    it 'gives incidents with the given alert monitoring tool' do
-      expect(described_class.with_alert_monitoring_tools(Gitlab::AlertManagement::Payload::MONITORING_TOOLS[:cilium]))
-      .to contain_exactly(alert_incident)
-    end
-  end
-
   describe '.without_alert_monitoring_tools' do
     let_it_be(:alert_incident) { create(:incident, project: reusable_project) }
     let_it_be(:alert) { create(:alert_management_alert, :cilium, project: reusable_project, issue: alert_incident) }

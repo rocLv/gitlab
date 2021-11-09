@@ -24425,10 +24425,6 @@ CREATE INDEX index_a6c68d16b2 ON gitlab_partitions_static.analytics_cycle_analyt
 
 CREATE INDEX index_a8276a450f ON gitlab_partitions_static.analytics_cycle_analytics_merge_request_stage_events_05 USING btree (stage_event_hash_id, project_id, end_event_timestamp, merge_request_id, start_event_timestamp) WHERE (end_event_timestamp IS NOT NULL);
 
-CREATE INDEX index_alert_management_alerts_on_monitoring_tool ON alert_management_alerts USING btree (monitoring_tool);
-
-CREATE UNIQUE INDEX index_alert_management_alerts_on_project_id_and_iid ON alert_management_alerts USING btree (project_id, iid);
-
 CREATE INDEX index_a88f20fc98 ON gitlab_partitions_static.analytics_cycle_analytics_issue_stage_events_11 USING btree (stage_event_hash_id, group_id, start_event_timestamp, issue_id) WHERE ((end_event_timestamp IS NULL) AND (state_id = 1));
 
 CREATE INDEX index_a9424aa392 ON gitlab_partitions_static.analytics_cycle_analytics_issue_stage_events_01 USING btree (stage_event_hash_id, project_id, start_event_timestamp, issue_id) WHERE ((end_event_timestamp IS NULL) AND (state_id = 1));
@@ -24958,6 +24954,8 @@ CREATE INDEX index_alert_management_alerts_on_domain ON alert_management_alerts 
 CREATE INDEX index_alert_management_alerts_on_environment_id ON alert_management_alerts USING btree (environment_id) WHERE (environment_id IS NOT NULL);
 
 CREATE INDEX index_alert_management_alerts_on_issue_id ON alert_management_alerts USING btree (issue_id);
+
+CREATE INDEX index_alert_management_alerts_on_monitoring_tool ON alert_management_alerts USING btree (issue_id, monitoring_tool) WHERE (monitoring_tool <> 'Cilium'::text);
 
 CREATE UNIQUE INDEX index_alert_management_alerts_on_project_id_and_iid ON alert_management_alerts USING btree (project_id, iid);
 
