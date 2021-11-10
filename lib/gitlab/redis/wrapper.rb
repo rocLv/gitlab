@@ -95,6 +95,10 @@ module Gitlab
           nil
         end
 
+        def using_config_fallback?
+          config_file_name == config_fallback&.config_file_name
+        end
+
         def instrumentation_class
           return unless defined?(::Gitlab::Instrumentation::Redis)
 
