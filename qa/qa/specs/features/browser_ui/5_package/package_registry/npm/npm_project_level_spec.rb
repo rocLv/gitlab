@@ -89,6 +89,10 @@ module QA
               "name": "@#{registry_scope}/mypackage",
               "version": "1.0.0",
               "description": "Example package for GitLab npm registry",
+              "dist": {
+                "tarball": "#{gitlab_address_with_port}/npm_package.tgz",
+                "shasum": "1234567890"
+              },
               "publishConfig": {
                 "@#{registry_scope}:registry": "#{gitlab_address_with_port}/api/v4/projects/#{project.id}/packages/npm/"
               }
