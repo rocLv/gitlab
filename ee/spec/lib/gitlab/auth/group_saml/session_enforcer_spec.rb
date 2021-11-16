@@ -8,6 +8,7 @@ RSpec.describe Gitlab::Auth::GroupSaml::SessionEnforcer do
       expect(enforced?).to be false
     end
   end
+
   RSpec.shared_examples_for 'group saml session enforcer' do
     describe '#access_restricted' do
       let_it_be(:saml_provider) { create(:saml_provider, enforced_sso: true) }
