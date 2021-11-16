@@ -55,35 +55,17 @@ RSpec.describe Gitlab::AnonymousSession do
     end
 
     it 'removes obsolete lookup through ip entries' do
-      Gitlab::Redis::Sessions.with do |redis|
+      redis_store_class.with do |redis|
         redis.set("session:lookup:ip:gitlab2:127.0.0.1", 2)
       end
 
       subject.cleanup_session_per_ip_count
 
-      Gitlab::Redis::Sessions.with do |redis|
+      redis_store_class.with do |redis|
         expect(redis.exists("session:lookup:ip:gitlab2:127.0.0.1")).to eq(false)
       end
     end
   end
 
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is true', :clean_gitlab_redis_sessions do
-    before do
-      stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'true')
-    end
-
-    it_behaves_like 'anonymous sessions' do
-      let(:redis_store_class) { Gitlab::Redis::Sessions }
-    end
-  end
-
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is false', :clean_gitlab_redis_shared_state do
-    before do
-      stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'false')
-    end
-
-    it_behaves_like 'anonymous sessions' do
-      let(:redis_store_class) { Gitlab::Redis::SharedState }
-    end
-  end
+  it_behaves_like 'redis sessions store', 'anonymous sessions'
 end

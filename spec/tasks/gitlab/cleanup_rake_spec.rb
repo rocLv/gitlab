@@ -197,23 +197,5 @@ RSpec.describe 'gitlab:cleanup rake tasks', :silence_stdout do
     end
   end
 
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is true', :clean_gitlab_redis_sessions do
-    before do
-      stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'true')
-    end
-
-    it_behaves_like 'rake gitlab:cleanup' do
-      let(:redis_store_class) { Gitlab::Redis::Sessions }
-    end
-  end
-
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is false', :clean_gitlab_redis_sessions do
-    before do
-      stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'false')
-    end
-
-    it_behaves_like 'rake gitlab:cleanup' do
-      let(:redis_store_class) { Gitlab::Redis::SharedState }
-    end
-  end
+  it_behaves_like 'redis sessions store', 'rake gitlab:cleanup'
 end

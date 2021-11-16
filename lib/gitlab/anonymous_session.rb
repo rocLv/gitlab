@@ -2,6 +2,8 @@
 
 module Gitlab
   class AnonymousSession
+    include ::Gitlab::Redis::SessionsStoreHelper
+
     def initialize(remote_ip)
       @remote_ip = remote_ip
     end
@@ -30,14 +32,6 @@ module Gitlab
     private
 
     attr_reader :remote_ip
-
-    def redis_store_class
-      use_redis_session_store? ? Gitlab::Redis::Sessions : Gitlab::Redis::SharedState
-    end
-
-    def use_redis_session_store?
-      Gitlab::Utils.to_boolean(ENV['GITLAB_USE_REDIS_SESSIONS_STORE'], default: true)
-    end
 
     def session_lookup_name
       @session_lookup_name ||= "#{Gitlab::Redis::Sessions::IP_SESSIONS_LOOKUP_NAMESPACE}:#{remote_ip}"

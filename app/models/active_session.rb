@@ -21,6 +21,7 @@
 #
 class ActiveSession
   include ActiveModel::Model
+  include ::Gitlab::Redis::SessionsStoreHelper
 
   SESSION_BATCH_SIZE = 200
   ALLOWED_NUMBER_OF_ACTIVE_SESSIONS = 100
@@ -235,13 +236,5 @@ class ActiveSession
     end
 
     entries.compact
-  end
-
-  def self.redis_store_class
-    use_redis_session_store? ? Gitlab::Redis::Sessions : Gitlab::Redis::SharedState
-  end
-
-  def self.use_redis_session_store?
-    Gitlab::Utils.to_boolean(ENV['GITLAB_USE_REDIS_SESSIONS_STORE'], default: true)
   end
 end

@@ -67,23 +67,5 @@ RSpec.describe ApplicationCable::Connection, :clean_gitlab_redis_shared_state do
     end
   end
 
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is true', :clean_gitlab_redis_sessions do
-    before do
-      stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'true')
-    end
-
-    it_behaves_like 'ApplicationCable::Connection' do
-      let(:redis_store_class) { Gitlab::Redis::Sessions }
-    end
-  end
-
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is false', :clean_gitlab_redis_sessions do
-    before do
-      stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'false')
-    end
-
-    it_behaves_like 'ApplicationCable::Connection' do
-      let(:redis_store_class) { Gitlab::Redis::SharedState }
-    end
-  end
+  it_behaves_like 'redis sessions store', 'ApplicationCable::Connection'
 end
