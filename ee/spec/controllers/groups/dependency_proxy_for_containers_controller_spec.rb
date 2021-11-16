@@ -45,7 +45,7 @@ RSpec.describe Groups::DependencyProxyForContainersController do
           expect(response).to have_gitlab_http_status(:not_found)
         end
 
-        RSpec shared_examples_for 'active session' do
+        shared_examples 'active session' do
           context 'with an active session' do
             let(:session_id) { '42' }
             let(:session_time) { 5.minutes.ago }
@@ -60,7 +60,7 @@ RSpec.describe Groups::DependencyProxyForContainersController do
               end
             end
 
-            it_behaves_like 'successful_example'
+            it_behaves_like successful_example
           end
         end
 
