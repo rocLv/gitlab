@@ -6,8 +6,6 @@ module Gitlab
       class SessionEnforcer
         include ::Gitlab::Redis::SessionsStoreHelper
 
-        OTP_SESSIONS_NAMESPACE = 'session:otp'
-
         def initialize(key)
           @key = key
         end
@@ -29,7 +27,7 @@ module Gitlab
         attr_reader :key
 
         def key_name
-          @key_name ||= "#{OTP_SESSIONS_NAMESPACE}:#{key.id}"
+          @key_name ||= "#{Gitlab::Redis::Sessions::OTP_SESSIONS_NAMESPACE}:#{key.id}"
         end
 
         def session_expiry_in_seconds

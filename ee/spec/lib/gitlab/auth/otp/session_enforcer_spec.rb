@@ -19,7 +19,7 @@ RSpec.describe Gitlab::Auth::Otp::SessionEnforcer, :clean_gitlab_redis_shared_st
 
         expect(redis).to(
           receive(:setex)
-            .with("#{described_class::OTP_SESSIONS_NAMESPACE}:#{key.id}",
+            .with("#{::Gitlab::Redis::Sessions::OTP_SESSIONS_NAMESPACE}:#{key.id}",
                   session_expiry_in_seconds,
                   true)
             .once)
@@ -50,7 +50,7 @@ RSpec.describe Gitlab::Auth::Otp::SessionEnforcer, :clean_gitlab_redis_shared_st
       context 'with existing session' do
         before do
           redis_store_class.with do |redis|
-            redis.set("#{described_class::OTP_SESSIONS_NAMESPACE}:#{key.id}", true )
+            redis.set("#{::Gitlab::Redis::Sessions::OTP_SESSIONS_NAMESPACE}:#{key.id}", true )
           end
         end
 

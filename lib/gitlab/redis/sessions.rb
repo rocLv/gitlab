@@ -7,6 +7,7 @@ module Gitlab
       USER_SESSIONS_NAMESPACE = 'session:user:gitlab'
       USER_SESSIONS_LOOKUP_NAMESPACE = 'session:lookup:user:gitlab'
       IP_SESSIONS_LOOKUP_NAMESPACE = 'session:lookup:ip:gitlab2'
+      OTP_SESSIONS_NAMESPACE = 'session:otp'
 
       class << self
         # The data we store on Sessions used to be stored on SharedState.
