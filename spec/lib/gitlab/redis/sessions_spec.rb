@@ -10,10 +10,6 @@ RSpec.describe Gitlab::Redis::Sessions, :clean_gitlab_redis_sessions do
       clear_pool
     end
 
-    after do
-      clear_pool
-    end
-
     context 'when redis.sessions configuration is not provided' do
       it 'uses ::Redis instance' do
         expect(described_class).to receive(:config_fallback?).and_return(true)
