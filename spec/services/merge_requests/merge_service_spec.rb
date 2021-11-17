@@ -395,11 +395,13 @@ RSpec.describe MergeRequests::MergeService do
 
           service.execute(merge_request)
 
-          expect(merge_request).to be_open
-          expect(merge_request.merge_commit_sha).to be_nil
-          expect(merge_request.squash_commit_sha).to be_nil
-          expect(merge_request.merge_error).to include(error_message)
-          expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(error_message))
+          aggregate_failures "of MR with squash failure" do
+            expect(merge_request).to be_open
+            expect(merge_request.merge_commit_sha).to be_nil
+            expect(merge_request.squash_commit_sha).to be_nil
+            expect(merge_request.merge_error).to include(error_message)
+            expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(error_message))
+          end
         end
 
         it 'logs and saves error if there is an PreReceiveError exception' do
