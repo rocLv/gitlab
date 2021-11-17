@@ -21866,7 +21866,10 @@ msgstr ""
 msgid "MergeRequests|Create issue to resolve thread"
 msgstr ""
 
-msgid "MergeRequests|Failed to squash. Should be done manually."
+msgid "MergeRequests|Failed to squash. Please do that locally, with an interactive rebase. %{docs_link}"
+msgstr ""
+
+msgid "MergeRequests|Read our rebase guide to learn more."
 msgstr ""
 
 msgid "MergeRequests|Saving the comment failed"

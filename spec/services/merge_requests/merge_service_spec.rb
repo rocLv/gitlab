@@ -388,7 +388,8 @@ RSpec.describe MergeRequests::MergeService do
         end
 
         it 'logs and saves error if there is an error when squashing' do
-          error_message = 'Failed to squash. Should be done manually'
+          base_message = 'Failed to squash. Please do that locally, with an interactive rebase.'
+          help_page_path = 'help/topics/git/git_rebase.md'
 
           allow_any_instance_of(MergeRequests::SquashService).to receive(:squash!).and_return(nil)
           merge_request.update!(squash: true)
@@ -399,8 +400,12 @@ RSpec.describe MergeRequests::MergeService do
             expect(merge_request).to be_open
             expect(merge_request.merge_commit_sha).to be_nil
             expect(merge_request.squash_commit_sha).to be_nil
-            expect(merge_request.merge_error).to include(error_message)
-            expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(error_message))
+
+            expect(merge_request.merge_error).to include(base_message)
+            expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(base_message))
+
+            expect(merge_request.merge_error).to include(help_page_path)
+            expect(Gitlab::AppLogger).to have_received(:error).with(a_string_matching(help_page_path))
           end
         end
 

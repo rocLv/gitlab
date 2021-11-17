@@ -8,7 +8,7 @@ description: "Introduction to Git rebase and force-push, methods to resolve merg
 
 # Introduction to Git rebase and force-push **(FREE)**
 
-This guide helps you to get started with rebasing, force-pushing, and fixing
+This guide helps you to get started with rebasing, force-pushing, squashing, and fixing
 [merge conflicts](../../user/project/merge_requests/conflicts.md) locally.
 
 Before diving into this document, make sure you are familiar with using
