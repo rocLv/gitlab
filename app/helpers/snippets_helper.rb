@@ -84,4 +84,35 @@ module SnippetsHelper
       api_v4_projects_snippets_award_emoji_path(id: snippet.project.id, snippet_id: snippet.id)
     end
   end
+
+  def snippets_tabs_data(subject, include_private, counts)
+    [
+      {
+        title: _("All"),
+        link: subject_snippets_path(subject),
+        count: include_private ? counts[:total] : counts[:are_public_or_internal],
+        scope: ''
+      },
+      (
+        {
+          title: _("Private"),
+          link: subject_snippets_path(subject, scope: 'are_private'),
+          count: counts[:are_private],
+          scope: 'are_private'
+        } unless !include_private
+      ),
+      {
+        title: _("Internal"),
+        link: subject_snippets_path(subject, scope: 'are_internal'),
+        count: counts[:are_internal],
+        scope: 'are_internal'
+      },
+      {
+        title: _("Public"),
+        link: subject_snippets_path(subject, scope: 'are_public'),
+        count: counts[:are_public],
+        scope: 'are_public'
+      },
+    ].compact
+  end
 end

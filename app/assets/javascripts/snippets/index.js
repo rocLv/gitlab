@@ -5,8 +5,30 @@ import createDefaultClient from '~/lib/graphql';
 import { SNIPPET_LEVELS_MAP, SNIPPET_VISIBILITY_PRIVATE } from '~/snippets/constants';
 import Translate from '~/vue_shared/translate';
 
+import Tabs from './components/tabs.vue';
+
 Vue.use(VueApollo);
 Vue.use(Translate);
+
+export const initSnippetsTabs = () => {
+  const el = document.querySelector('#js-snippets-tabs');
+
+  const { tabs } = el.dataset;
+
+  if (!el) {
+    return false;
+  }
+
+  return new Vue({
+    el,
+    provide: {
+      tabs: JSON.parse(tabs),
+    },
+    render(createElement) {
+      return createElement(Tabs);
+    },
+  });
+};
 
 export default function appFactory(el, Component) {
   if (!el) {
