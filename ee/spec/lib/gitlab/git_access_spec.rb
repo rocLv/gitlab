@@ -776,7 +776,7 @@ RSpec.describe Gitlab::GitAccess do
       context 'with an OTP session', :clean_gitlab_redis_sessions, :clean_gitlab_redis_shared_state do
         before do
           redis_store_class.with do |redis|
-            redis.set("#{Gitlab::Auth::Otp::SessionEnforcer::OTP_SESSIONS_NAMESPACE}:#{key.id}", true)
+            redis.set("#{Gitlab::Redis::Sessions::OTP_SESSIONS_NAMESPACE}:#{key.id}", true)
           end
         end
 
@@ -808,7 +808,7 @@ RSpec.describe Gitlab::GitAccess do
 
             expect(redis).to(
               receive(:get)
-                .with("#{Gitlab::Auth::Otp::SessionEnforcer::OTP_SESSIONS_NAMESPACE}:#{key.id}"))
+                .with("#{Gitlab::Redis::Sessions::OTP_SESSIONS_NAMESPACE}:#{key.id}"))
                          .at_most(:twice)
                          .and_return(value_of_key)
           end
