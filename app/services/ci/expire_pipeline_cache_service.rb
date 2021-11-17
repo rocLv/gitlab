@@ -2,11 +2,6 @@
 
 module Ci
   class ExpirePipelineCacheService
-    class UrlHelpers
-      include ::Gitlab::Routing
-      include ::GitlabRoutingHelper
-    end
-
     def execute(pipeline, delete: false)
       store = Gitlab::EtagCaching::Store.new
 
@@ -85,7 +80,7 @@ module Ci
     end
 
     def url_helpers
-      @url_helpers ||= UrlHelpers.new
+      @url_helpers ||= Gitlab::Routing::UrlHelpers.new
     end
   end
 end

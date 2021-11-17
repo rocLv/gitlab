@@ -5,11 +5,6 @@ module Mutations
     class Create < BaseMutation
       include FindsProject
 
-      class UrlHelpers
-        include GitlabRoutingHelper
-        include Gitlab::Routing
-      end
-
       graphql_name 'CommitCreate'
 
       argument :project_path, GraphQL::Types::ID,
@@ -66,7 +61,7 @@ module Mutations
         {
           content: actions.pluck(:content),  # rubocop:disable CodeReuse/ActiveRecord because actions is an Array, not a Relation
           commit: (project.repository.commit(result[:result]) if result[:status] == :success),
-          commit_pipeline_path: UrlHelpers.new.graphql_etag_pipeline_sha_path(result[:result]),
+          commit_pipeline_path: Gitlab::Routing::UrlHelpers.new.graphql_etag_pipeline_sha_path(result[:result]),
           errors: Array.wrap(result[:message])
         }
       end
