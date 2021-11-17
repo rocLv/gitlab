@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Gitlab::Redis::Sessions, :clean_gitlab_redis_sessions do
+RSpec.describe Gitlab::Redis::Sessions do
   include_examples "redis_new_instance_shared_examples", 'sessions', Gitlab::Redis::SharedState
 
   describe 'redis instance used in connection pool' do
