@@ -18,7 +18,7 @@ module MergeRequests
 
     def error_help
       docs_link = ActionController::Base.helpers.link_to(
-        _('MergeRequests|Read our rebase guide to learn more.'),
+        s_('MergeRequests|Read our rebase guide to learn more.'),
         Rails.application.routes.url_helpers.help_page_url(
           'topics/git/git_rebase.md'
           # Not using anchor: 'interactive-rebase' because
@@ -26,7 +26,7 @@ module MergeRequests
         ), target: '_blank', rel: 'noopener noreferrer'
       )
       error(
-        _('MergeRequests|Failed to squash. Please do that locally, with an interactive rebase. %{docs_link}').html_safe % { docs_link: docs_link.html_safe }
+        s_('MergeRequests|Failed to squash. Please do that locally, with an interactive rebase. %{docs_link}').html_safe % { docs_link: docs_link.html_safe }
       )
     end
 
