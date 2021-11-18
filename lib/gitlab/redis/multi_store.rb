@@ -72,7 +72,7 @@ module Gitlab
 
         log_method_missing(...)
 
-        secondary_store.send(...) # rubocop:disable GitlabSecurity/PublicSend
+        primary_store.send(...) # rubocop:disable GitlabSecurity/PublicSend
       end
 
       def respond_to_missing?(command_name, include_private = false)
@@ -127,10 +127,10 @@ module Gitlab
           log_error(e, command_name,
             multi_store_error_message: FAILED_TO_READ_ERROR_MESSAGE)
         end
-
-        value ||= fallback_read(command_name, *args, &block)
-
-        value
+        #
+        # value ||= fallback_read(command_name, *args, &block)
+        #
+        # value
       end
 
       def fallback_read(command_name, *args, &block)
@@ -151,11 +151,12 @@ module Gitlab
           log_error(e, command_name,
             multi_store_error_message: FAILED_TO_WRITE_ERROR_MESSAGE)
         end
-
-        send_command(secondary_store, command_name, *args, &block)
+        #
+        # send_command(secondary_store, command_name, *args, &block)
       end
 
       def multi_store_enabled?
+        return true
         Feature.enabled?(:use_multi_store, default_enabled: :yaml) && !same_redis_store?
       end
 
