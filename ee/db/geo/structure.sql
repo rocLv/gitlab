@@ -81,8 +81,7 @@ CREATE TABLE file_registry (
     verification_checksum bytea,
     verification_checksum_mismatched bytea,
     checksum_mismatch boolean DEFAULT false NOT NULL,
-    verification_failure text,
-    CONSTRAINT check_1886652634 CHECK ((char_length(verification_failure) <= 256))
+    verification_failure character varying(255)
 );
 
 CREATE SEQUENCE file_registry_id_seq
@@ -621,6 +620,12 @@ CREATE INDEX lfs_object_registry_failed_verification ON lfs_object_registry USIN
 CREATE INDEX lfs_object_registry_needs_verification ON lfs_object_registry USING btree (verification_state) WHERE ((state = 2) AND (verification_state = ANY (ARRAY[0, 3])));
 
 CREATE INDEX lfs_object_registry_pending_verification ON lfs_object_registry USING btree (verified_at NULLS FIRST) WHERE ((state = 2) AND (verification_state = 0));
+
+CREATE INDEX job_artifact_registry_failed_verification ON job_artifact_registry USING btree (verification_retry_at NULLS FIRST) WHERE ((state = 2) AND (verification_state = 3));
+
+CREATE INDEX job_artifact_registry_needs_verification ON job_artifact_registry USING btree (verification_state) WHERE ((state = 2) AND (verification_state = ANY (ARRAY[0, 3])));
+
+CREATE INDEX job_artifact_registry_pending_verification ON job_artifact_registry USING btree (verified_at NULLS FIRST) WHERE ((state = 2) AND (verification_state = 0));
 
 CREATE INDEX merge_request_diff_registry_failed_verification ON merge_request_diff_registry USING btree (verification_retry_at NULLS FIRST) WHERE ((state = 2) AND (verification_state = 3));
 

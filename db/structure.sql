@@ -15665,6 +15665,27 @@ CREATE SEQUENCE jira_tracker_data_id_seq
 
 ALTER SEQUENCE jira_tracker_data_id_seq OWNED BY jira_tracker_data.id;
 
+CREATE TABLE job_artifact_states (
+    ci_job_artifacts_id bigint NOT NULL,
+    verification_state smallint DEFAULT 0 NOT NULL,
+    verification_started_at timestamp with time zone,
+    verification_retry_at timestamp with time zone,
+    verified_at timestamp with time zone,
+    verification_retry_count smallint,
+    verification_checksum bytea,
+    verification_failure text,
+    CONSTRAINT check_2561f573a9 CHECK ((char_length(verification_failure) <= 255))
+);
+
+CREATE SEQUENCE job_artifact_states_ci_job_artifacts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE job_artifact_states_ci_job_artifacts_id_seq OWNED BY job_artifact_states.ci_job_artifacts_id;
+
 CREATE TABLE keys (
     id integer NOT NULL,
     user_id integer,
@@ -21748,6 +21769,8 @@ ALTER TABLE ONLY jira_imports ALTER COLUMN id SET DEFAULT nextval('jira_imports_
 
 ALTER TABLE ONLY jira_tracker_data ALTER COLUMN id SET DEFAULT nextval('jira_tracker_data_id_seq'::regclass);
 
+ALTER TABLE ONLY job_artifact_states ALTER COLUMN ci_job_artifacts_id SET DEFAULT nextval('job_artifact_states_ci_job_artifacts_id_seq'::regclass);
+
 ALTER TABLE ONLY keys ALTER COLUMN id SET DEFAULT nextval('keys_id_seq'::regclass);
 
 ALTER TABLE ONLY label_links ALTER COLUMN id SET DEFAULT nextval('label_links_id_seq'::regclass);
@@ -23456,6 +23479,9 @@ ALTER TABLE ONLY jira_imports
 
 ALTER TABLE ONLY jira_tracker_data
     ADD CONSTRAINT jira_tracker_data_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY job_artifact_states
+    ADD CONSTRAINT job_artifact_states_pkey PRIMARY KEY (ci_job_artifacts_id);
 
 ALTER TABLE ONLY keys
     ADD CONSTRAINT keys_pkey PRIMARY KEY (id);
@@ -26432,6 +26458,16 @@ CREATE INDEX index_jira_imports_on_project_id_and_jira_project_key ON jira_impor
 CREATE INDEX index_jira_imports_on_user_id ON jira_imports USING btree (user_id);
 
 CREATE INDEX index_jira_tracker_data_on_service_id ON jira_tracker_data USING btree (service_id);
+
+CREATE INDEX index_job_artifact_states_failed_verification ON job_artifact_states USING btree (verification_retry_at NULLS FIRST) WHERE (verification_state = 3);
+
+CREATE INDEX index_job_artifact_states_needs_verification ON job_artifact_states USING btree (verification_state) WHERE ((verification_state = 0) OR (verification_state = 3));
+
+CREATE INDEX index_job_artifact_states_on_ci_job_artifacts_id ON job_artifact_states USING btree (ci_job_artifacts_id);
+
+CREATE INDEX index_job_artifact_states_on_verification_state ON job_artifact_states USING btree (verification_state);
+
+CREATE INDEX index_job_artifact_states_pending_verification ON job_artifact_states USING btree (verified_at NULLS FIRST) WHERE (verification_state = 0);
 
 CREATE INDEX index_keys_on_expires_at_and_id ON keys USING btree (date(timezone('UTC'::text, expires_at)), id) WHERE (expiry_notification_delivered_at IS NULL);
 
@@ -30780,6 +30816,9 @@ ALTER TABLE ONLY packages_conan_metadata
 
 ALTER TABLE ONLY vulnerability_feedback
     ADD CONSTRAINT fk_rails_8c77e5891a FOREIGN KEY (issue_id) REFERENCES issues(id) ON DELETE SET NULL;
+
+ALTER TABLE ONLY job_artifact_states
+    ADD CONSTRAINT fk_rails_8d2f21abfa FOREIGN KEY (ci_job_artifacts_id) REFERENCES ci_job_artifacts(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY ci_pipeline_messages
     ADD CONSTRAINT fk_rails_8d3b04e3e1 FOREIGN KEY (pipeline_id) REFERENCES ci_pipelines(id) ON DELETE CASCADE;
