@@ -713,7 +713,7 @@ RSpec.describe Gitlab::GitAccess do
         project.add_developer(user)
       end
 
-      context 'user with a smartcard session', :clean_gitlab_redis_sessions, :clean_gitlab_shared_state do
+      context 'user with a smartcard session' do
         let(:session_id) { '42' }
         let(:stored_session) do
           { 'smartcard_signins' => { 'last_signin_at' => 5.minutes.ago } }
@@ -773,7 +773,7 @@ RSpec.describe Gitlab::GitAccess do
         stub_licensed_features(git_two_factor_enforcement: true)
       end
 
-      context 'with an OTP session', :clean_gitlab_redis_sessions, :clean_gitlab_redis_shared_state do
+      context 'with an OTP session' do
         before do
           redis_store_class.with do |redis|
             redis.set("#{Gitlab::Redis::Sessions::OTP_SESSIONS_NAMESPACE}:#{key.id}", true)

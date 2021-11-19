@@ -9,7 +9,7 @@ RSpec.describe Gitlab::Auth::Smartcard::Session do
 
       subject { described_class.new.active?(user) }
 
-      context 'with a smartcard session', :clean_gitlab_redis_shared_state do
+      context 'with a smartcard session' do
         let(:session_id) { '42' }
         let(:stored_session) do
           { 'smartcard_signins' => { 'last_signin_at' => 5.minutes.ago } }

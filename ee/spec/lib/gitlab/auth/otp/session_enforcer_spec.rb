@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Gitlab::Auth::Otp::SessionEnforcer, :clean_gitlab_redis_shared_state do
+RSpec.describe Gitlab::Auth::Otp::SessionEnforcer do
   shared_examples_for 'otp session enforcer' do
     let_it_be(:key) { create(:key)}
 

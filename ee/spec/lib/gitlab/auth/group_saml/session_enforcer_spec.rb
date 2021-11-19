@@ -28,7 +28,7 @@ RSpec.describe Gitlab::Auth::GroupSaml::SessionEnforcer do
           allow(saml_provider).to receive(:git_check_enforced?).and_return(true)
         end
 
-        context 'with an active session', :clean_gitlab_redis_shared_state do
+        context 'with an active session' do
           let(:session_id) { '42' }
           let(:session_time) { 5.minutes.ago }
           let(:stored_session) do
@@ -64,7 +64,7 @@ RSpec.describe Gitlab::Auth::GroupSaml::SessionEnforcer do
             end
           end
 
-          context 'with two active sessions', :clean_gitlab_redis_shared_state do
+          context 'with two active sessions' do
             let(:second_session_id) { '52' }
             let(:second_stored_session) do
               { 'active_group_sso_sign_ins' => { create(:saml_provider, enforced_sso: true).id => session_time } }
@@ -80,7 +80,7 @@ RSpec.describe Gitlab::Auth::GroupSaml::SessionEnforcer do
             it_behaves_like 'not enforced'
           end
 
-          context 'with two active sessions for the same provider and one pre-sso', :clean_gitlab_redis_shared_state do
+          context 'with two active sessions for the same provider and one pre-sso' do
             let(:second_session_id) { '52' }
             let(:third_session_id) { '62' }
             let(:second_stored_session) do
@@ -193,7 +193,7 @@ RSpec.describe Gitlab::Auth::GroupSaml::SessionEnforcer do
           allow(saml_provider).to receive(:git_check_enforced?).and_return(false)
         end
 
-        context 'with an active session', :clean_gitlab_redis_shared_state do
+        context 'with an active session' do
           let(:session_id) { '42' }
           let(:stored_session) do
             { 'active_group_sso_sign_ins' => { saml_provider.id => 5.minutes.ago } }

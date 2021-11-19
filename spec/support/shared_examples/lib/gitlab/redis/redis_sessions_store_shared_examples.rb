@@ -11,7 +11,7 @@ RSpec.shared_examples 'redis sessions store' do |example|
     end
   end
 
-  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is false', :clean_gitlab_redis_sessions do
+  context 'when ENV[GITLAB_USE_REDIS_SESSIONS_STORE] is false', :clean_gitlab_redis_shared_state do
     before do
       stub_env('GITLAB_USE_REDIS_SESSIONS_STORE', 'false')
     end

@@ -31,7 +31,7 @@ RSpec.shared_examples 'snippet edit usage data counters' do
         cookies[Gitlab::Application.config.session_options[:key]] = session_id.public_id
       end
 
-      it 'tracks usage data actions', :clean_gitlab_redis_shared_state do
+      it 'tracks usage data actions' do
         expect(::Gitlab::UsageDataCounters::EditorUniqueCounter).to receive(:track_snippet_editor_edit_action)
 
         post_graphql_mutation(mutation)
