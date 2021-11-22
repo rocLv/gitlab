@@ -121,16 +121,10 @@ module Gitlab
       end
 
       def read_one_with_fallback(command_name, *args, &block)
-        begin
-          value = send_command(primary_store, command_name, *args, &block)
-        rescue StandardError => e
-          log_error(e, command_name,
-            multi_store_error_message: FAILED_TO_READ_ERROR_MESSAGE)
-        end
-        #
-        # value ||= fallback_read(command_name, *args, &block)
-        #
-        # value
+        send_command(primary_store, command_name, *args, &block)
+      rescue StandardError => e
+        log_error(e, command_name,
+          multi_store_error_message: FAILED_TO_READ_ERROR_MESSAGE)
       end
 
       def fallback_read(command_name, *args, &block)
@@ -145,19 +139,17 @@ module Gitlab
       end
 
       def write_both(command_name, *args, &block)
-        begin
-          send_command(primary_store, command_name, *args, &block)
-        rescue StandardError => e
-          log_error(e, command_name,
-            multi_store_error_message: FAILED_TO_WRITE_ERROR_MESSAGE)
-        end
+        send_command(primary_store, command_name, *args, &block)
+      rescue StandardError => e
+        log_error(e, command_name,
+          multi_store_error_message: FAILED_TO_WRITE_ERROR_MESSAGE)
+
         #
         # send_command(secondary_store, command_name, *args, &block)
       end
 
       def multi_store_enabled?
-        return true
-        Feature.enabled?(:use_multi_store, default_enabled: :yaml) && !same_redis_store?
+        true
       end
 
       def same_redis_store?
