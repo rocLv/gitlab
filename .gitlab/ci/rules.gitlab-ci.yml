@@ -518,6 +518,8 @@
       when: never
     - <<: *if-jh
       when: never
+    - <<: *if-security-merge-request
+      when: never
     - <<: *if-merge-request-labels-as-if-jh
     - <<: *if-merge-request-labels-run-all-rspec
     - changes: *code-backstage-qa-patterns
@@ -550,7 +552,7 @@
     - <<: *if-jh
       when: never
     - <<: *if-security-merge-request
-      changes: *code-backstage-patterns
+      when: never
     - <<: *if-merge-request-labels-as-if-jh
     - <<: *if-merge-request-labels-run-all-rspec
     - <<: *if-merge-request
@@ -1637,6 +1639,8 @@
     - <<: *if-not-ee
       when: never
     - <<: *if-jh
+      when: never
+    - <<: *if-security-merge-request
       when: never
     - <<: *if-merge-request-labels-as-if-jh
     - <<: *if-merge-request-labels-run-all-rspec
