@@ -27,7 +27,6 @@ import { loadCSSFile } from '../lib/utils/css_utils';
     ) {
       this.onUploadImageBtnClick = this.onUploadImageBtnClick.bind(this);
       this.onModalHide = this.onModalHide.bind(this);
-      this.onModalShow = this.onModalShow.bind(this);
       this.onPickImageClick = this.onPickImageClick.bind(this);
       this.fileInput = $(input);
       this.modalCropImg = isString(this.modalCropImg) ? $(this.modalCropImg) : this.modalCropImg;
@@ -80,7 +79,7 @@ import { loadCSSFile } from '../lib/utils/css_utils';
       return this.fileInput.trigger('click');
     }
 
-    onModalShow() {
+    onStartCrop() {
       const _this = this;
       return this.modalCropImg.cropper({
         viewMode: 1,
@@ -123,6 +122,7 @@ import { loadCSSFile } from '../lib/utils/css_utils';
       e.preventDefault();
       this.setBlob();
       this.setPreview();
+      // TODO: Replace this
       this.modalCrop.modal('hide');
       return this.fileInput.val('');
     }
@@ -143,7 +143,9 @@ import { loadCSSFile } from '../lib/utils/css_utils';
       const reader = new FileReader();
       reader.onload = () => {
         _this.modalCropImg.attr('src', reader.result);
-        return _this.modalCrop.modal('show');
+        // TODO: Replace this
+        return _this.onStartCrop(this);
+        // return _this.modalCrop
       };
       return reader.readAsDataURL(input.files[0]);
     }

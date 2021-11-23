@@ -38,6 +38,24 @@
       .gl-text-gray-500= s_("Profiles|The maximum file size allowed is 200KB.")
       - if @user.avatar?
         = link_to s_("Profiles|Remove avatar"), profile_avatar_path, data: { confirm: s_("Profiles|Avatar will be removed. Are you sure?") }, method: :delete, class: 'gl-button btn btn-danger-secondary btn-sm gl-mt-5'
+    .col-lg-12 
+      .modal-profile-crop{ data: { cropper_css_path: ActionController::Base.helpers.stylesheet_path('lazy_bundles/cropper.css') } }
+        %h4.modal-title
+          = s_("Profiles|Position and size your new avatar")
+        %button.close{ type: "button", "data-dismiss": "modal", "aria-label" => _("Close") }
+          %span{ "aria-hidden": "true" } &times;
+        .profile-crop-image-container
+          %img.modal-profile-crop-image{ alt: s_("Profiles|Avatar cropper") }
+        .crop-controls
+          .btn-group
+            %button.btn.gl-button.btn-confirm{ data: { method: 'zoom', option: '-0.1' } }
+              %span
+                = sprite_icon('search-minus')
+            %button.btn.gl-button.btn-confirm{ data: { method: 'zoom', option: '0.1' } }
+              %span
+                = sprite_icon('search-plus')
+        %button.btn.gl-button.btn-confirm.js-upload-user-avatar{ type: 'button' }
+          = s_("Profiles|Set new profile picture")
     .col-lg-12
       %hr
   .row.js-search-settings-section
@@ -129,25 +147,25 @@
 
 #password-prompt-modal
 
-.modal.modal-profile-crop{ data: { cropper_css_path: ActionController::Base.helpers.stylesheet_path('lazy_bundles/cropper.css') } }
-  .modal-dialog
-    .modal-content
-      .modal-header
-        %h4.modal-title
-          = s_("Profiles|Position and size your new avatar")
-        %button.close{ type: "button", "data-dismiss": "modal", "aria-label" => _("Close") }
-          %span{ "aria-hidden": "true" } &times;
-      .modal-body
-        .profile-crop-image-container
-          %img.modal-profile-crop-image{ alt: s_("Profiles|Avatar cropper") }
-        .crop-controls
-          .btn-group
-            %button.btn.gl-button.btn-confirm{ data: { method: 'zoom', option: '-0.1' } }
-              %span
-                = sprite_icon('search-minus')
-            %button.btn.gl-button.btn-confirm{ data: { method: 'zoom', option: '0.1' } }
-              %span
-                = sprite_icon('search-plus')
-      .modal-footer
-        %button.btn.gl-button.btn-confirm.js-upload-user-avatar{ type: 'button' }
-          = s_("Profiles|Set new profile picture")
+-# .modal.modal-profile-crop{ data: { cropper_css_path: ActionController::Base.helpers.stylesheet_path('lazy_bundles/cropper.css') } }
+-#   .modal-dialog
+-#     .modal-content
+-#       .modal-header
+-#         %h4.modal-title
+-#           = s_("Profiles|Position and size your new avatar")
+-#         %button.close{ type: "button", "data-dismiss": "modal", "aria-label" => _("Close") }
+-#           %span{ "aria-hidden": "true" } &times;
+-#       .modal-body
+-#         .profile-crop-image-container
+-#           %img.modal-profile-crop-image{ alt: s_("Profiles|Avatar cropper") }
+-#         .crop-controls
+-#           .btn-group
+-#             %button.btn.gl-button.btn-confirm{ data: { method: 'zoom', option: '-0.1' } }
+-#               %span
+-#                 = sprite_icon('search-minus')
+-#             %button.btn.gl-button.btn-confirm{ data: { method: 'zoom', option: '0.1' } }
+-#               %span
+-#                 = sprite_icon('search-plus')
+-#       .modal-footer
+-#         %button.btn.gl-button.btn-confirm.js-upload-user-avatar{ type: 'button' }
+-#           = s_("Profiles|Set new profile picture")
