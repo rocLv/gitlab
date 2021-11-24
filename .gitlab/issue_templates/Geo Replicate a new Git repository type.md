@@ -137,7 +137,7 @@ The Geo primary site needs to checksum every replicable so secondaries can verif
         create_table :cool_widget_states, id: false do |t|
           t.references :cool_widget, primary_key: true, null: false, foreign_key: { on_delete: :cascade }
           t.integer :verification_state, default: 0, limit: 2, null: false
-          t.column :verification_started_at, :datetime_with_timezone
+          t.datetime_with_timezone :verification_started_at
           t.datetime_with_timezone :verification_retry_at
           t.datetime_with_timezone :verified_at
           t.integer :verification_retry_count, limit: 2

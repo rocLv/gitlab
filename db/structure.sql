@@ -15666,7 +15666,7 @@ CREATE SEQUENCE jira_tracker_data_id_seq
 ALTER SEQUENCE jira_tracker_data_id_seq OWNED BY jira_tracker_data.id;
 
 CREATE TABLE job_artifact_states (
-    ci_job_artifacts_id bigint NOT NULL,
+    job_artifact_id bigint NOT NULL,
     verification_state smallint DEFAULT 0 NOT NULL,
     verification_started_at timestamp with time zone,
     verification_retry_at timestamp with time zone,
@@ -15677,14 +15677,14 @@ CREATE TABLE job_artifact_states (
     CONSTRAINT check_2561f573a9 CHECK ((char_length(verification_failure) <= 255))
 );
 
-CREATE SEQUENCE job_artifact_states_ci_job_artifacts_id_seq
+CREATE SEQUENCE job_artifact_states_job_artifact_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-ALTER SEQUENCE job_artifact_states_ci_job_artifacts_id_seq OWNED BY job_artifact_states.ci_job_artifacts_id;
+ALTER SEQUENCE job_artifact_states_job_artifact_id_seq OWNED BY job_artifact_states.job_artifact_id;
 
 CREATE TABLE keys (
     id integer NOT NULL,
@@ -21769,7 +21769,7 @@ ALTER TABLE ONLY jira_imports ALTER COLUMN id SET DEFAULT nextval('jira_imports_
 
 ALTER TABLE ONLY jira_tracker_data ALTER COLUMN id SET DEFAULT nextval('jira_tracker_data_id_seq'::regclass);
 
-ALTER TABLE ONLY job_artifact_states ALTER COLUMN ci_job_artifacts_id SET DEFAULT nextval('job_artifact_states_ci_job_artifacts_id_seq'::regclass);
+ALTER TABLE ONLY job_artifact_states ALTER COLUMN job_artifact_id SET DEFAULT nextval('job_artifact_states_job_artifact_id_seq'::regclass);
 
 ALTER TABLE ONLY keys ALTER COLUMN id SET DEFAULT nextval('keys_id_seq'::regclass);
 
@@ -23481,7 +23481,7 @@ ALTER TABLE ONLY jira_tracker_data
     ADD CONSTRAINT jira_tracker_data_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY job_artifact_states
-    ADD CONSTRAINT job_artifact_states_pkey PRIMARY KEY (ci_job_artifacts_id);
+    ADD CONSTRAINT job_artifact_states_pkey PRIMARY KEY (job_artifact_id);
 
 ALTER TABLE ONLY keys
     ADD CONSTRAINT keys_pkey PRIMARY KEY (id);
@@ -26463,7 +26463,7 @@ CREATE INDEX index_job_artifact_states_failed_verification ON job_artifact_state
 
 CREATE INDEX index_job_artifact_states_needs_verification ON job_artifact_states USING btree (verification_state) WHERE ((verification_state = 0) OR (verification_state = 3));
 
-CREATE INDEX index_job_artifact_states_on_ci_job_artifacts_id ON job_artifact_states USING btree (ci_job_artifacts_id);
+CREATE INDEX index_job_artifact_states_on_job_artifact_id ON job_artifact_states USING btree (job_artifact_id);
 
 CREATE INDEX index_job_artifact_states_on_verification_state ON job_artifact_states USING btree (verification_state);
 
@@ -30184,6 +30184,9 @@ ALTER TABLE ONLY cluster_agents
 ALTER TABLE ONLY boards_epic_user_preferences
     ADD CONSTRAINT fk_rails_268c57d62d FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE;
 
+ALTER TABLE ONLY job_artifact_states
+    ADD CONSTRAINT fk_rails_26d8c07584 FOREIGN KEY (job_artifact_id) REFERENCES ci_job_artifacts(id) ON DELETE CASCADE;
+
 ALTER TABLE ONLY group_wiki_repositories
     ADD CONSTRAINT fk_rails_26f867598c FOREIGN KEY (group_id) REFERENCES namespaces(id) ON DELETE CASCADE;
 
@@ -30816,9 +30819,6 @@ ALTER TABLE ONLY packages_conan_metadata
 
 ALTER TABLE ONLY vulnerability_feedback
     ADD CONSTRAINT fk_rails_8c77e5891a FOREIGN KEY (issue_id) REFERENCES issues(id) ON DELETE SET NULL;
-
-ALTER TABLE ONLY job_artifact_states
-    ADD CONSTRAINT fk_rails_8d2f21abfa FOREIGN KEY (ci_job_artifacts_id) REFERENCES ci_job_artifacts(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY ci_pipeline_messages
     ADD CONSTRAINT fk_rails_8d3b04e3e1 FOREIGN KEY (pipeline_id) REFERENCES ci_pipelines(id) ON DELETE CASCADE;

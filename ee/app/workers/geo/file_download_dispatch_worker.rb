@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
 module Geo
+  #
+  # This Worker is deprecated and it only handles the Job Artifacts now
+  #
   class FileDownloadDispatchWorker < Geo::Scheduler::Secondary::SchedulerWorker # rubocop:disable Scalability/IdempotentWorker
     # rubocop:disable Scalability/CronWorkerContext
     # This worker does not perform work scoped to a context
     include CronjobQueue
     # rubocop:enable Scalability/CronWorkerContext
+
+    def perform
+      if ::Geo::JobArtifactReplicator.enabled?
+        log_info('JobArtifact replication is handled by Geo self service framework')
+        return
+      end
+
+      super
+    end
 
     private
 

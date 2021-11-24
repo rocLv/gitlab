@@ -82,6 +82,7 @@ ci_freeze_periods: :gitlab_ci
 ci_group_variables: :gitlab_ci
 ci_instance_variables: :gitlab_ci
 ci_job_artifacts: :gitlab_ci
+job_artifact_states: :gitlab_ci
 ci_job_token_project_scope_links: :gitlab_ci
 ci_job_variables: :gitlab_ci
 ci_minutes_additional_packs: :gitlab_ci

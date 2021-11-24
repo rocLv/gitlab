@@ -12,6 +12,13 @@ module EE
     SECURITY_REPORT_FILE_TYPES = %w[sast secret_detection dependency_scanning container_scanning cluster_image_scanning dast coverage_fuzzing api_fuzzing].freeze
 
     prepended do
+      include ::Gitlab::Geo::ReplicableModel
+      include ::Gitlab::Geo::VerificationState
+
+      with_replicator ::Geo::JobArtifactReplicator
+
+      has_one :job_artifact_state, autosave: false, inverse_of: :job_artifact, class_name: '::Geo::JobArtifactState'
+
       # After destroy callbacks are often skipped because of FastDestroyAll.
       # All destroy callbacks should be implemented in `Ci::JobArtifacts::DestroyBatchService`
       # See https://gitlab.com/gitlab-org/gitlab/-/issues/297472
@@ -66,7 +73,25 @@ module EE
         with_file_types(API_FUZZING_REPORT_TYPES)
       end
 
+      scope :with_files_stored_locally, -> { where(file_store: ::ObjectStorage::Store::LOCAL) }
+      scope :with_files_stored_remotely, -> { where(file_store: ::ObjectStorage::Store::REMOTE) }
+      scope :with_verification_state, ->(state) { joins(:job_artifact_state).where(job_artifact_states: { verification_state: verification_state_value(state) }) }
+      scope :checksummed, -> { joins(:job_artifact_state).where.not(job_artifact_states: { verification_checksum: nil } ) }
+      scope :not_checksummed, -> { joins(:job_artifact_state).where(job_artifact_states: { verification_checksum: nil } ) }
+      scope :available_verifiables, -> { joins(:job_artifact_state) }
+
       delegate :validate_schema?, to: :job
+
+      delegate :verification_retry_at, :verification_retry_at=,
+               :verified_at, :verified_at=,
+               :verification_checksum, :verification_checksum=,
+               :verification_failure, :verification_failure=,
+               :verification_retry_count, :verification_retry_count=,
+               :verification_state=, :verification_state,
+               :verification_started_at=, :verification_started_at,
+               to: :job_artifact_state
+
+      after_save :save_verification_details
     end
 
     class_methods do
@@ -79,6 +104,41 @@ module EE
 
         super
       end
+
+      # @param primary_key_in [Range, CoolWidget] arg to pass to primary_key_in scope
+      # @return [ActiveRecord::Relation<CoolWidget>] everything that should be synced to this node, restricted by primary key
+      def self.replicables_for_current_secondary(primary_key_in)
+        # This issue template does not help you write this method.
+        #
+        # This method is called only on Geo secondary sites. It is called when
+        # we want to know which records to replicate. This is not easy to automate
+        # because for example:
+        #
+        # * The "selective sync" feature allows admins to choose which namespaces #   to replicate, per secondary site. Most Models are scoped to a
+        #   namespace, but the nature of the relationship to a namespace varies
+        #   between Models.
+        # * The "selective sync" feature allows admins to choose which shards to
+        #   replicate, per secondary site. Repositories are associated with
+        #   shards. Most blob types are not, but Project Uploads are.
+        # * Remote stored replicables are not replicated, by default. But the
+        #   setting `sync_object_storage` enables replication of remote stored
+        #   replicables.
+        #
+        # Search the codebase for examples, and consult a Geo expert if needed.
+      end
+
+      override :verification_state_table_class
+      def verification_state_table_class
+        ::Geo::JobArtifactState
+      end
+    end
+
+    def job_artifact_state
+      super || build_job_artifact_state
+    end
+
+    def verification_state_object
+      job_artifact_state
     end
 
     def log_geo_deleted_event
