@@ -2,11 +2,13 @@
 import { pickBy, isEmpty } from 'lodash';
 import { mapActions } from 'vuex';
 import { getIdFromGraphQLId, isGid } from '~/graphql_shared/utils';
-import { updateHistory, setUrlParams } from '~/lib/utils/url_utility';
+import { convertObjectPropsToCamelCase } from '~/lib/utils/common_utils';
+import { updateHistory, setUrlParams, queryToObject } from '~/lib/utils/url_utility';
 import { __ } from '~/locale';
 import { FILTERED_SEARCH_TERM } from '~/vue_shared/components/filtered_search_bar/constants';
 import FilteredSearch from '~/vue_shared/components/filtered_search_bar/filtered_search_bar_root.vue';
 import { AssigneeFilterType } from '~/boards/constants';
+import eventHub from '../eventhub';
 
 export default {
   i18n: {
@@ -270,12 +272,20 @@ export default {
     },
   },
   created() {
+    eventHub.$on('updateTokens', this.updateTokens);
     if (!isEmpty(this.eeFilters)) {
       this.filterParams = this.eeFilters;
     }
   },
+  beforeDestroy() {
+    eventHub.$off('updateTokens', this.updateTokens);
+  },
   methods: {
     ...mapActions(['performSearch']),
+    updateTokens() {
+      const rawFilterParams = queryToObject(window.location.search, { gatherArrays: true });
+      this.filterParams = convertObjectPropsToCamelCase(rawFilterParams, {});
+    },
     handleFilter(filters) {
       this.filterParams = this.getFilterParams(filters);
 

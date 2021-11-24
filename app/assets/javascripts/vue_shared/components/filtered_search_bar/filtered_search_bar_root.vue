@@ -177,7 +177,8 @@ export default {
         !this.initialRender &&
         newValue.length === 1 &&
         firstVal.type === 'filtered-search-term' &&
-        !firstVal.value.data
+        !firstVal.value.data &&
+        oldValue.length
       ) {
         const filtersCleared =
           oldValue[0].type !== 'filtered-search-term' || oldValue[0].value.data !== '';
@@ -188,6 +189,9 @@ export default {
       // as we don't want to emit event
       // on initial load when value is empty already.
       this.initialRender = false;
+    },
+    initialFilterValue(newValue) {
+      this.filterValue = newValue;
     },
   },
   created() {
