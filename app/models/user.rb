@@ -47,7 +47,7 @@ class User < ApplicationRecord
 
   add_authentication_token_field :incoming_email_token, token_generator: -> { SecureRandom.hex.to_i(16).to_s(36) }
   add_authentication_token_field :feed_token
-  add_authentication_token_field :static_object_token
+  add_authentication_token_field :static_object_token, encrypted: :migrating
 
   default_value_for :admin, false
   default_value_for(:external) { Gitlab::CurrentSettings.user_default_external }
@@ -265,6 +265,7 @@ class User < ApplicationRecord
   before_validation :sanitize_attrs
   before_save :default_private_profile_to_false
   before_save :ensure_incoming_email_token
+  before_save :ensure_static_object_token
   before_save :ensure_user_rights_and_limits, if: ->(user) { user.new_record? || user.external_changed? }
   before_save :skip_reconfirmation!, if: ->(user) { user.email_changed? && user.read_only_attribute?(:email) }
   before_save :check_for_verified_email, if: ->(user) { user.email_changed? && !user.new_record? }

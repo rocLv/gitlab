@@ -21,7 +21,7 @@ class ApplicationSetting < ApplicationRecord
 
   add_authentication_token_field :runners_registration_token, encrypted: -> { Feature.enabled?(:application_settings_tokens_optional_encryption) ? :optional : :required }
   add_authentication_token_field :health_check_access_token
-  add_authentication_token_field :static_objects_external_storage_auth_token
+  add_authentication_token_field :static_objects_external_storage_auth_token, encrypted: :migrating
 
   belongs_to :self_monitoring_project, class_name: "Project", foreign_key: 'instance_administration_project_id'
   belongs_to :push_rule
@@ -588,6 +588,7 @@ class ApplicationSetting < ApplicationRecord
   before_validation :ensure_uuid!
   before_validation :coerce_repository_storages_weighted, if: :repository_storages_weighted_changed?
   before_validation :normalize_default_branch_name
+  before_validation :encrypt_static_objects_external_storage_auth_token
 
   before_save :ensure_runners_registration_token
   before_save :ensure_health_check_access_token
@@ -596,6 +597,12 @@ class ApplicationSetting < ApplicationRecord
     reset_memoized_terms
   end
   after_commit :expire_performance_bar_allowed_user_ids_cache, if: -> { previous_changes.key?('performance_bar_allowed_group_id') }
+
+  def encrypt_static_objects_external_storage_auth_token
+    if attributes['static_objects_external_storage_auth_token'].present?
+      set_static_objects_external_storage_auth_token(attributes['static_objects_external_storage_auth_token'])
+    end
+  end
 
   def validate_grafana_url
     validate_url(parsed_grafana_url, :grafana_url, GRAFANA_URL_ERROR_MESSAGE)
