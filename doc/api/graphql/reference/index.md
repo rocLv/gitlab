@@ -10336,6 +10336,7 @@ Represents an epic board list.
 | <a id="epiclistlisttype"></a>`listType` | [`String!`](#string) | Type of the list. |
 | <a id="epiclistposition"></a>`position` | [`Int`](#int) | Position of the list within the board. |
 | <a id="epiclisttitle"></a>`title` | [`String!`](#string) | Title of the list. |
+| <a id="epiclistweight"></a>`weight` | [`Int`](#int) | Weights of issues belonging to the epics in the list. |
 
 #### Fields with arguments
 

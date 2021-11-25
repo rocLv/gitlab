@@ -173,6 +173,10 @@ module EE
         select(selection).in_parents(node.parent_ids)
       end
 
+      def self.weight_for_ids(ids)
+        where('epics.id' => ids).joins(epic_issues: :issue).sum(:weight)
+      end
+
       # This is being overriden from Issuable to be able to use
       # keyset pagination, allowing queries with these
       # ordering statements to be reversible on GraphQL.

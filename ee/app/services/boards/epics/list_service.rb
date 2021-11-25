@@ -16,6 +16,14 @@ module Boards
         super(items)
       end
 
+      def query_additions(items)
+        items.left_joins(epic_issues: :issue)
+      end
+
+      def metadata_fields
+        super.merge(weight: 'SUM(weight)')
+      end
+
       def filter_by_from_id(items)
         return items unless params[:from_id].present?
 

@@ -706,6 +706,24 @@ RSpec.describe Epic do
     end
   end
 
+  describe '.weight_for_ids' do
+    let_it_be(:epic1) { create(:epic, group: group) }
+    let_it_be(:epic2) { create(:epic, group: group) }
+    let_it_be(:epic3) { create(:epic, group: group, parent: epic1) }
+
+    let_it_be(:issue1) { create(:issue, project: project, weight: 1) }
+    let_it_be(:issue2) { create(:issue, project: project, weight: 3) }
+    let_it_be(:issue3) { create(:issue, project: project, weight: 5) }
+
+    let_it_be(:epic_issue1) { create(:epic_issue, epic: epic1, issue: issue1) }
+    let_it_be(:epic_issue1) { create(:epic_issue, epic: epic2, issue: issue2) }
+    let_it_be(:epic_issue1) { create(:epic_issue, epic: epic3, issue: issue3) }
+
+    it 'counts weight corrrectly' do
+      expect(described_class.weight_for_ids([epic1.id, epic3.id])).to eq(6)
+    end
+  end
+
   describe '#has_parent?' do
     let_it_be(:epic, reload: true) { create(:epic, group: group) }
 

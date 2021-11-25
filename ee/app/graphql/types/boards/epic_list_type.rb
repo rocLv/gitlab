@@ -38,12 +38,19 @@ module Types
       field :epics_count, GraphQL::Types::Int, null: true,
             description: 'Count of epics in the list.'
 
+      field :weight, GraphQL::Types::Int, null: true,
+          description: 'Weights of issues belonging to the epics in the list.'
+
       def collapsed
         object.collapsed?(current_user)
       end
 
       def epics_count
         metadata[:size]
+      end
+
+      def weight
+        metadata[:weight]
       end
 
       def metadata
