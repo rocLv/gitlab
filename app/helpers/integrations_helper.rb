@@ -27,11 +27,11 @@ module IntegrationsHelper
     end
   end
 
-  def scoped_integration_path(integration, project: nil, group: nil)
+  def scoped_integration_path(integration)
     if integration.project_level?
-      project_service_path(project, integration)
-    elsif group.present?
-      group_settings_integration_path(group, integration)
+      project_service_path(integration.project, integration)
+    elsif integration.group_level?
+      group_settings_integration_path(integration.group, integration)
     else
       admin_application_settings_integration_path(integration)
     end
