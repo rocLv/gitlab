@@ -19,6 +19,9 @@
 .if-default-branch-refs: &if-default-branch-refs
   if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
 
+.if-stable-branch-refs: &if-stable-branch-refs
+  if: '$CI_COMMIT_REF_NAME =~ /^[\d-]+-stable(-ee)?$/'
+
 .if-default-branch-push: &if-default-branch-push
   if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
 
@@ -584,6 +587,8 @@
       when: never
     - <<: *if-merge-request-targeting-stable-branch
       when: never
+    - <<: *if-stable-branch-refs
+      when: never
     - <<: *if-merge-request-labels-as-if-jh
     - <<: *if-merge-request-labels-run-all-rspec
     - changes: *code-backstage-qa-patterns
@@ -618,6 +623,8 @@
     - <<: *if-security-merge-request
       when: never
     - <<: *if-merge-request-targeting-stable-branch
+      when: never
+    - <<: *if-stable-branch-refs
       when: never
     - <<: *if-merge-request-labels-as-if-jh
     - <<: *if-merge-request-labels-run-all-rspec
@@ -1267,6 +1274,8 @@
       when: never
     - <<: *if-merge-request-targeting-stable-branch
       when: never
+    - <<: *if-stable-branch-refs
+      when: never
     - <<: *if-merge-request-labels-as-if-jh
       allow_failure: true
     - <<: *if-merge-request
@@ -1819,6 +1828,8 @@
     - <<: *if-security-merge-request
       when: never
     - <<: *if-merge-request-targeting-stable-branch
+      when: never
+    - <<: *if-stable-branch-refs
       when: never
     - <<: *if-merge-request-labels-as-if-jh
     - <<: *if-merge-request-labels-run-all-rspec
