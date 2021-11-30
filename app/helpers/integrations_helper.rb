@@ -27,11 +27,11 @@ module IntegrationsHelper
     end
   end
 
-  def scoped_integration_path(integration)
-    if integration.project_level?
-      project_service_path(integration.project, integration)
-    elsif integration.group_level?
-      group_settings_integration_path(integration.group, integration)
+  def scoped_integration_path(integration, project: nil, group: nil)
+    if project.present?
+      project_service_path(project, integration)
+    elsif group.present?
+      group_settings_integration_path(group, integration)
     else
       admin_application_settings_integration_path(integration)
     end
@@ -71,7 +71,7 @@ module IntegrationsHelper
     end
   end
 
-  def integration_form_data(integration, group: nil)
+  def integration_form_data(integration, project: nil, group: nil)
     form_data = {
       id: integration.id,
       show_active: integration.show_active_box?.to_s,
@@ -87,9 +87,9 @@ module IntegrationsHelper
       inherit_from_id: integration.inherit_from_id,
       integration_level: integration_level(integration),
       editable: integration.editable?.to_s,
-      cancel_path: scoped_integrations_path(group: group),
+      cancel_path: scoped_integrations_path(project: project, group: group),
       can_test: integration.testable?.to_s,
-      test_path: scoped_test_integration_path(integration),
+      test_path: scoped_test_integration_path(integration, project: project, group: group),
       reset_path: scoped_reset_integration_path(integration, group: group)
     }
 
