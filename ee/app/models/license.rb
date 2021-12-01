@@ -259,7 +259,7 @@ class License < ApplicationRecord
   validate :valid_license
   validate :check_users_limit, if: :new_record?, unless: [:validate_with_trueup?, :reconciliation_completed?]
   validate :check_trueup, unless: [:persisted?, :reconciliation_completed?], if: :validate_with_trueup?
-  validate :check_restricted_user_count, if: :reconciliation_completed?
+  validate :check_restricted_user_count, if: [:new_record?, :reconciliation_completed?]
   validate :not_expired, unless: :persisted?
 
   before_validation :reset_license, if: :data_changed?
