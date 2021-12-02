@@ -457,9 +457,13 @@ class Member < ApplicationRecord
   end
 
   def signup_email_valid?
-    error = validate_admin_signup_restrictions(invite_email)
+    error_type, error = validate_admin_signup_restrictions(invite_email)
 
-    errors.add(:user, error) if error
+    # do something here or in that custom validation
+    if error
+      errors.add(:user, error)
+      errors.add(:base, error_type)
+    end
   end
 
   def signup_email_invalid_message

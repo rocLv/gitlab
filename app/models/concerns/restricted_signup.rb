@@ -12,9 +12,12 @@ module RestrictedSignup
     return unless error_type.present?
 
     [
-      signup_email_invalid_message,
-      error_message[created_by_key][error_type]
-    ].join(' ')
+      error_type,
+      [
+        signup_email_invalid_message,
+        error_message[created_by_key][error_type]
+      ].join(' ')
+    ]
   end
 
   def fetch_error_type(email)
