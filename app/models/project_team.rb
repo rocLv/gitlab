@@ -23,6 +23,10 @@ class ProjectTeam
     add_user(user, :maintainer, current_user: current_user)
   end
 
+  def add_owner(user, current_user = nil)
+    add_user(user, :owner, current_user: current_user)
+  end
+
   def add_role(user, role, current_user: nil)
     public_send(:"add_#{role}", user, current_user: current_user) # rubocop:disable GitlabSecurity/PublicSend
   end
@@ -99,12 +103,7 @@ class ProjectTeam
   end
 
   def owners
-    @owners ||=
-      if group
-        group.owners
-      else
-        [project.owner]
-      end
+    @owners ||= fetch_members(Gitlab::Access::OWNER)
   end
 
   def import(source_project, current_user = nil)
@@ -151,6 +150,10 @@ class ProjectTeam
 
   def maintainer?(user)
     max_member_access(user.id) == Gitlab::Access::MAINTAINER
+  end
+
+  def owner?(user)
+    max_member_access(user.id) == Gitlab::Access::OWNER
   end
 
   # Checks if `user` is authorized for this project, with at least the

@@ -16,6 +16,7 @@ RSpec.describe Project, factory_default: :keep do
   describe 'associations' do
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:namespace) }
+    it { is_expected.to have_many(:owners).through(:project_members) }
     it { is_expected.to belong_to(:project_namespace).class_name('Namespaces::ProjectNamespace').with_foreign_key('project_namespace_id') }
     it { is_expected.to belong_to(:creator).class_name('User') }
     it { is_expected.to belong_to(:pool_repository) }
@@ -984,6 +985,19 @@ RSpec.describe Project, factory_default: :keep do
           expect(project.to_human_reference(another_project)).to eq 'Sample project'
         end
       end
+    end
+  end
+
+  describe '#owners' do
+    let_it_be(:project) { create(:project) }
+    let_it_be(:owner) { create(:user) }
+    let_it_be(:developer) { create(:user) }
+
+    it 'returns the owners' do
+      project.add_owner(owner)
+      project.add_developer(developer)
+
+      expect(project.owners).to eq([owner])
     end
   end
 

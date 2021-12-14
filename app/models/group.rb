@@ -319,10 +319,6 @@ class Group < Namespace
     self[:lfs_enabled]
   end
 
-  def owned_by?(user)
-    owners.include?(user)
-  end
-
   def add_users(users, access_level, current_user: nil, expires_at: nil, tasks_to_be_done: [], tasks_project_id: nil)
     Members::Groups::BulkCreatorService.add_users( # rubocop:disable CodeReuse/ServiceClass
       self,

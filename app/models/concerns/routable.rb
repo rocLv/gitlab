@@ -153,9 +153,8 @@ module Routable
     end
   end
 
-  # Group would override this to check from association
   def owned_by?(user)
-    owner == user
+    owners.include?(user)
   end
 
   private

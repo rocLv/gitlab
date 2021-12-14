@@ -265,6 +265,10 @@ class Project < ApplicationRecord
 
   alias_method :members, :project_members
   has_many :users, through: :project_members
+  has_many :owners,
+           -> { where(members: { access_level: Gitlab::Access::OWNER }) },
+           through: :project_members,
+           source: :user
 
   has_many :requesters, -> { where.not(requested_at: nil) },
     as: :source, class_name: 'ProjectMember', dependent: :delete_all # rubocop:disable Cop/ActiveRecordDependent
@@ -442,7 +446,7 @@ class Project < ApplicationRecord
   delegate :name, to: :owner, allow_nil: true, prefix: true
   delegate :members, to: :team, prefix: true
   delegate :add_user, :add_users, to: :team
-  delegate :add_guest, :add_reporter, :add_developer, :add_maintainer, :add_role, to: :team
+  delegate :add_guest, :add_reporter, :add_developer, :add_maintainer, :add_role, :add_owner, to: :team
   delegate :group_runners_enabled, :group_runners_enabled=, to: :ci_cd_settings, allow_nil: true
   delegate :root_ancestor, to: :namespace, allow_nil: true
   delegate :last_pipeline, to: :commit, allow_nil: true
@@ -1513,7 +1517,17 @@ class Project < ApplicationRecord
     group || namespace.try(:owner)
   end
 
+  def owners
+    # make this more betterer
+    return User.where(id: namespace.owner_id) if namespace&.user_namespace?
+
+    team.owners
+  end
+
   def default_owner
+    return owners.first if owners.any?
+
+    # the parent group
     obj = owner
 
     if obj.respond_to?(:default_owner)
