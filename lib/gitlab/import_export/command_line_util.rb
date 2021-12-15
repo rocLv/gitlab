@@ -57,7 +57,7 @@ module Gitlab
 
       def download(url, upload_path)
         File.open(upload_path, 'wb') do |file|
-          Gitlab::HTTP.get(url, stream_body: true, allow_local_network: true) do |fragment|
+          Gitlab::HTTP.get(url, stream_body: true, allow_local_network: true, allow_localhost: true) do |fragment|
             if [301, 302, 307].include?(fragment.code)
               Gitlab::Import::Logger.warn(message: "received redirect fragment", fragment_code: fragment.code)
             elsif fragment.code == 200
