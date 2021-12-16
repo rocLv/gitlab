@@ -10318,12 +10318,6 @@ msgstr ""
 msgid "Crm|Create organization"
 msgstr ""
 
-msgid "Crm|Customer Relations Contacts"
-msgstr ""
-
-msgid "Crm|Customer Relations Organizations"
-msgstr ""
-
 msgid "Crm|Default rate (optional)"
 msgstr ""
 
@@ -10333,6 +10327,9 @@ msgstr ""
 msgid "Crm|Edit contact"
 msgstr ""
 
+msgid "Crm|Edit organization"
+msgstr ""
+
 msgid "Crm|Email"
 msgstr ""
 
@@ -10340,9 +10337,6 @@ msgid "Crm|First name"
 msgstr ""
 
 msgid "Crm|Last name"
-msgstr ""
-
-msgid "Crm|New Organization"
 msgstr ""
 
 msgid "Crm|New contact"
@@ -10358,6 +10352,9 @@ msgid "Crm|No organizations found"
 msgstr ""
 
 msgid "Crm|Organization has been added"
+msgstr ""
+
+msgid "Crm|Organization has been updated"
 msgstr ""
 
 msgid "Crm|Phone number (optional)"
@@ -10471,13 +10468,13 @@ msgstr ""
 msgid "Custom range (UTC)"
 msgstr ""
 
-msgid "Customer Relations Contacts"
-msgstr ""
-
-msgid "Customer Relations Organizations"
-msgstr ""
-
 msgid "Customer relations"
+msgstr ""
+
+msgid "Customer relations contacts"
+msgstr ""
+
+msgid "Customer relations organizations"
 msgstr ""
 
 msgid "Customizable by an administrator."

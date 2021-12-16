@@ -2,6 +2,7 @@ export const MINIMUM_SEARCH_LENGTH = 3;
 
 export const TYPE_CI_RUNNER = 'Ci::Runner';
 export const TYPE_CRM_CONTACT = 'CustomerRelations::Contact';
+export const TYPE_CRM_ORGANIZATION = 'CustomerRelations::Organization';
 export const TYPE_DISCUSSION = 'Discussion';
 export const TYPE_EPIC = 'Epic';
 export const TYPE_GROUP = 'Group';

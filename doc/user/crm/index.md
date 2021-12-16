@@ -66,7 +66,7 @@ To view a group's organizations:
 1. On the top bar, select **Menu > Groups** and find your group.
 1. On the left sidebar, select **Customer relations > Organizations**.
 
-![Organizations list](crm_organizations_v14_6.png)
+![Organizations list](crm_organizations_v14_7.png)
 
 ### Create an organization
 
@@ -83,7 +83,16 @@ organizations using the GraphQL API.
 
 ### Edit an organization
 
-You can only [edit](../../api/graphql/reference/index.md#mutationcustomerrelationsorganizationupdate)
+> Ability to edit organizations using the UI [introduced](https://gitlab.com/gitlab-org/gitlab/-/issues/2256) in GitLab 14.7.
+To edit an existing organization:
+
+1. On the top bar, select **Menu > Groups** and find your group.
+1. On the left sidebar, select **Customer relations > Organizations**.
+1. Next to the organization you wish to edit, select **Edit** (**{pencil}**).
+1. Edit the required fields.
+1. Select **Save changes**.
+
+You can also [edit](../../api/graphql/reference/index.md#mutationcustomerrelationsorganizationupdate)
 organizations using the GraphQL API.
 
 ## Issues

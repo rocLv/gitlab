@@ -40,27 +40,27 @@ export default {
     };
   },
   computed: {
-    invalid() {
+    isInvalid() {
       const { firstName, lastName, email } = this;
 
       return firstName.trim() === '' || lastName.trim() === '' || email.trim() === '';
     },
-    editMode() {
+    isEditMode() {
       return Boolean(this.contact);
     },
     title() {
-      return this.editMode ? this.$options.i18n.editTitle : this.$options.i18n.newTitle;
+      return this.isEditMode ? this.$options.i18n.editTitle : this.$options.i18n.newTitle;
     },
     buttonLabel() {
-      return this.editMode
+      return this.isEditMode
         ? this.$options.i18n.editButtonLabel
         : this.$options.i18n.createButtonLabel;
     },
     mutation() {
-      return this.editMode ? updateContactMutation : createContactMutation;
+      return this.isEditMode ? updateContactMutation : createContactMutation;
     },
     variables() {
-      const { contact, firstName, lastName, phone, email, description, editMode, groupId } = this;
+      const { contact, firstName, lastName, phone, email, description, isEditMode, groupId } = this;
 
       const variables = {
         input: {
@@ -72,7 +72,7 @@ export default {
         },
       };
 
-      if (editMode) {
+      if (isEditMode) {
         variables.input.id = contact.id;
       } else {
         variables.input.groupId = convertToGraphQLId(TYPE_GROUP, groupId);
@@ -82,7 +82,7 @@ export default {
     },
   },
   mounted() {
-    if (this.editMode) {
+    if (this.isEditMode) {
       const { contact } = this;
 
       this.firstName = contact.firstName || '';
@@ -131,6 +131,8 @@ export default {
         return;
       }
 
+      if (this.isEditMode) return;
+
       const queryArgs = {
         query: getGroupContactsQuery,
         variables: { groupFullPath: this.groupFullPath },
@@ -140,7 +142,7 @@ export default {
 
       queryArgs.data = produce(sourceData, (draftState) => {
         draftState.group.contacts.nodes = [
-          ...sourceData.group.contacts.nodes.filter(({ id }) => id !== this.contact?.id),
+          ...sourceData.group.contacts.nodes,
           mutationData.contact,
         ];
       });
@@ -212,7 +214,7 @@ export default {
         </gl-button>
         <gl-button
           variant="confirm"
-          :disabled="invalid"
+          :disabled="isInvalid"
           :loading="submitting"
           data-testid="save-contact-button"
           type="submit"

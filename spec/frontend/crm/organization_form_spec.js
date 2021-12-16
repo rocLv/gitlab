@@ -4,42 +4,50 @@ import VueApollo from 'vue-apollo';
 import { shallowMountExtended } from 'helpers/vue_test_utils_helper';
 import createMockApollo from 'helpers/mock_apollo_helper';
 import waitForPromises from 'helpers/wait_for_promises';
-import NewOrganizationForm from '~/crm/components/new_organization_form.vue';
+import OrganizationForm from '~/crm/components/organization_form.vue';
 import createOrganizationMutation from '~/crm/components/queries/create_organization.mutation.graphql';
+import updateOrganizationMutation from '~/crm/components/queries/update_organization.mutation.graphql';
 import getGroupOrganizationsQuery from '~/crm/components/queries/get_group_organizations.query.graphql';
 import {
   createOrganizationMutationErrorResponse,
   createOrganizationMutationResponse,
   getGroupOrganizationsQueryResponse,
+  updateOrganizationMutationErrorResponse,
+  updateOrganizationMutationResponse,
 } from './mock_data';
 
 describe('Customer relations organizations root app', () => {
   Vue.use(VueApollo);
   let wrapper;
   let fakeApollo;
+  let mutation;
   let queryHandler;
 
-  const findCreateNewOrganizationButton = () =>
-    wrapper.findByTestId('create-new-organization-button');
+  const findSaveOrganizationButton = () => wrapper.findByTestId('save-organization-button');
   const findCancelButton = () => wrapper.findByTestId('cancel-button');
   const findForm = () => wrapper.find('form');
   const findError = () => wrapper.findComponent(GlAlert);
 
-  const mountComponent = () => {
-    fakeApollo = createMockApollo([[createOrganizationMutation, queryHandler]]);
+  const mountComponent = ({ editForm = false } = {}) => {
+    fakeApollo = createMockApollo([[mutation, queryHandler]]);
     fakeApollo.clients.defaultClient.cache.writeQuery({
       query: getGroupOrganizationsQuery,
       variables: { groupFullPath: 'flightjs' },
       data: getGroupOrganizationsQueryResponse.data,
     });
-    wrapper = shallowMountExtended(NewOrganizationForm, {
+
+    const propsData = { drawerOpen: true };
+    if (editForm) propsData.organization = { name: 'Company Inc' };
+
+    wrapper = shallowMountExtended(OrganizationForm, {
       provide: { groupId: 26, groupFullPath: 'flightjs' },
       apolloProvider: fakeApollo,
-      propsData: { drawerOpen: true },
+      propsData,
     });
   };
 
   beforeEach(() => {
+    mutation = createOrganizationMutation;
     queryHandler = jest.fn().mockResolvedValue(createOrganizationMutationResponse);
   });
 
@@ -48,20 +56,20 @@ describe('Customer relations organizations root app', () => {
     fakeApollo = null;
   });
 
-  describe('Create new organization button', () => {
-    it('should be disabled by default', () => {
+  describe('Save organization button', () => {
+    it('should be disabled when required fields are empty', () => {
       mountComponent();
 
-      expect(findCreateNewOrganizationButton().attributes('disabled')).toBeTruthy();
+      expect(findSaveOrganizationButton().attributes('disabled')).toBeTruthy();
     });
 
-    it('should not be disabled when first, last and email have values', async () => {
+    it('should not be disabled when required fields have values', async () => {
       mountComponent();
 
       wrapper.find('#organization-name').vm.$emit('input', 'A');
       await waitForPromises();
 
-      expect(findCreateNewOrganizationButton().attributes('disabled')).toBeFalsy();
+      expect(findSaveOrganizationButton().attributes('disabled')).toBeFalsy();
     });
   });
 
@@ -73,7 +81,7 @@ describe('Customer relations organizations root app', () => {
     expect(wrapper.emitted().close).toBeTruthy();
   });
 
-  describe('when query is successful', () => {
+  describe('when create mutation is successful', () => {
     it("should emit 'close'", async () => {
       mountComponent();
 
@@ -84,7 +92,7 @@ describe('Customer relations organizations root app', () => {
     });
   });
 
-  describe('when query fails', () => {
+  describe('when create mutation fails', () => {
     it('should show error on reject', async () => {
       queryHandler = jest.fn().mockRejectedValue('ERROR');
       mountComponent();
@@ -104,6 +112,45 @@ describe('Customer relations organizations root app', () => {
 
       expect(findError().exists()).toBe(true);
       expect(findError().text()).toBe('Name cannot be blank.');
+    });
+  });
+
+  describe('when update mutation is successful', () => {
+    it("should emit 'close'", async () => {
+      mutation = updateOrganizationMutation;
+      queryHandler = jest.fn().mockResolvedValue(updateOrganizationMutationResponse);
+      mountComponent({ editForm: true });
+
+      findForm().trigger('submit');
+      await waitForPromises();
+
+      expect(wrapper.emitted().close).toBeTruthy();
+    });
+  });
+
+  describe('when update mutation fails', () => {
+    beforeEach(() => {
+      mutation = updateOrganizationMutation;
+    });
+
+    it('should show error on reject', async () => {
+      queryHandler = jest.fn().mockRejectedValue('ERROR');
+      mountComponent({ editForm: true });
+      findForm().trigger('submit');
+      await waitForPromises();
+
+      expect(findError().exists()).toBe(true);
+    });
+
+    it('should show error on error response', async () => {
+      queryHandler = jest.fn().mockResolvedValue(updateOrganizationMutationErrorResponse);
+      mountComponent({ editForm: true });
+
+      findForm().trigger('submit');
+      await waitForPromises();
+
+      expect(findError().exists()).toBe(true);
+      expect(findError().text()).toBe('Description is invalid.');
     });
   });
 });

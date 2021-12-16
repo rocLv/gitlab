@@ -6,8 +6,8 @@ import { mountExtended, shallowMountExtended } from 'helpers/vue_test_utils_help
 import createMockApollo from 'helpers/mock_apollo_helper';
 import waitForPromises from 'helpers/wait_for_promises';
 import OrganizationsRoot from '~/crm/components/organizations_root.vue';
-import NewOrganizationForm from '~/crm/components/new_organization_form.vue';
-import { NEW_ROUTE_NAME } from '~/crm/constants';
+import OrganizationForm from '~/crm/components/organization_form.vue';
+import { NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '~/crm/constants';
 import routes from '~/crm/routes';
 import getGroupOrganizationsQuery from '~/crm/components/queries/get_group_organizations.query.graphql';
 import { getGroupOrganizationsQueryResponse } from './mock_data';
@@ -23,7 +23,8 @@ describe('Customer relations organizations root app', () => {
   const findRowByName = (rowName) => wrapper.findAllByRole('row', { name: rowName });
   const findIssuesLinks = () => wrapper.findAllByTestId('issues-link');
   const findNewOrganizationButton = () => wrapper.findByTestId('new-organization-button');
-  const findNewOrganizationForm = () => wrapper.findComponent(NewOrganizationForm);
+  const findEditOrganizationButton = () => wrapper.findByTestId('edit-organization-button');
+  const findOrganizationForm = () => wrapper.findComponent(OrganizationForm);
   const findError = () => wrapper.findComponent(GlAlert);
   const successQueryHandler = jest.fn().mockResolvedValue(getGroupOrganizationsQueryResponse);
 
@@ -37,7 +38,12 @@ describe('Customer relations organizations root app', () => {
     fakeApollo = createMockApollo([[getGroupOrganizationsQuery, queryHandler]]);
     wrapper = mountFunction(OrganizationsRoot, {
       router,
-      provide: { canAdminCrmOrganization, groupFullPath: 'flightjs', groupIssuesPath: '/issues' },
+      provide: {
+        canAdminCrmOrganization,
+        groupFullPath: 'flightjs',
+        groupId: 26,
+        groupIssuesPath: '/issues',
+      },
       apolloProvider: fakeApollo,
     });
   };
@@ -76,12 +82,12 @@ describe('Customer relations organizations root app', () => {
     });
   });
 
-  describe('new organization form', () => {
+  describe('organization form', () => {
     it('should not exist by default', async () => {
       mountComponent();
       await waitForPromises();
 
-      expect(findNewOrganizationForm().exists()).toBe(false);
+      expect(findOrganizationForm().exists()).toBe(false);
     });
 
     it('should exist when user clicks new contact button', async () => {
@@ -90,25 +96,54 @@ describe('Customer relations organizations root app', () => {
       findNewOrganizationButton().vm.$emit('click');
       await waitForPromises();
 
-      expect(findNewOrganizationForm().exists()).toBe(true);
+      expect(findOrganizationForm().exists()).toBe(true);
     });
 
-    it('should exist when user navigates directly to /new', async () => {
+    it('should exist when user navigates directly to `new` route', async () => {
       router.replace({ name: NEW_ROUTE_NAME });
       mountComponent();
       await waitForPromises();
 
-      expect(findNewOrganizationForm().exists()).toBe(true);
+      expect(findOrganizationForm().exists()).toBe(true);
     });
 
-    it('should not exist when form emits close', async () => {
+    it('should exist when user clicks edit organization button', async () => {
+      mountComponent({ mountFunction: mountExtended });
+      await waitForPromises();
+
+      findEditOrganizationButton().vm.$emit('click');
+      await waitForPromises();
+
+      expect(findOrganizationForm().exists()).toBe(true);
+    });
+
+    it('should exist when user navigates directly to `edit` route', async () => {
+      router.replace({ name: EDIT_ROUTE_NAME, params: { id: 2 } });
+      mountComponent();
+      await waitForPromises();
+
+      expect(findOrganizationForm().exists()).toBe(true);
+    });
+
+    it('should not exist when new form emits close', async () => {
       router.replace({ name: NEW_ROUTE_NAME });
       mountComponent();
 
-      findNewOrganizationForm().vm.$emit('close');
+      findOrganizationForm().vm.$emit('close');
       await waitForPromises();
 
-      expect(findNewOrganizationForm().exists()).toBe(false);
+      expect(findOrganizationForm().exists()).toBe(false);
+    });
+
+    it('should not exist when edit form emits close', async () => {
+      router.replace({ name: EDIT_ROUTE_NAME, params: { id: 2 } });
+      mountComponent();
+      await waitForPromises();
+
+      findOrganizationForm().vm.$emit('close');
+      await waitForPromises();
+
+      expect(findOrganizationForm().exists()).toBe(false);
     });
   });
 

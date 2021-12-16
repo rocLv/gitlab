@@ -4,7 +4,8 @@ import { produce } from 'immer';
 import { __, s__ } from '~/locale';
 import { convertToGraphQLId } from '~/graphql_shared/utils';
 import { TYPE_GROUP } from '~/graphql_shared/constants';
-import createOrganization from './queries/create_organization.mutation.graphql';
+import createOrganizationMutation from './queries/create_organization.mutation.graphql';
+import updateOrganizationMutation from './queries/update_organization.mutation.graphql';
 import getGroupOrganizationsQuery from './queries/get_group_organizations.query.graphql';
 
 export default {
@@ -21,6 +22,11 @@ export default {
       type: Boolean,
       required: true,
     },
+    organization: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -32,28 +38,71 @@ export default {
     };
   },
   computed: {
-    invalid() {
+    isInvalid() {
       return this.name.trim() === '';
     },
+    isEditMode() {
+      return Boolean(this.organization);
+    },
+    title() {
+      return this.isEditMode ? this.$options.i18n.editTitle : this.$options.i18n.newTitle;
+    },
+    buttonLabel() {
+      return this.isEditMode
+        ? this.$options.i18n.editButtonLabel
+        : this.$options.i18n.newButtonLabel;
+    },
+    mutation() {
+      return this.isEditMode ? updateOrganizationMutation : createOrganizationMutation;
+    },
+    variables() {
+      const { organization, name, defaultRate, description, isEditMode, groupId } = this;
+
+      const variables = {
+        input: {
+          name,
+          defaultRate: defaultRate ? parseFloat(defaultRate) : null,
+          description,
+        },
+      };
+
+      if (isEditMode) {
+        variables.input.id = organization.id;
+      } else {
+        variables.input.groupId = convertToGraphQLId(TYPE_GROUP, groupId);
+      }
+
+      return variables;
+    },
+  },
+  mounted() {
+    if (this.isEditMode) {
+      const { organization } = this;
+
+      this.name = organization.name || '';
+      this.defaultRate = organization.defaultRate || '';
+      this.description = organization.description || '';
+    }
   },
   methods: {
     save() {
+      const { mutation, variables, updateCache, close } = this;
+
       this.submitting = true;
+
       return this.$apollo
         .mutate({
-          mutation: createOrganization,
-          variables: {
-            input: {
-              groupId: convertToGraphQLId(TYPE_GROUP, this.groupId),
-              name: this.name,
-              defaultRate: this.defaultRate ? parseFloat(this.defaultRate) : null,
-              description: this.description,
-            },
-          },
-          update: this.updateCache,
+          mutation,
+          variables,
+          update: updateCache,
         })
         .then(({ data }) => {
-          if (data.customerRelationsOrganizationCreate.errors.length === 0) this.close(true);
+          if (
+            data.customerRelationsOrganizationCreate?.errors.length === 0 ||
+            data.customerRelationsOrganizationUpdate?.errors.length === 0
+          ) {
+            close(true);
+          }
 
           this.submitting = false;
         })
@@ -65,32 +114,32 @@ export default {
     close(success) {
       this.$emit('close', success);
     },
-    updateCache(store, { data: { customerRelationsOrganizationCreate } }) {
-      if (customerRelationsOrganizationCreate.errors.length > 0) {
-        this.errorMessages = customerRelationsOrganizationCreate.errors;
+    updateCache(store, { data }) {
+      const mutationData =
+        data.customerRelationsOrganizationCreate || data.customerRelationsOrganizationUpdate;
+
+      if (mutationData?.errors.length > 0) {
+        this.errorMessages = mutationData.errors;
         return;
       }
 
-      const variables = {
-        groupFullPath: this.groupFullPath,
-      };
-      const sourceData = store.readQuery({
-        query: getGroupOrganizationsQuery,
-        variables,
-      });
+      if (this.isEditMode) return;
 
-      const data = produce(sourceData, (draftState) => {
+      const queryArgs = {
+        query: getGroupOrganizationsQuery,
+        variables: { groupFullPath: this.groupFullPath },
+      };
+
+      const sourceData = store.readQuery(queryArgs);
+
+      queryArgs.data = produce(sourceData, (draftState) => {
         draftState.group.organizations.nodes = [
           ...sourceData.group.organizations.nodes,
-          customerRelationsOrganizationCreate.organization,
+          mutationData.organization,
         ];
       });
 
-      store.writeQuery({
-        query: getGroupOrganizationsQuery,
-        variables,
-        data,
-      });
+      store.writeQuery(queryArgs);
     },
     getDrawerHeaderHeight() {
       const wrapperEl = document.querySelector('.content-wrapper');
@@ -103,12 +152,14 @@ export default {
     },
   },
   i18n: {
-    buttonLabel: s__('Crm|Create organization'),
+    newButtonLabel: s__('Crm|Create organization'),
+    editButtonLabel: __('Save changes'),
     cancel: __('Cancel'),
     name: __('Name'),
     defaultRate: s__('Crm|Default rate (optional)'),
     description: __('Description (optional)'),
-    title: s__('Crm|New Organization'),
+    newTitle: s__('Crm|New organization'),
+    editTitle: s__('Crm|Edit organization'),
     somethingWentWrong: __('Something went wrong. Please try again.'),
   },
 };
@@ -122,7 +173,7 @@ export default {
     @close="close(false)"
   >
     <template #title>
-      <h4>{{ $options.i18n.title }}</h4>
+      <h4>{{ title }}</h4>
     </template>
     <gl-alert v-if="errorMessages.length" variant="danger" @dismiss="errorMessages = []">
       <ul class="gl-mb-0! gl-ml-5">
@@ -152,11 +203,11 @@ export default {
         </gl-button>
         <gl-button
           variant="confirm"
-          :disabled="invalid"
+          :disabled="isInvalid"
           :loading="submitting"
-          data-testid="create-new-organization-button"
+          data-testid="save-organization-button"
           type="submit"
-          >{{ $options.i18n.buttonLabel }}</gl-button
+          >{{ buttonLabel }}</gl-button
         >
       </span>
     </form>

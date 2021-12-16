@@ -28,7 +28,7 @@ describe('Customer relations contact form component', () => {
   const findForm = () => wrapper.find('form');
   const findError = () => wrapper.findComponent(GlAlert);
 
-  const mountComponent = ({ mountFunction = shallowMountExtended, editForm = false } = {}) => {
+  const mountComponent = ({ editForm = false } = {}) => {
     fakeApollo = createMockApollo([[mutation, queryHandler]]);
     fakeApollo.clients.defaultClient.cache.writeQuery({
       query: getGroupContactsQuery,
@@ -38,7 +38,7 @@ describe('Customer relations contact form component', () => {
     const propsData = { drawerOpen: true };
     if (editForm)
       propsData.contact = { firstName: 'First', lastName: 'Last', email: 'email@example.com' };
-    wrapper = mountFunction(ContactForm, {
+    wrapper = shallowMountExtended(ContactForm, {
       provide: { groupId: 26, groupFullPath: 'flightjs' },
       apolloProvider: fakeApollo,
       propsData,

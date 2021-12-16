@@ -2,10 +2,11 @@
 import { GlAlert, GlButton, GlLoadingIcon, GlTable, GlTooltipDirective } from '@gitlab/ui';
 import { parseBoolean } from '~/lib/utils/common_utils';
 import { s__, __ } from '~/locale';
-import { getIdFromGraphQLId } from '~/graphql_shared/utils';
-import { INDEX_ROUTE_NAME, NEW_ROUTE_NAME } from '../constants';
+import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
+import { TYPE_CRM_ORGANIZATION } from '~/graphql_shared/constants';
+import { INDEX_ROUTE_NAME, NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
 import getGroupOrganizationsQuery from './queries/get_group_organizations.query.graphql';
-import NewOrganizationForm from './new_organization_form.vue';
+import OrganizationForm from './organization_form.vue';
 
 export default {
   components: {
@@ -13,7 +14,7 @@ export default {
     GlButton,
     GlLoadingIcon,
     GlTable,
-    NewOrganizationForm,
+    OrganizationForm,
   },
   directives: {
     GlTooltip: GlTooltipDirective,
@@ -50,8 +51,16 @@ export default {
     showNewForm() {
       return this.$route.name === NEW_ROUTE_NAME;
     },
-    canCreateNew() {
+    showEditForm() {
+      return !this.isLoading && this.$route.name === EDIT_ROUTE_NAME;
+    },
+    canAdmin() {
       return parseBoolean(this.canAdminCrmOrganization);
+    },
+    editingOrganization() {
+      return this.organizations.find(
+        ({ id }) => id === convertToGraphQLId(TYPE_CRM_ORGANIZATION, this.$route.params.id),
+      );
     },
   },
   methods: {
@@ -72,6 +81,18 @@ export default {
 
       this.$router.replace({ name: INDEX_ROUTE_NAME });
     },
+    hideEditForm(success) {
+      if (success) this.$toast.show(this.$options.i18n.organizationUpdated);
+
+      this.editingOrganizationId = 0;
+      this.$router.replace({ name: INDEX_ROUTE_NAME });
+    },
+    edit(id) {
+      if (this.showEditForm) return;
+
+      this.editingOrganizationId = id;
+      this.$router.push({ name: EDIT_ROUTE_NAME, params: { id } });
+    },
   },
   fields: [
     { key: 'name', sortable: true },
@@ -79,7 +100,7 @@ export default {
     { key: 'description', sortable: true },
     {
       key: 'id',
-      label: __('Issues'),
+      label: '',
       formatter: (id) => {
         return getIdFromGraphQLId(id);
       },
@@ -88,10 +109,12 @@ export default {
   i18n: {
     emptyText: s__('Crm|No organizations found'),
     issuesButtonLabel: __('View issues'),
-    title: s__('Crm|Customer Relations Organizations'),
+    editButtonLabel: __('Edit'),
+    title: __('Customer relations organizations'),
     newOrganization: s__('Crm|New organization'),
     errorText: __('Something went wrong. Please try again.'),
     organizationAdded: s__('Crm|Organization has been added'),
+    organizationUpdated: s__('Crm|Organization has been updated'),
   },
 };
 </script>
@@ -108,7 +131,7 @@ export default {
         {{ $options.i18n.title }}
       </h2>
       <div
-        v-if="canCreateNew"
+        v-if="canAdmin"
         class="gl-display-none gl-md-display-flex gl-align-items-center gl-justify-content-end"
       >
         <gl-button variant="confirm" data-testid="new-organization-button" @click="displayNewForm">
@@ -116,7 +139,13 @@ export default {
         </gl-button>
       </div>
     </div>
-    <new-organization-form v-if="showNewForm" :drawer-open="showNewForm" @close="hideNewForm" />
+    <organization-form v-if="showNewForm" :drawer-open="showNewForm" @close="hideNewForm" />
+    <organization-form
+      v-if="showEditForm"
+      :organization="editingOrganization"
+      :drawer-open="showEditForm"
+      @close="hideEditForm"
+    />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table
       v-else
@@ -129,10 +158,19 @@ export default {
       <template #cell(id)="data">
         <gl-button
           v-gl-tooltip.hover.bottom="$options.i18n.issuesButtonLabel"
+          class="gl-mr-3"
           data-testid="issues-link"
           icon="issues"
           :aria-label="$options.i18n.issuesButtonLabel"
           :href="getIssuesPath(groupIssuesPath, data.value)"
+        />
+        <gl-button
+          v-if="canAdmin"
+          v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"
+          data-testid="edit-organization-button"
+          icon="pencil"
+          :aria-label="$options.i18n.editButtonLabel"
+          @click="edit(data.value)"
         />
       </template>
     </gl-table>

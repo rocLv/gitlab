@@ -119,7 +119,7 @@ export default {
     emptyText: s__('Crm|No contacts found'),
     issuesButtonLabel: __('View issues'),
     editButtonLabel: __('Edit'),
-    title: s__('Crm|Customer Relations Contacts'),
+    title: __('Customer relations contacts'),
     newContact: s__('Crm|New contact'),
     errorText: __('Something went wrong. Please try again.'),
   },
