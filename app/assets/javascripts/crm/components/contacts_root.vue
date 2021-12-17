@@ -151,6 +151,7 @@ export default {
     <contact-form v-if="showNewForm" :drawer-open="showNewForm" @close="hideNewForm" />
     <contact-form
       v-if="showEditForm"
+      :is-edit-mode="true"
       :contact="editingContact"
       :drawer-open="showEditForm"
       @close="hideEditForm"

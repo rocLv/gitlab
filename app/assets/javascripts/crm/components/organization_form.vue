@@ -27,6 +27,11 @@ export default {
       required: false,
       default: () => {},
     },
+    isEditMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -40,9 +45,6 @@ export default {
   computed: {
     isInvalid() {
       return this.name.trim() === '';
-    },
-    isEditMode() {
-      return Boolean(this.organization);
     },
     title() {
       return this.isEditMode ? this.$options.i18n.editTitle : this.$options.i18n.newTitle;
@@ -173,7 +175,7 @@ export default {
     @close="close(false)"
   >
     <template #title>
-      <h4>{{ title }}</h4>
+      <h3>{{ title }}</h3>
     </template>
     <gl-alert v-if="errorMessages.length" variant="danger" @dismiss="errorMessages = []">
       <ul class="gl-mb-0! gl-ml-5">

@@ -142,6 +142,7 @@ export default {
     <organization-form v-if="showNewForm" :drawer-open="showNewForm" @close="hideNewForm" />
     <organization-form
       v-if="showEditForm"
+      :is-edit-mode="true"
       :organization="editingOrganization"
       :drawer-open="showEditForm"
       @close="hideEditForm"

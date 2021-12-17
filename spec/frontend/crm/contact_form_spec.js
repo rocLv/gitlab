@@ -36,8 +36,10 @@ describe('Customer relations contact form component', () => {
       data: getGroupContactsQueryResponse.data,
     });
     const propsData = { drawerOpen: true };
-    if (editForm)
+    if (editForm) {
+      propsData.isEditMode = true;
       propsData.contact = { firstName: 'First', lastName: 'Last', email: 'email@example.com' };
+    }
     wrapper = shallowMountExtended(ContactForm, {
       provide: { groupId: 26, groupFullPath: 'flightjs' },
       apolloProvider: fakeApollo,

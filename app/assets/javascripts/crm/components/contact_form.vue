@@ -27,6 +27,11 @@ export default {
       required: false,
       default: () => {},
     },
+    isEditMode: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -44,9 +49,6 @@ export default {
       const { firstName, lastName, email } = this;
 
       return firstName.trim() === '' || lastName.trim() === '' || email.trim() === '';
-    },
-    isEditMode() {
-      return Boolean(this.contact);
     },
     title() {
       return this.isEditMode ? this.$options.i18n.editTitle : this.$options.i18n.newTitle;

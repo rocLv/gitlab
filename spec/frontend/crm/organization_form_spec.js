@@ -37,7 +37,10 @@ describe('Customer relations organizations root app', () => {
     });
 
     const propsData = { drawerOpen: true };
-    if (editForm) propsData.organization = { name: 'Company Inc' };
+    if (editForm) {
+      propsData.isEditMode = true;
+      propsData.organization = { name: 'Company Inc' };
+    }
 
     wrapper = shallowMountExtended(OrganizationForm, {
       provide: { groupId: 26, groupFullPath: 'flightjs' },
