@@ -31,7 +31,7 @@ export default {
 
       <section class="mr-info-list">
         <p>
-          {{ s__('mrWidget|The changes were not merged into') }}
+          {{ s__('mrWidget|The changes were not merged into the target branch') }}
           <a :href="mr.targetBranchPath" class="label-branch"> {{ mr.targetBranch }} </a>
         </p>
       </section>

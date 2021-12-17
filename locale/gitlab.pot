@@ -42321,7 +42321,7 @@ msgstr ""
 msgid "mrWidget|The changes were merged into"
 msgstr ""
 
-msgid "mrWidget|The changes were not merged into"
+msgid "mrWidget|The changes were not merged into the target branch"
 msgstr ""
 
 msgid "mrWidget|The pipeline for this merge request did not complete. Push a new commit to fix the failure, or check the %{linkStart}troubleshooting documentation%{linkEnd} to see other possible actions."
