@@ -3,10 +3,11 @@ import { GlAlert, GlButton, GlLoadingIcon, GlTable, GlTooltipDirective } from '@
 import { parseBoolean } from '~/lib/utils/common_utils';
 import { s__, __ } from '~/locale';
 import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
-import { TYPE_CRM_CONTACT } from '~/graphql_shared/constants';
+import { TYPE_CRM_CONTACT, TYPE_GROUP } from '~/graphql_shared/constants';
 import { INDEX_ROUTE_NAME, NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
 import getGroupContactsQuery from './queries/get_group_contacts.query.graphql';
-import ContactForm from './contact_form.vue';
+import createContactMutation from './queries/create_contact.mutation.graphql';
+import updateContactMutation from './queries/update_contact.mutation.graphql';
 
 export default {
   components: {
@@ -14,16 +15,18 @@ export default {
     GlButton,
     GlLoadingIcon,
     GlTable,
-    ContactForm,
   },
   directives: {
     GlTooltip: GlTooltipDirective,
   },
-  inject: ['groupFullPath', 'groupIssuesPath', 'canAdminCrmContact'],
+  inject: ['canAdminCrmContact', 'groupFullPath', 'groupId', 'groupIssuesPath'],
   data() {
     return {
       contacts: [],
       error: false,
+      getGroupContactsQuery,
+      createContactMutation,
+      updateContactMutation,
     };
   },
   apollo: {
@@ -48,19 +51,18 @@ export default {
     isLoading() {
       return this.$apollo.queries.contacts.loading;
     },
-    showNewForm() {
-      return this.$route.name === NEW_ROUTE_NAME;
-    },
-    showEditForm() {
-      return !this.isLoading && this.$route.name === EDIT_ROUTE_NAME;
-    },
     canAdmin() {
       return parseBoolean(this.canAdminCrmContact);
     },
     editingContact() {
+      if (this.$route.name !== EDIT_ROUTE_NAME) return;
+
       return this.contacts.find(
-        (contact) => contact.id === convertToGraphQLId(TYPE_CRM_CONTACT, this.$route.params.id),
+        ({ id }) => id === convertToGraphQLId(TYPE_CRM_CONTACT, this.$route.params.id),
       );
+    },
+    groupGraphQLId() {
+      return convertToGraphQLId(TYPE_GROUP, this.groupId);
     },
   },
   methods: {
@@ -73,13 +75,8 @@ export default {
 
       this.$router.push({ name: NEW_ROUTE_NAME });
     },
-    hideNewForm(success) {
-      if (success) this.$toast.show(s__('Crm|Contact has been added'));
-
-      this.$router.replace({ name: INDEX_ROUTE_NAME });
-    },
-    hideEditForm(success) {
-      if (success) this.$toast.show(s__('Crm|Contact has been updated'));
+    hideForm(message) {
+      if (message) this.$toast.show(message);
 
       this.editingContactId = 0;
       this.$router.replace({ name: INDEX_ROUTE_NAME });
@@ -148,13 +145,25 @@ export default {
         </gl-button>
       </div>
     </div>
-    <contact-form v-if="showNewForm" :drawer-open="showNewForm" @close="hideNewForm" />
-    <contact-form
-      v-if="showEditForm"
-      :is-edit-mode="true"
-      :contact="editingContact"
-      :drawer-open="showEditForm"
-      @close="hideEditForm"
+    <router-view
+      v-if="!isLoading"
+      :drawer-open="true"
+      :get-query="getGroupContactsQuery"
+      :get-query-variables="{ groupFullPath }"
+      get-query-node-path="group.contacts"
+      :create-mutation="createContactMutation"
+      :additional-create-params="{ groupId: groupGraphQLId }"
+      :update-mutation="updateContactMutation"
+      :existing-model="editingContact"
+      :fields="[
+        { name: 'firstName', label: __('First name'), required: true },
+        { name: 'lastName', label: __('Last name'), required: true },
+        { name: 'email', label: __('Email'), required: true },
+        { name: 'phone', label: __('Phone') },
+        { name: 'description', label: __('Description') },
+      ]"
+      :i18n="{ modelName: s__('Crm|Contact') }"
+      @close="hideForm"
     />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table

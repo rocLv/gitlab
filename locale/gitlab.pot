@@ -1160,6 +1160,9 @@ msgstr ""
 msgid "(max size 15 MB)"
 msgstr ""
 
+msgid "(optional)"
+msgstr ""
+
 msgid "(removed)"
 msgstr ""
 
@@ -10306,28 +10309,19 @@ msgstr ""
 msgid "Critical vulnerabilities present"
 msgstr ""
 
-msgid "Crm|Contact has been added"
-msgstr ""
-
-msgid "Crm|Contact has been updated"
+msgid "Crm|Contact"
 msgstr ""
 
 msgid "Crm|Create new contact"
 msgstr ""
 
-msgid "Crm|Create organization"
-msgstr ""
-
-msgid "Crm|Default rate (optional)"
+msgid "Crm|Default rate"
 msgstr ""
 
 msgid "Crm|Description (optional)"
 msgstr ""
 
 msgid "Crm|Edit contact"
-msgstr ""
-
-msgid "Crm|Edit organization"
 msgstr ""
 
 msgid "Crm|Email"
@@ -10351,10 +10345,7 @@ msgstr ""
 msgid "Crm|No organizations found"
 msgstr ""
 
-msgid "Crm|Organization has been added"
-msgstr ""
-
-msgid "Crm|Organization has been updated"
+msgid "Crm|Organization"
 msgstr ""
 
 msgid "Crm|Phone number (optional)"
@@ -25646,6 +25637,9 @@ msgid "Phabricator Server URL"
 msgstr ""
 
 msgid "Phabricator Tasks"
+msgstr ""
+
+msgid "Phone"
 msgstr ""
 
 msgid "Pick a name"
@@ -41755,7 +41749,13 @@ msgstr ""
 msgid "has already been taken as Suite"
 msgstr ""
 
+msgid "has been added"
+msgstr ""
+
 msgid "has been completed."
+msgstr ""
+
+msgid "has been updated"
 msgstr ""
 
 msgid "has too deep level of nesting"

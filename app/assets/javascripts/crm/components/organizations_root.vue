@@ -3,10 +3,11 @@ import { GlAlert, GlButton, GlLoadingIcon, GlTable, GlTooltipDirective } from '@
 import { parseBoolean } from '~/lib/utils/common_utils';
 import { s__, __ } from '~/locale';
 import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
-import { TYPE_CRM_ORGANIZATION } from '~/graphql_shared/constants';
+import { TYPE_CRM_ORGANIZATION, TYPE_GROUP } from '~/graphql_shared/constants';
 import { INDEX_ROUTE_NAME, NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
 import getGroupOrganizationsQuery from './queries/get_group_organizations.query.graphql';
-import OrganizationForm from './organization_form.vue';
+import createOrganizationMutation from './queries/create_organization.mutation.graphql';
+import updateOrganizationMutation from './queries/update_organization.mutation.graphql';
 
 export default {
   components: {
@@ -14,16 +15,18 @@ export default {
     GlButton,
     GlLoadingIcon,
     GlTable,
-    OrganizationForm,
   },
   directives: {
     GlTooltip: GlTooltipDirective,
   },
-  inject: ['canAdminCrmOrganization', 'groupFullPath', 'groupIssuesPath'],
+  inject: ['canAdminCrmOrganization', 'groupFullPath', 'groupId', 'groupIssuesPath'],
   data() {
     return {
-      error: false,
       organizations: [],
+      error: false,
+      getGroupOrganizationsQuery,
+      createOrganizationMutation,
+      updateOrganizationMutation,
     };
   },
   apollo: {
@@ -48,19 +51,18 @@ export default {
     isLoading() {
       return this.$apollo.queries.organizations.loading;
     },
-    showNewForm() {
-      return this.$route.name === NEW_ROUTE_NAME;
-    },
-    showEditForm() {
-      return !this.isLoading && this.$route.name === EDIT_ROUTE_NAME;
-    },
     canAdmin() {
       return parseBoolean(this.canAdminCrmOrganization);
     },
     editingOrganization() {
+      if (this.$route.name !== EDIT_ROUTE_NAME) return;
+
       return this.organizations.find(
         ({ id }) => id === convertToGraphQLId(TYPE_CRM_ORGANIZATION, this.$route.params.id),
       );
+    },
+    groupGraphQLId() {
+      return convertToGraphQLId(TYPE_GROUP, this.groupId);
     },
   },
   methods: {
@@ -72,23 +74,18 @@ export default {
       return `${path}?scope=all&state=opened&crm_organization_id=${value}`;
     },
     displayNewForm() {
-      if (this.showNewForm) return;
+      if (this.$route.name === NEW_ROUTE_NAME) return;
 
       this.$router.push({ name: NEW_ROUTE_NAME });
     },
-    hideNewForm(success) {
-      if (success) this.$toast.show(this.$options.i18n.organizationAdded);
-
-      this.$router.replace({ name: INDEX_ROUTE_NAME });
-    },
-    hideEditForm(success) {
-      if (success) this.$toast.show(this.$options.i18n.organizationUpdated);
+    hideForm(message) {
+      if (message) this.$toast.show(message);
 
       this.editingOrganizationId = 0;
       this.$router.replace({ name: INDEX_ROUTE_NAME });
     },
     edit(id) {
-      if (this.showEditForm) return;
+      if (this.$route.name === EDIT_ROUTE_NAME) return;
 
       this.editingOrganizationId = id;
       this.$router.push({ name: EDIT_ROUTE_NAME, params: { id } });
@@ -113,8 +110,6 @@ export default {
     title: __('Customer relations organizations'),
     newOrganization: s__('Crm|New organization'),
     errorText: __('Something went wrong. Please try again.'),
-    organizationAdded: s__('Crm|Organization has been added'),
-    organizationUpdated: s__('Crm|Organization has been updated'),
   },
 };
 </script>
@@ -139,13 +134,27 @@ export default {
         </gl-button>
       </div>
     </div>
-    <organization-form v-if="showNewForm" :drawer-open="showNewForm" @close="hideNewForm" />
-    <organization-form
-      v-if="showEditForm"
-      :is-edit-mode="true"
-      :organization="editingOrganization"
-      :drawer-open="showEditForm"
-      @close="hideEditForm"
+    <router-view
+      v-if="!isLoading"
+      :drawer-open="true"
+      :get-query="getGroupOrganizationsQuery"
+      :get-query-variables="{ groupFullPath }"
+      get-query-node-path="group.organizations"
+      :create-mutation="createOrganizationMutation"
+      :additional-create-params="{ groupId: groupGraphQLId }"
+      :update-mutation="updateOrganizationMutation"
+      :existing-model="editingOrganization"
+      :fields="[
+        { name: 'name', label: __('Name'), required: true },
+        {
+          name: 'defaultRate',
+          label: s__('Crm|Default rate'),
+          input: { type: 'number', step: '0.01' },
+        },
+        { name: 'description', label: __('Description') },
+      ]"
+      :i18n="{ modelName: s__('Crm|Organization') }"
+      @close="hideForm"
     />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table
