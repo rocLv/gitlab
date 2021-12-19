@@ -23,7 +23,6 @@ describe('Customer relations contacts root app', () => {
   const findRowByName = (rowName) => wrapper.findAllByRole('row', { name: rowName });
   const findIssuesLinks = () => wrapper.findAllByTestId('issues-link');
   const findNewContactButton = () => wrapper.findByTestId('new-contact-button');
-  const findEditContactButton = () => wrapper.findByTestId('edit-contact-button');
   const findContactForm = () => wrapper.findComponent(ContactForm);
   const findError = () => wrapper.findComponent(GlAlert);
   const successQueryHandler = jest.fn().mockResolvedValue(getGroupContactsQueryResponse);
@@ -90,28 +89,9 @@ describe('Customer relations contacts root app', () => {
       expect(findContactForm().exists()).toBe(false);
     });
 
-    it('should exist when user clicks new contact button', async () => {
-      mountComponent({ mountFunction: mountExtended });
-
-      findNewContactButton().vm.$emit('click');
-      await waitForPromises();
-
-      expect(findContactForm().exists()).toBe(true);
-    });
-
     it('should exist when user navigates directly to `new` route', async () => {
       router.replace({ name: NEW_ROUTE_NAME });
       mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      expect(findContactForm().exists()).toBe(true);
-    });
-
-    it('should exist when user clicks edit contact button', async () => {
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findEditContactButton().vm.$emit('click');
       await waitForPromises();
 
       expect(findContactForm().exists()).toBe(true);

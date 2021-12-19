@@ -27,6 +27,8 @@ export default {
       getGroupOrganizationsQuery,
       createOrganizationMutation,
       updateOrganizationMutation,
+      NEW_ROUTE_NAME,
+      EDIT_ROUTE_NAME,
     };
   },
   apollo: {
@@ -55,7 +57,7 @@ export default {
       return parseBoolean(this.canAdminCrmOrganization);
     },
     editingOrganization() {
-      if (this.$route.name !== EDIT_ROUTE_NAME) return;
+      if (this.$route.name !== EDIT_ROUTE_NAME) return null;
 
       return this.organizations.find(
         ({ id }) => id === convertToGraphQLId(TYPE_CRM_ORGANIZATION, this.$route.params.id),
@@ -73,22 +75,10 @@ export default {
     getIssuesPath(path, value) {
       return `${path}?scope=all&state=opened&crm_organization_id=${value}`;
     },
-    displayNewForm() {
-      if (this.$route.name === NEW_ROUTE_NAME) return;
-
-      this.$router.push({ name: NEW_ROUTE_NAME });
-    },
     hideForm(message) {
       if (message) this.$toast.show(message);
 
-      this.editingOrganizationId = 0;
       this.$router.replace({ name: INDEX_ROUTE_NAME });
-    },
-    edit(id) {
-      if (this.$route.name === EDIT_ROUTE_NAME) return;
-
-      this.editingOrganizationId = id;
-      this.$router.push({ name: EDIT_ROUTE_NAME, params: { id } });
     },
   },
   fields: [
@@ -129,9 +119,11 @@ export default {
         v-if="canAdmin"
         class="gl-display-none gl-md-display-flex gl-align-items-center gl-justify-content-end"
       >
-        <gl-button variant="confirm" data-testid="new-organization-button" @click="displayNewForm">
-          {{ $options.i18n.newOrganization }}
-        </gl-button>
+        <router-link :to="{ name: NEW_ROUTE_NAME }">
+          <gl-button variant="confirm" data-testid="new-organization-button">
+            {{ $options.i18n.newOrganization }}
+          </gl-button>
+        </router-link>
       </div>
     </div>
     <router-view
@@ -174,14 +166,15 @@ export default {
           :aria-label="$options.i18n.issuesButtonLabel"
           :href="getIssuesPath(groupIssuesPath, data.value)"
         />
-        <gl-button
-          v-if="canAdmin"
-          v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"
-          data-testid="edit-organization-button"
-          icon="pencil"
-          :aria-label="$options.i18n.editButtonLabel"
-          @click="edit(data.value)"
-        />
+        <router-link :to="{ name: EDIT_ROUTE_NAME, params: { id: data.value } }">
+          <gl-button
+            v-if="canAdmin"
+            v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"
+            data-testid="edit-organization-button"
+            icon="pencil"
+            :aria-label="$options.i18n.editButtonLabel"
+          />
+        </router-link>
       </template>
     </gl-table>
   </div>

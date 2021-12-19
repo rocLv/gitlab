@@ -77,12 +77,9 @@ export default {
     isInvalid() {
       const { fields, model } = this;
 
-      for (const field of fields) {
-        if (!field.required) continue;
-        if (model[field.name] == null || model[field.name].trim() === '') return true;
-      }
-
-      return false;
+      return fields.some((field) => {
+        return field.required && (model[field.name] == null || model[field.name].trim() === '');
+      });
     },
     title() {
       const { editPrefix, newPrefix } = this.$options.i18n;
@@ -102,14 +99,15 @@ export default {
     variables() {
       const { additionalCreateParams, fields, isEditMode, model } = this;
 
-      const variables = {};
-      for (const field of fields) {
+      const variables = fields.reduce((map, field) => {
+        const result = { ...map };
         if (model[field.name] != null && field.input?.type === 'number') {
-          variables[field.name] = parseFloat(model[field.name]);
+          result[field.name] = parseFloat(model[field.name]);
         } else {
-          variables[field.name] = model[field.name];
+          result[field.name] = model[field.name];
         }
-      }
+        return result;
+      }, {});
 
       if (isEditMode) {
         return { input: { id: this.existingModel.id, ...variables } };
@@ -193,6 +191,10 @@ export default {
 
       return '';
     },
+    getFieldLabel(field) {
+      const optionalSuffix = field.required ? '' : ` ${this.$options.i18n.optional}`;
+      return field.label + optionalSuffix;
+    },
   },
   i18n: {
     create: __('Create'),
@@ -229,7 +231,7 @@ export default {
       <gl-form-group
         v-for="field in fields"
         :key="field.name"
-        :label="field.label"
+        :label="getFieldLabel(field)"
         :label-for="field.name"
       >
         <gl-form-input :id="field.name" v-bind="field.input" v-model="model[field.name]" />

@@ -23,7 +23,6 @@ describe('Customer relations organizations root app', () => {
   const findRowByName = (rowName) => wrapper.findAllByRole('row', { name: rowName });
   const findIssuesLinks = () => wrapper.findAllByTestId('issues-link');
   const findNewOrganizationButton = () => wrapper.findByTestId('new-organization-button');
-  const findEditOrganizationButton = () => wrapper.findByTestId('edit-organization-button');
   const findOrganizationForm = () => wrapper.findComponent(OrganizationForm);
   const findError = () => wrapper.findComponent(GlAlert);
   const successQueryHandler = jest.fn().mockResolvedValue(getGroupOrganizationsQueryResponse);
@@ -90,29 +89,9 @@ describe('Customer relations organizations root app', () => {
       expect(findOrganizationForm().exists()).toBe(false);
     });
 
-    it('should exist when user clicks new contact button', async () => {
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findNewOrganizationButton().vm.$emit('click');
-      await waitForPromises();
-
-      expect(findOrganizationForm().exists()).toBe(true);
-    });
-
     it('should exist when user navigates directly to `new` route', async () => {
       router.replace({ name: NEW_ROUTE_NAME });
       mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      expect(findOrganizationForm().exists()).toBe(true);
-    });
-
-    it('should exist when user clicks edit organization button', async () => {
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findEditOrganizationButton().vm.$emit('click');
       await waitForPromises();
 
       expect(findOrganizationForm().exists()).toBe(true);

@@ -27,6 +27,8 @@ export default {
       getGroupContactsQuery,
       createContactMutation,
       updateContactMutation,
+      NEW_ROUTE_NAME,
+      EDIT_ROUTE_NAME,
     };
   },
   apollo: {
@@ -55,7 +57,7 @@ export default {
       return parseBoolean(this.canAdminCrmContact);
     },
     editingContact() {
-      if (this.$route.name !== EDIT_ROUTE_NAME) return;
+      if (this.$route.name !== EDIT_ROUTE_NAME) return null;
 
       return this.contacts.find(
         ({ id }) => id === convertToGraphQLId(TYPE_CRM_CONTACT, this.$route.params.id),
@@ -70,25 +72,13 @@ export default {
       const contacts = data?.group?.contacts?.nodes || [];
       return contacts.slice().sort((a, b) => a.firstName.localeCompare(b.firstName));
     },
-    displayNewForm() {
-      if (this.showNewForm) return;
-
-      this.$router.push({ name: NEW_ROUTE_NAME });
-    },
     hideForm(message) {
       if (message) this.$toast.show(message);
 
-      this.editingContactId = 0;
       this.$router.replace({ name: INDEX_ROUTE_NAME });
     },
     getIssuesPath(path, value) {
       return `${path}?scope=all&state=opened&crm_contact_id=${value}`;
-    },
-    edit(value) {
-      if (this.showEditForm) return;
-
-      this.editingContactId = value;
-      this.$router.push({ name: EDIT_ROUTE_NAME, params: { id: value } });
     },
   },
   fields: [
@@ -134,15 +124,15 @@ export default {
       <h2 class="gl-font-size-h2 gl-my-0">
         {{ $options.i18n.title }}
       </h2>
-      <div class="gl-display-none gl-md-display-flex gl-align-items-center gl-justify-content-end">
-        <gl-button
-          v-if="canAdmin"
-          variant="confirm"
-          data-testid="new-contact-button"
-          @click="displayNewForm"
-        >
-          {{ $options.i18n.newContact }}
-        </gl-button>
+      <div
+        v-if="canAdmin"
+        class="gl-display-none gl-md-display-flex gl-align-items-center gl-justify-content-end"
+      >
+        <router-link :to="{ name: NEW_ROUTE_NAME }">
+          <gl-button variant="confirm" data-testid="new-contact-button">
+            {{ $options.i18n.newContact }}
+          </gl-button>
+        </router-link>
       </div>
     </div>
     <router-view
@@ -183,14 +173,15 @@ export default {
           :aria-label="$options.i18n.issuesButtonLabel"
           :href="getIssuesPath(groupIssuesPath, data.value)"
         />
-        <gl-button
-          v-if="canAdmin"
-          v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"
-          data-testid="edit-contact-button"
-          icon="pencil"
-          :aria-label="$options.i18n.editButtonLabel"
-          @click="edit(data.value)"
-        />
+        <router-link :to="{ name: EDIT_ROUTE_NAME, params: { id: data.value } }">
+          <gl-button
+            v-if="canAdmin"
+            v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"
+            data-testid="edit-contact-button"
+            icon="pencil"
+            :aria-label="$options.i18n.editButtonLabel"
+          />
+        </router-link>
       </template>
     </gl-table>
   </div>

@@ -10312,25 +10312,7 @@ msgstr ""
 msgid "Crm|Contact"
 msgstr ""
 
-msgid "Crm|Create new contact"
-msgstr ""
-
 msgid "Crm|Default rate"
-msgstr ""
-
-msgid "Crm|Description (optional)"
-msgstr ""
-
-msgid "Crm|Edit contact"
-msgstr ""
-
-msgid "Crm|Email"
-msgstr ""
-
-msgid "Crm|First name"
-msgstr ""
-
-msgid "Crm|Last name"
 msgstr ""
 
 msgid "Crm|New contact"
@@ -10346,9 +10328,6 @@ msgid "Crm|No organizations found"
 msgstr ""
 
 msgid "Crm|Organization"
-msgstr ""
-
-msgid "Crm|Phone number (optional)"
 msgstr ""
 
 msgid "Cron Timezone"
