@@ -24,11 +24,6 @@ export default {
     return {
       organizations: [],
       error: false,
-      getGroupOrganizationsQuery,
-      createOrganizationMutation,
-      updateOrganizationMutation,
-      NEW_ROUTE_NAME,
-      EDIT_ROUTE_NAME,
     };
   },
   apollo: {
@@ -101,6 +96,11 @@ export default {
     newOrganization: s__('Crm|New organization'),
     errorText: __('Something went wrong. Please try again.'),
   },
+  getGroupOrganizationsQuery,
+  createOrganizationMutation,
+  updateOrganizationMutation,
+  NEW_ROUTE_NAME,
+  EDIT_ROUTE_NAME,
 };
 </script>
 
@@ -119,7 +119,7 @@ export default {
         v-if="canAdmin"
         class="gl-display-none gl-md-display-flex gl-align-items-center gl-justify-content-end"
       >
-        <router-link :to="{ name: NEW_ROUTE_NAME }">
+        <router-link :to="{ name: $options.NEW_ROUTE_NAME }">
           <gl-button variant="confirm" data-testid="new-organization-button">
             {{ $options.i18n.newOrganization }}
           </gl-button>
@@ -129,12 +129,12 @@ export default {
     <router-view
       v-if="!isLoading"
       :drawer-open="true"
-      :get-query="getGroupOrganizationsQuery"
+      :get-query="$options.getGroupOrganizationsQuery"
       :get-query-variables="{ groupFullPath }"
       get-query-node-path="group.organizations"
-      :create-mutation="createOrganizationMutation"
+      :create-mutation="$options.createOrganizationMutation"
       :additional-create-params="{ groupId: groupGraphQLId }"
-      :update-mutation="updateOrganizationMutation"
+      :update-mutation="$options.updateOrganizationMutation"
       :existing-model="editingOrganization"
       :fields="[
         { name: 'name', label: __('Name'), required: true },
@@ -166,7 +166,7 @@ export default {
           :aria-label="$options.i18n.issuesButtonLabel"
           :href="getIssuesPath(groupIssuesPath, data.value)"
         />
-        <router-link :to="{ name: EDIT_ROUTE_NAME, params: { id: data.value } }">
+        <router-link :to="{ name: $options.EDIT_ROUTE_NAME, params: { id: data.value } }">
           <gl-button
             v-if="canAdmin"
             v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"

@@ -24,11 +24,6 @@ export default {
     return {
       contacts: [],
       error: false,
-      getGroupContactsQuery,
-      createContactMutation,
-      updateContactMutation,
-      NEW_ROUTE_NAME,
-      EDIT_ROUTE_NAME,
     };
   },
   apollo: {
@@ -110,6 +105,11 @@ export default {
     newContact: s__('Crm|New contact'),
     errorText: __('Something went wrong. Please try again.'),
   },
+  getGroupContactsQuery,
+  createContactMutation,
+  updateContactMutation,
+  NEW_ROUTE_NAME,
+  EDIT_ROUTE_NAME,
 };
 </script>
 
@@ -128,7 +128,7 @@ export default {
         v-if="canAdmin"
         class="gl-display-none gl-md-display-flex gl-align-items-center gl-justify-content-end"
       >
-        <router-link :to="{ name: NEW_ROUTE_NAME }">
+        <router-link :to="{ name: $options.NEW_ROUTE_NAME }">
           <gl-button variant="confirm" data-testid="new-contact-button">
             {{ $options.i18n.newContact }}
           </gl-button>
@@ -138,12 +138,12 @@ export default {
     <router-view
       v-if="!isLoading"
       :drawer-open="true"
-      :get-query="getGroupContactsQuery"
+      :get-query="$options.getGroupContactsQuery"
       :get-query-variables="{ groupFullPath }"
       get-query-node-path="group.contacts"
-      :create-mutation="createContactMutation"
+      :create-mutation="$options.createContactMutation"
       :additional-create-params="{ groupId: groupGraphQLId }"
-      :update-mutation="updateContactMutation"
+      :update-mutation="$options.updateContactMutation"
       :existing-model="editingContact"
       :fields="[
         { name: 'firstName', label: __('First name'), required: true },
@@ -173,7 +173,7 @@ export default {
           :aria-label="$options.i18n.issuesButtonLabel"
           :href="getIssuesPath(groupIssuesPath, data.value)"
         />
-        <router-link :to="{ name: EDIT_ROUTE_NAME, params: { id: data.value } }">
+        <router-link :to="{ name: $options.EDIT_ROUTE_NAME, params: { id: data.value } }">
           <gl-button
             v-if="canAdmin"
             v-gl-tooltip.hover.bottom="$options.i18n.editButtonLabel"
