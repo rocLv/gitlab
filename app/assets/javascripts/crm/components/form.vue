@@ -3,6 +3,7 @@ import { GlAlert, GlButton, GlDrawer, GlFormGroup, GlFormInput } from '@gitlab/u
 import { get } from 'lodash';
 import { produce } from 'immer';
 import { __ } from '~/locale';
+import { INDEX_ROUTE_NAME } from '../constants';
 
 export default {
   components: {
@@ -152,7 +153,9 @@ export default {
         message += isEditMode ? updated : added;
       }
 
-      this.$emit('close', message);
+      // This is needed so toast perists when route is changed
+      this.$root.$toast.show(message);
+      this.$router.replace({ name: INDEX_ROUTE_NAME });
     },
     updateCache(store, { data }) {
       const mutationData = data[Object.keys(data)[0]];

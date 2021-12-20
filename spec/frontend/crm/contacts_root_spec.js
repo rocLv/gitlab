@@ -104,28 +104,6 @@ describe('Customer relations contacts root app', () => {
 
       expect(findContactForm().exists()).toBe(true);
     });
-
-    it('should not exist when new form emits close', async () => {
-      router.replace({ name: NEW_ROUTE_NAME });
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findContactForm().vm.$emit('close');
-      await waitForPromises();
-
-      expect(findContactForm().exists()).toBe(false);
-    });
-
-    it('should not exist when edit form emits close', async () => {
-      router.replace({ name: EDIT_ROUTE_NAME, params: { id: 16 } });
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findContactForm().vm.$emit('close');
-      await waitForPromises();
-
-      expect(findContactForm().exists()).toBe(false);
-    });
   });
 
   describe('error', () => {

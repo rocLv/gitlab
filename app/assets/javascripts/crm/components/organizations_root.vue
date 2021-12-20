@@ -4,7 +4,7 @@ import { parseBoolean } from '~/lib/utils/common_utils';
 import { s__, __ } from '~/locale';
 import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
 import { TYPE_CRM_ORGANIZATION, TYPE_GROUP } from '~/graphql_shared/constants';
-import { INDEX_ROUTE_NAME, NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
+import { NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
 import getGroupOrganizationsQuery from './queries/get_group_organizations.query.graphql';
 import createOrganizationMutation from './queries/create_organization.mutation.graphql';
 import updateOrganizationMutation from './queries/update_organization.mutation.graphql';
@@ -69,11 +69,6 @@ export default {
     },
     getIssuesPath(path, value) {
       return `${path}?scope=all&state=opened&crm_organization_id=${value}`;
-    },
-    hideForm(message) {
-      if (message) this.$toast.show(message);
-
-      this.$router.replace({ name: INDEX_ROUTE_NAME });
     },
   },
   fields: [
@@ -146,7 +141,6 @@ export default {
         { name: 'description', label: __('Description') },
       ]"
       :i18n="{ modelName: s__('Crm|Organization') }"
-      @close="hideForm"
     />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table

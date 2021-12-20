@@ -104,28 +104,6 @@ describe('Customer relations organizations root app', () => {
 
       expect(findOrganizationForm().exists()).toBe(true);
     });
-
-    it('should not exist when new form emits close', async () => {
-      router.replace({ name: NEW_ROUTE_NAME });
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findOrganizationForm().vm.$emit('close');
-      await waitForPromises();
-
-      expect(findOrganizationForm().exists()).toBe(false);
-    });
-
-    it('should not exist when edit form emits close', async () => {
-      router.replace({ name: EDIT_ROUTE_NAME, params: { id: 2 } });
-      mountComponent({ mountFunction: mountExtended });
-      await waitForPromises();
-
-      findOrganizationForm().vm.$emit('close');
-      await waitForPromises();
-
-      expect(findOrganizationForm().exists()).toBe(false);
-    });
   });
 
   it('should render error message on reject', async () => {

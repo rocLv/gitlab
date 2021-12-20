@@ -67,11 +67,6 @@ export default {
       const contacts = data?.group?.contacts?.nodes || [];
       return contacts.slice().sort((a, b) => a.firstName.localeCompare(b.firstName));
     },
-    hideForm(message) {
-      if (message) this.$toast.show(message);
-
-      this.$router.replace({ name: INDEX_ROUTE_NAME });
-    },
     getIssuesPath(path, value) {
       return `${path}?scope=all&state=opened&crm_contact_id=${value}`;
     },
@@ -153,7 +148,6 @@ export default {
         { name: 'description', label: __('Description') },
       ]"
       :i18n="{ modelName: s__('Crm|Contact') }"
-      @close="hideForm"
     />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table
