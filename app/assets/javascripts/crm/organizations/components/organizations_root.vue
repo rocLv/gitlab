@@ -2,12 +2,9 @@
 import { GlAlert, GlButton, GlLoadingIcon, GlTable, GlTooltipDirective } from '@gitlab/ui';
 import { parseBoolean } from '~/lib/utils/common_utils';
 import { s__, __ } from '~/locale';
-import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
-import { TYPE_CRM_ORGANIZATION, TYPE_GROUP } from '~/graphql_shared/constants';
-import { NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
+import { getIdFromGraphQLId } from '~/graphql_shared/utils';
+import { EDIT_ROUTE_NAME, NEW_ROUTE_NAME } from '../../constants';
 import getGroupOrganizationsQuery from './queries/get_group_organizations.query.graphql';
-import createOrganizationMutation from './queries/create_organization.mutation.graphql';
-import updateOrganizationMutation from './queries/update_organization.mutation.graphql';
 
 export default {
   components: {
@@ -19,7 +16,7 @@ export default {
   directives: {
     GlTooltip: GlTooltipDirective,
   },
-  inject: ['canAdminCrmOrganization', 'groupFullPath', 'groupId', 'groupIssuesPath'],
+  inject: ['canAdminCrmOrganization', 'groupFullPath', 'groupIssuesPath'],
   data() {
     return {
       organizations: [],
@@ -51,16 +48,6 @@ export default {
     canAdmin() {
       return parseBoolean(this.canAdminCrmOrganization);
     },
-    editingOrganization() {
-      if (this.$route.name !== EDIT_ROUTE_NAME) return null;
-
-      return this.organizations.find(
-        ({ id }) => id === convertToGraphQLId(TYPE_CRM_ORGANIZATION, this.$route.params.id),
-      );
-    },
-    groupGraphQLId() {
-      return convertToGraphQLId(TYPE_GROUP, this.groupId);
-    },
   },
   methods: {
     extractOrganizations(data) {
@@ -91,11 +78,8 @@ export default {
     newOrganization: s__('Crm|New organization'),
     errorText: __('Something went wrong. Please try again.'),
   },
-  getGroupOrganizationsQuery,
-  createOrganizationMutation,
-  updateOrganizationMutation,
-  NEW_ROUTE_NAME,
   EDIT_ROUTE_NAME,
+  NEW_ROUTE_NAME,
 };
 </script>
 
@@ -121,27 +105,7 @@ export default {
         </router-link>
       </div>
     </div>
-    <router-view
-      v-if="!isLoading"
-      :drawer-open="true"
-      :get-query="$options.getGroupOrganizationsQuery"
-      :get-query-variables="{ groupFullPath }"
-      get-query-node-path="group.organizations"
-      :create-mutation="$options.createOrganizationMutation"
-      :additional-create-params="{ groupId: groupGraphQLId }"
-      :update-mutation="$options.updateOrganizationMutation"
-      :existing-model="editingOrganization"
-      :fields="[
-        { name: 'name', label: __('Name'), required: true },
-        {
-          name: 'defaultRate',
-          label: s__('Crm|Default rate'),
-          input: { type: 'number', step: '0.01' },
-        },
-        { name: 'description', label: __('Description') },
-      ]"
-      :i18n="{ modelName: s__('Crm|Organization') }"
-    />
+    <router-view />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table
       v-else

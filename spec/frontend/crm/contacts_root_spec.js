@@ -5,11 +5,11 @@ import VueRouter from 'vue-router';
 import { mountExtended, shallowMountExtended } from 'helpers/vue_test_utils_helper';
 import createMockApollo from 'helpers/mock_apollo_helper';
 import waitForPromises from 'helpers/wait_for_promises';
-import ContactsRoot from '~/crm/components/contacts_root.vue';
+import ContactsRoot from '~/crm/contacts/components/contacts_root.vue';
 import ContactForm from '~/crm/components/form.vue';
-import getGroupContactsQuery from '~/crm/components/queries/get_group_contacts.query.graphql';
+import getGroupContactsQuery from '~/crm/contacts/components/queries/get_group_contacts.query.graphql';
 import { NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '~/crm/constants';
-import routes from '~/crm/routes';
+import routes from '~/crm/contacts/routes';
 import { getGroupContactsQueryResponse } from './mock_data';
 
 describe('Customer relations contacts root app', () => {
@@ -40,7 +40,6 @@ describe('Customer relations contacts root app', () => {
       provide: {
         groupFullPath: 'flightjs',
         groupIssuesPath: '/issues',
-        groupId: 26,
         canAdminCrmContact,
       },
       apolloProvider: fakeApollo,

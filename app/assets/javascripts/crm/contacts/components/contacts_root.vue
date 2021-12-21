@@ -2,12 +2,9 @@
 import { GlAlert, GlButton, GlLoadingIcon, GlTable, GlTooltipDirective } from '@gitlab/ui';
 import { parseBoolean } from '~/lib/utils/common_utils';
 import { s__, __ } from '~/locale';
-import { convertToGraphQLId, getIdFromGraphQLId } from '~/graphql_shared/utils';
-import { TYPE_CRM_CONTACT, TYPE_GROUP } from '~/graphql_shared/constants';
-import { INDEX_ROUTE_NAME, NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '../constants';
+import { getIdFromGraphQLId } from '~/graphql_shared/utils';
+import { EDIT_ROUTE_NAME, NEW_ROUTE_NAME } from '../../constants';
 import getGroupContactsQuery from './queries/get_group_contacts.query.graphql';
-import createContactMutation from './queries/create_contact.mutation.graphql';
-import updateContactMutation from './queries/update_contact.mutation.graphql';
 
 export default {
   components: {
@@ -19,7 +16,7 @@ export default {
   directives: {
     GlTooltip: GlTooltipDirective,
   },
-  inject: ['canAdminCrmContact', 'groupFullPath', 'groupId', 'groupIssuesPath'],
+  inject: ['canAdminCrmContact', 'groupFullPath', 'groupIssuesPath'],
   data() {
     return {
       contacts: [],
@@ -50,16 +47,6 @@ export default {
     },
     canAdmin() {
       return parseBoolean(this.canAdminCrmContact);
-    },
-    editingContact() {
-      if (this.$route.name !== EDIT_ROUTE_NAME) return null;
-
-      return this.contacts.find(
-        ({ id }) => id === convertToGraphQLId(TYPE_CRM_CONTACT, this.$route.params.id),
-      );
-    },
-    groupGraphQLId() {
-      return convertToGraphQLId(TYPE_GROUP, this.groupId);
     },
   },
   methods: {
@@ -100,11 +87,8 @@ export default {
     newContact: s__('Crm|New contact'),
     errorText: __('Something went wrong. Please try again.'),
   },
-  getGroupContactsQuery,
-  createContactMutation,
-  updateContactMutation,
-  NEW_ROUTE_NAME,
   EDIT_ROUTE_NAME,
+  NEW_ROUTE_NAME,
 };
 </script>
 
@@ -130,25 +114,7 @@ export default {
         </router-link>
       </div>
     </div>
-    <router-view
-      v-if="!isLoading"
-      :drawer-open="true"
-      :get-query="$options.getGroupContactsQuery"
-      :get-query-variables="{ groupFullPath }"
-      get-query-node-path="group.contacts"
-      :create-mutation="$options.createContactMutation"
-      :additional-create-params="{ groupId: groupGraphQLId }"
-      :update-mutation="$options.updateContactMutation"
-      :existing-model="editingContact"
-      :fields="[
-        { name: 'firstName', label: __('First name'), required: true },
-        { name: 'lastName', label: __('Last name'), required: true },
-        { name: 'email', label: __('Email'), required: true },
-        { name: 'phone', label: __('Phone') },
-        { name: 'description', label: __('Description') },
-      ]"
-      :i18n="{ modelName: s__('Crm|Contact') }"
-    />
+    <router-view />
     <gl-loading-icon v-if="isLoading" class="gl-mt-5" size="lg" />
     <gl-table
       v-else

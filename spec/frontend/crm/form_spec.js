@@ -5,9 +5,9 @@ import { shallowMountExtended } from 'helpers/vue_test_utils_helper';
 import createMockApollo from 'helpers/mock_apollo_helper';
 import waitForPromises from 'helpers/wait_for_promises';
 import Form from '~/crm/components/form.vue';
-import createContactMutation from '~/crm/components/queries/create_contact.mutation.graphql';
-import updateContactMutation from '~/crm/components/queries/update_contact.mutation.graphql';
-import getGroupContactsQuery from '~/crm/components/queries/get_group_contacts.query.graphql';
+import createContactMutation from '~/crm/contacts/components/queries/create_contact.mutation.graphql';
+import updateContactMutation from '~/crm/contacts/components/queries/update_contact.mutation.graphql';
+import getGroupContactsQuery from '~/crm/contacts/components/queries/get_group_contacts.query.graphql';
 import {
   createContactMutationErrorResponse,
   createContactMutationResponse,
@@ -26,6 +26,39 @@ describe('Reusable form component', () => {
   const findSaveButton = () => wrapper.findByTestId('save-button');
   const findForm = () => wrapper.find('form');
   const findError = () => wrapper.findComponent(GlAlert);
+
+  const mountComponent = (propsData, fakeApollo) => {
+    wrapper = shallowMountExtended(Form, {
+      apolloProvider: fakeApollo,
+      propsData: { drawerOpen: true, i18n: { modelName: 'Contact' }, ...propsData },
+      mocks: {
+        $toast: {
+          show: mockToastShow,
+        },
+      },
+    });
+  };
+
+  const mountContact = ({ propsData, fakeApollo } = {}) => {
+    fakeApollo.clients.defaultClient.cache.writeQuery({
+      query: getGroupContactsQuery,
+      variables: { groupFullPath: 'flightjs' },
+      data: getGroupContactsQueryResponse.data,
+    });
+    mountComponent(
+      {
+        fields: [
+          { name: 'firstName', label: 'First name', required: true },
+          { name: 'lastName', label: 'Last name', required: true },
+          { name: 'email', label: 'Email', required: true },
+          { name: 'phone', label: 'Phone' },
+          { name: 'description', label: 'Description' },
+        ],
+        ...propsData,
+      },
+      fakeApollo,
+    );
+  };
 
   const mountContactCreate = () => {
     if (!queryHandler) queryHandler = jest.fn().mockResolvedValue(createContactMutationResponse);
@@ -56,39 +89,6 @@ describe('Reusable form component', () => {
       isEditMode: true,
     };
     mountContact({ propsData, fakeApollo });
-  };
-
-  const mountContact = ({ propsData, fakeApollo } = {}) => {
-    fakeApollo.clients.defaultClient.cache.writeQuery({
-      query: getGroupContactsQuery,
-      variables: { groupFullPath: 'flightjs' },
-      data: getGroupContactsQueryResponse.data,
-    });
-    mountComponent(
-      {
-        fields: [
-          { name: 'firstName', label: 'First name', required: true },
-          { name: 'lastName', label: 'Last name', required: true },
-          { name: 'email', label: 'Email', required: true },
-          { name: 'phone', label: 'Phone' },
-          { name: 'description', label: 'Description' },
-        ],
-        ...propsData,
-      },
-      fakeApollo,
-    );
-  };
-
-  const mountComponent = (propsData, fakeApollo) => {
-    wrapper = shallowMountExtended(Form, {
-      apolloProvider: fakeApollo,
-      propsData: { drawerOpen: true, i18n: { modelName: 'Contact' }, ...propsData },
-      mocks: {
-        $toast: {
-          show: mockToastShow,
-        },
-      },
-    });
   };
 
   const formNames = {

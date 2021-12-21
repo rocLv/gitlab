@@ -10309,9 +10309,6 @@ msgstr ""
 msgid "Critical vulnerabilities present"
 msgstr ""
 
-msgid "Crm|Contact"
-msgstr ""
-
 msgid "Crm|Default rate"
 msgstr ""
 
@@ -10327,7 +10324,10 @@ msgstr ""
 msgid "Crm|No organizations found"
 msgstr ""
 
-msgid "Crm|Organization"
+msgid "Crm|contact"
+msgstr ""
+
+msgid "Crm|organization"
 msgstr ""
 
 msgid "Cron Timezone"

@@ -5,11 +5,11 @@ import VueRouter from 'vue-router';
 import { mountExtended, shallowMountExtended } from 'helpers/vue_test_utils_helper';
 import createMockApollo from 'helpers/mock_apollo_helper';
 import waitForPromises from 'helpers/wait_for_promises';
-import OrganizationsRoot from '~/crm/components/organizations_root.vue';
+import OrganizationsRoot from '~/crm/organizations/components/organizations_root.vue';
 import OrganizationForm from '~/crm/components/form.vue';
 import { NEW_ROUTE_NAME, EDIT_ROUTE_NAME } from '~/crm/constants';
-import routes from '~/crm/routes';
-import getGroupOrganizationsQuery from '~/crm/components/queries/get_group_organizations.query.graphql';
+import routes from '~/crm/organizations/routes';
+import getGroupOrganizationsQuery from '~/crm/organizations/components/queries/get_group_organizations.query.graphql';
 import { getGroupOrganizationsQueryResponse } from './mock_data';
 
 describe('Customer relations organizations root app', () => {
@@ -40,7 +40,6 @@ describe('Customer relations organizations root app', () => {
       provide: {
         canAdminCrmOrganization,
         groupFullPath: 'flightjs',
-        groupId: 26,
         groupIssuesPath: '/issues',
       },
       apolloProvider: fakeApollo,
