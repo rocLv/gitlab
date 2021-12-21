@@ -1,6 +1,6 @@
 <script>
 import { GlAlert, GlButton, GlDrawer, GlFormGroup, GlFormInput } from '@gitlab/ui';
-import { get } from 'lodash';
+import { get as getPropValueByPath, isEmpty } from 'lodash';
 import { produce } from 'immer';
 import { __ } from '~/locale';
 import { INDEX_ROUTE_NAME } from '../constants';
@@ -79,7 +79,7 @@ export default {
       const { fields, model } = this;
 
       return fields.some((field) => {
-        return field.required && (model[field.name] == null || model[field.name].trim() === '');
+        return field.required && isEmpty(model[field.name]);
       });
     },
     title() {
@@ -136,11 +136,11 @@ export default {
           if (data[Object.keys(data)[0]].errors.length === 0) {
             close(true);
           }
-
-          this.submitting = false;
         })
         .catch(() => {
           this.errorMessages = [this.$options.i18n.somethingWentWrong];
+        })
+        .finally(() => {
           this.submitting = false;
         });
     },
@@ -177,8 +177,8 @@ export default {
       const sourceData = store.readQuery(queryArgs);
 
       queryArgs.data = produce(sourceData, (draftState) => {
-        get(draftState, this.getQueryNodePath).nodes = [
-          ...get(draftState, this.getQueryNodePath).nodes,
+        getPropValueByPath(draftState, this.getQueryNodePath).nodes = [
+          ...getPropValueByPath(draftState, this.getQueryNodePath).nodes,
           mutationData[Object.keys(mutationData)[0]],
         ];
       });
