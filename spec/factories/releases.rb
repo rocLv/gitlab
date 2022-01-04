@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :release do
     sequence :tag do |n|
-      "v1.#{n.to_s}.0"
+      "v1.#{n}.0"
     end
     sha { 'b83d6e391c22777fca1ed3012fce84f633d7fed0' }
     name { tag }
