@@ -4,13 +4,9 @@ class RemoveDuplicateProjectTagReleases < Gitlab::Database::Migration[1.0]
   disable_ddl_transaction!
 
   def up
-    ActiveRecord::Base.connection.execute <<~SQL
-      delete from releases a using
-        (SELECT project_id, tag, MAX(released_at) FROM releases GROUP BY project_id, tag HAVING COUNT(*) > 1) b
-        where a.project_id = b.project_id
-          and a.tag = b.tag
-          and a.released_at < b.max;
-    SQL
+    Release.select(:project_id, :tag, 'MAX(released_at) as max').group(:project_id, :tag).having('COUNT(*) > 1').each do |rel|
+      Release.where(project_id: rel.project_id, tag: rel.tag).where("released_at < ?", rel.max).delete_all
+    end
   end
 
   def down
