@@ -33487,9 +33487,6 @@ msgstr ""
 msgid "SortOptions|Last created"
 msgstr ""
 
-msgid "SortOptions|Last updated"
-msgstr ""
-
 msgid "SortOptions|Least popular"
 msgstr ""
 
@@ -33593,6 +33590,9 @@ msgid "SortOptions|Title"
 msgstr ""
 
 msgid "SortOptions|Type"
+msgstr ""
+
+msgid "SortOptions|Updated date"
 msgstr ""
 
 msgid "SortOptions|Version"
@@ -38178,6 +38178,9 @@ msgid "Updated"
 msgstr ""
 
 msgid "Updated %{updated_at} by %{updated_by}"
+msgstr ""
+
+msgid "Updated date"
 msgstr ""
 
 msgid "Updates"
