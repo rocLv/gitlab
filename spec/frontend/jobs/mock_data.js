@@ -941,7 +941,7 @@ export default {
       method: 'post',
     },
   },
-  coverage: 20,
+  coverage: 0, // Valid result and distinct from null
   erased_at: threeWeeksAgo.toISOString(),
   erased: false,
   duration: 6.785563,

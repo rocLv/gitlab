@@ -61,7 +61,7 @@ describe('Job Sidebar Details Container', () => {
       ['finished_at', 'Finished: 3 weeks ago'],
       ['queued', 'Queued: 9 seconds'],
       ['runner', 'Runner: #1 (ABCDEFGH) local ci runner'],
-      ['coverage', 'Coverage: 20%'],
+      ['coverage', 'Coverage: 0%'], // Valid result and distinct from null
     ])('uses %s to render job-%s', async (detail, value) => {
       await store.dispatch('receiveJobSuccess', { [detail]: job[detail] });
       const detailsRow = findAllDetailsRow();
