@@ -3,9 +3,27 @@
 class RemoveDuplicateProjectTagReleases < Gitlab::Database::Migration[1.0]
   disable_ddl_transaction!
 
+  BATCH_SIZE = 50
+
   def up
-    Release.select(:project_id, :tag, 'MAX(released_at) as max').group(:project_id, :tag).having('COUNT(*) > 1').each do |rel|
-      Release.where(project_id: rel.project_id, tag: rel.tag).where("released_at < ?", rel.max).delete_all
+    count = execute("SELECT count(project_id) FROM releases GROUP BY project_id, tag HAVING COUNT(*) > 1").to_a
+    count = count.empty? ? 0 : count[0]["count"]
+
+    (0...count).step(BATCH_SIZE).each do |i|
+      execute(
+        "SELECT  project_id, tag, MAX(released_at) as max FROM releases GROUP BY project_id, tag HAVING COUNT(*) > 1 LIMIT #{BATCH_SIZE} OFFSET #{i}"
+      ).each do |result|
+        execute(
+          ActiveRecord::Base.sanitize_sql(
+            [
+              "DELETE FROM releases WHERE project_id = ? AND tag = ? AND (released_at < ?)",
+              result["project_id"],
+              result["tag"],
+              result["max"]
+            ]
+          )
+        )
+      end
     end
   end
 
