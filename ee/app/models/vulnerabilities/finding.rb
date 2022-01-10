@@ -105,6 +105,8 @@ module Vulnerabilities
         .where("vulnerability_occurrences.location -> 'image' ?| array[:images]", images: images)
     end
 
+    alias_method :declarative_policy_subject, :project
+
     def self.counted_by_severity
       group(:severity).count.transform_keys do |severity|
         severities[severity]
