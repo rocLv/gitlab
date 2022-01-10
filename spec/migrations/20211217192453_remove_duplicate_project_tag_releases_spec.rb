@@ -23,6 +23,7 @@ RSpec.describe RemoveDuplicateProjectTagReleases do
       rel
     end
   end
+
   let(:valid_release) do
     releases.create!(
       project_id: project.id,
