@@ -567,6 +567,7 @@ RSpec.describe GroupPolicy do
 
     context 'without restriction' do
       it { is_expected.to be_allowed(:read_group) }
+      it { is_expected.to be_allowed(:read_milestone) }
     end
 
     context 'with restriction' do
@@ -578,6 +579,7 @@ RSpec.describe GroupPolicy do
         let(:range) { '192.168.0.0/24' }
 
         it { is_expected.to be_allowed(:read_group) }
+        it { is_expected.to be_allowed(:read_milestone) }
       end
 
       context 'address is outside the range' do
@@ -585,18 +587,21 @@ RSpec.describe GroupPolicy do
 
         context 'as developer' do
           it { is_expected.to be_disallowed(:read_group) }
+          it { is_expected.to be_disallowed(:read_milestone) }
         end
 
         context 'as owner' do
           let(:current_user) { owner }
 
           it { is_expected.to be_allowed(:read_group) }
+          it { is_expected.to be_allowed(:read_milestone) }
         end
 
         context 'as auditor' do
           let(:current_user) { create(:user, :auditor) }
 
           it { is_expected.to be_allowed(:read_group) }
+          it { is_expected.to be_allowed(:read_milestone) }
         end
       end
     end
