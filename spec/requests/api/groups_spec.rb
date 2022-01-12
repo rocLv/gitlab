@@ -314,6 +314,26 @@ RSpec.describe API::Groups do
       end
     end
 
+    context "when using membership_groups in request" do
+      let(:subgroup) { create(:group, :nested, name: 'subgroup') }
+      let(:member_group) { create(:group)}
+      let(:response_groups) { json_response.map { |group| group['name'] } }
+
+      before do
+        member_group.add_developer(user1)
+        subgroup.add_owner(user1)
+      end
+
+      it "return only groups where the user is a member" do
+        get api("/groups", user1), params: { membership_groups: true }
+
+        expect(response).to have_gitlab_http_status(:ok)
+        expect(response).to include_pagination_headers
+        expect(json_response).to be_an Array
+        expect(response_groups).to contain_exactly(member_group.name, group1.name, subgroup.name)
+      end
+    end
+
     context "when using skip_groups in request" do
       it "returns all groups excluding skipped groups" do
         get api("/groups", admin), params: { skip_groups: [group2.id] }

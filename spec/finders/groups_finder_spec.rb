@@ -231,6 +231,43 @@ RSpec.describe GroupsFinder do
       end
     end
 
+    context 'with membership groups' do
+      let_it_be(:user) { create(:user) }
+      let_it_be(:parent_group) { create(:group, :public) }
+      let_it_be(:public_subgroup) { create(:group, :public, parent: parent_group) }
+      let_it_be(:internal_sub_subgroup) { create(:group, :internal, parent: public_subgroup) }
+      let_it_be(:private_sub_subgroup) { create(:group, :private, parent: public_subgroup) }
+      let_it_be(:public_sub_subgroup) { create(:group, :public, parent: public_subgroup) }
+
+      let(:params) { { membership_groups: true } }
+
+      context 'without an authenticated user' do
+        it 'parameter is ignored and all public groups are returned' do
+          expect(described_class.new(nil, params).execute).to contain_exactly(
+            parent_group,
+            public_subgroup,
+            public_sub_subgroup
+          )
+        end
+      end
+
+      context 'when an authenticated user is present' do
+        before do
+          parent_group.add_developer(user)
+        end
+
+        it 'returns the groups and their descendants where the user is a member' do
+          expect(described_class.new(user, params).execute).to contain_exactly(
+            parent_group,
+            public_subgroup,
+            public_sub_subgroup,
+            internal_sub_subgroup,
+            private_sub_subgroup
+          )
+        end
+      end
+    end
+
     context 'with search' do
       let_it_be(:parent_group) { create(:group, :public, name: 'Parent Group') }
       let_it_be(:test_group) { create(:group, :public, path: 'test-path') }
