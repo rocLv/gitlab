@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Resolvers
   class RecentBoardsResolver < BaseResolver
     type Types::BoardType, null: true
@@ -8,8 +9,9 @@ module Resolvers
       return Board.none unless parent
 
       recent_visits =
-        ::Boards::VisitsFinder.new(parent, context[:current_user]).latest(Board::RECENT_BOARDS_SIZE)
-      recent_visits.map(&:board)
+        ::Boards::VisitsFinder.new(parent, current_user).latest(Board::RECENT_BOARDS_SIZE)
+
+      recent_visits&.map(&:board) || []
     end
   end
 end

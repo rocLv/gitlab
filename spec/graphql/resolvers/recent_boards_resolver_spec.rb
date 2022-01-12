@@ -8,7 +8,7 @@ RSpec.describe Resolvers::RecentBoardsResolver do
   let_it_be(:user) { create(:user) }
 
   shared_examples_for 'group and project recent boards resolver' do
-    let_it_be(:board1) { create(:board, name: 'Two', resource_parent: board_parent) }
+    let_it_be(:board1) { create(:board, name: 'One', resource_parent: board_parent) }
     let_it_be(:board2) { create(:board, name: 'Two', resource_parent: board_parent) }
 
     before do

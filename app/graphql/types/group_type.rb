@@ -97,7 +97,7 @@ module Types
     field :recent_issue_boards,
           Types::BoardType.connection_type,
           null: true,
-          description: 'List of recent boards of the project.',
+          description: 'List of recently visited boards of the project. Maximum size is 4.',
           resolver: Resolvers::RecentBoardsResolver
 
     field :board,
