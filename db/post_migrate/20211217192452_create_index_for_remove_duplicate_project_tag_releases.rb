@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CreateIndexForRemoveDuplicateProjectTagReleases < Gitlab::Database::Migration[1.0]
-  INDEX_NAME = 'index_releases_on_project_rag_released_at'
+  INDEX_NAME = 'index_releases_on_project_tag_released_at'
 
   disable_ddl_transaction!
 
