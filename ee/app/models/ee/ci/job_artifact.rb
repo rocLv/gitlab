@@ -105,28 +105,6 @@ module EE
         super
       end
 
-      # @param primary_key_in [Range, CoolWidget] arg to pass to primary_key_in scope
-      # @return [ActiveRecord::Relation<CoolWidget>] everything that should be synced to this node, restricted by primary key
-      def self.replicables_for_current_secondary(primary_key_in)
-        # This issue template does not help you write this method.
-        #
-        # This method is called only on Geo secondary sites. It is called when
-        # we want to know which records to replicate. This is not easy to automate
-        # because for example:
-        #
-        # * The "selective sync" feature allows admins to choose which namespaces #   to replicate, per secondary site. Most Models are scoped to a
-        #   namespace, but the nature of the relationship to a namespace varies
-        #   between Models.
-        # * The "selective sync" feature allows admins to choose which shards to
-        #   replicate, per secondary site. Repositories are associated with
-        #   shards. Most blob types are not, but Project Uploads are.
-        # * Remote stored replicables are not replicated, by default. But the
-        #   setting `sync_object_storage` enables replication of remote stored
-        #   replicables.
-        #
-        # Search the codebase for examples, and consult a Geo expert if needed.
-      end
-
       override :verification_state_table_class
       def verification_state_table_class
         ::Geo::JobArtifactState
