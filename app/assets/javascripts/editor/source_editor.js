@@ -37,6 +37,12 @@ const instanceDisposeModels = (editor, instance, model) => {
   }
 };
 
+const createResizeObserver = (instance) => {
+  return new ResizeObserver(() => {
+    instance.layout();
+  });
+};
+
 export default class SourceEditor {
   /**
    * Constructs a global editor.
@@ -45,6 +51,7 @@ export default class SourceEditor {
   constructor(options = {}) {
     this.instances = [];
     this.extensionsStore = new Map();
+    this.observer = null;
     this.options = {
       extraEditorClassName: 'gl-source-editor',
       ...defaultEditorOptions,
@@ -143,12 +150,17 @@ export default class SourceEditor {
       });
     }
 
+    this.observer = createResizeObserver(instance);
+    this.observer.observe(el);
+
     instance.onDidDispose(() => {
       instanceRemoveFromRegistry(this, instance);
       instanceDisposeModels(this, instance, model);
+      this.observer.unobserve(el);
     });
 
     this.instances.push(instance);
+
     el.dispatchEvent(new CustomEvent(EDITOR_READY_EVENT, { detail: { instance } }));
     return instance;
   }
