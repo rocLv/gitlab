@@ -49,6 +49,7 @@ class GroupsFinder < UnionFinder
   def all_groups
     return [owned_groups] if params[:owned]
     return [groups_with_min_access_level] if min_access_level?
+    return [membership_groups] if membership_groups?
     return [Group.all] if current_user&.can_read_all_resources? && all_available?
 
     groups = []
@@ -73,6 +74,10 @@ class GroupsFinder < UnionFinder
 
   def groups_for_descendants
     current_user.groups
+  end
+
+  def membership_groups
+    current_user.membership_groups
   end
 
   # rubocop: disable CodeReuse/ActiveRecord
@@ -131,6 +136,10 @@ class GroupsFinder < UnionFinder
 
   def include_parent_descendants?
     params.fetch(:include_parent_descendants, false)
+  end
+
+  def membership_groups?
+    current_user && params.fetch(:membership_groups, false)
   end
 
   def min_access_level?

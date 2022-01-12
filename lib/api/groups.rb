@@ -18,6 +18,7 @@ module API
 
       params :group_list_params do
         use :statistics_params
+        optional :membership_groups, type: Boolean, default: false, desc: 'Limit to groups authenticated user is a member of, either directly or through a parent group'
         optional :skip_groups, type: Array[Integer], coerce_with: ::API::Validations::Types::CommaSeparatedToIntegerArray.coerce, desc: 'Array of group ids to exclude from list'
         optional :all_available, type: Boolean, desc: 'Show all group that you have access to'
         optional :search, type: String, desc: 'Search for a specific group'
@@ -34,7 +35,9 @@ module API
         find_params = params.slice(
           :all_available,
           :custom_attributes,
-          :owned, :min_access_level,
+          :owned,
+          :membership_groups,
+          :min_access_level,
           :include_parent_descendants,
           :search
         )
