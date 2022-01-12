@@ -33,13 +33,13 @@ RSpec.describe Resolvers::RecentBoardsResolver do
     end
 
     it 'returns recent most recent visited board boards' do
-      expect(resolve_recent_boards).to eq [board2, board1]
+      expect(resolve_recent_boards).to match_array [board2, board1]
     end
 
     it 'returns a set number of boards' do
       stub_const("Board::RECENT_BOARDS_SIZE", 1)
 
-      expect(resolve_recent_boards).to eq [board2]
+      expect(resolve_recent_boards).to match_array [board2]
     end
   end
 
