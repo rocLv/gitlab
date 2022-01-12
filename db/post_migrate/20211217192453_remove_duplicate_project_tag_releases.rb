@@ -3,15 +3,10 @@
 class RemoveDuplicateProjectTagReleases < Gitlab::Database::Migration[1.0]
   disable_ddl_transaction!
 
-  BATCH_SIZE = 50
-
   def up
-    count = execute("SELECT count(project_id) FROM releases GROUP BY project_id, tag HAVING COUNT(*) > 1").to_a
-    count = count.empty? ? 0 : count[0]["count"]
-
-    (0...count).step(BATCH_SIZE).each do |i|
+    Project.all.each_batch(of: 50) do |projects|
       execute(
-        "SELECT  project_id, tag, MAX(released_at) as max FROM releases GROUP BY project_id, tag HAVING COUNT(*) > 1 LIMIT #{BATCH_SIZE} OFFSET #{i}"
+        "SELECT project_id, tag, MAX(released_at) as max FROM releases WHERE project_id IN (#{projects.pluck(:id).join(",")}) GROUP BY project_id, tag HAVING COUNT(*) > 1"
       ).each do |result|
         execute(
           ActiveRecord::Base.sanitize_sql(

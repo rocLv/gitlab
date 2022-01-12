@@ -44,6 +44,7 @@ RSpec.describe RemoveDuplicateProjectTagReleases do
       expect(releases.select(:project_id, :tag, 'MAX(released_at) as max')
                      .group(:project_id, :tag).having('COUNT(*) > 1').length).to eq 0
       expect(releases.find(valid_release.id)).to eq(valid_release)
+      expect(releases.find(dup_releases.last.id)).to eq(dup_releases.last)
     end
   end
 end
