@@ -424,10 +424,6 @@ module EE
       end
     end
 
-    def owners_emails
-      owners.pluck(:email)
-    end
-
     # this method will be delegated to namespace_settings, but as we need to wait till
     # all groups will have namespace_settings created via background migration,
     # we need to serve it from this class

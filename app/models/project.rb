@@ -37,6 +37,7 @@ class Project < ApplicationRecord
   include EachBatch
   include GitlabRoutingHelper
   include BulkMemberAccessLoad
+  include OwnerMethods
 
   extend Gitlab::Cache::RequestCache
   extend Gitlab::Utils::Override
@@ -1522,19 +1523,6 @@ class Project < ApplicationRecord
     return User.where(id: namespace.owner_id) if namespace&.user_namespace?
 
     team.owners
-  end
-
-  def default_owner
-    return owners.first if owners.any?
-
-    # the parent group
-    obj = owner
-
-    if obj.respond_to?(:default_owner)
-      obj.default_owner
-    else
-      obj
-    end
   end
 
   # rubocop: disable CodeReuse/ServiceClass
