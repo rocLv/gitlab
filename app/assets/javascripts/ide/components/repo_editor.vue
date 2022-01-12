@@ -390,10 +390,6 @@ export default {
         fileLanguage: this.model.language,
       });
 
-      this.$nextTick(() => {
-        this.editor.updateDimensions();
-      });
-
       this.$emit('editorSetup');
       if (performance.getEntriesByName(WEBIDE_MARK_FILE_CLICKED).length) {
         eventHub.$emit(WEBIDE_MEASURE_FILE_AFTER_INTERACTION);
