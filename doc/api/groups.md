@@ -22,6 +22,7 @@ Parameters:
 
 | Attribute                | Type              | Required | Description |
 | ------------------------ | ----------------- | -------- | ---------- |
+| `membership_groups`      | boolean           | no       | Limit to groups where the current user is a member, either directly or through a parent group |
 | `skip_groups`            | array of integers | no       | Skip the group IDs passed |
 | `all_available`          | boolean           | no       | Show all the groups you have access to (defaults to `false` for authenticated users, `true` for administrators); Attributes `owned` and `min_access_level` have precedence |
 | `search`                 | string            | no       | Return the list of authorized groups matching the search criteria |
