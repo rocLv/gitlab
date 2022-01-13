@@ -36,6 +36,7 @@ RSpec.describe RemoveDuplicateProjectTagReleases do
   describe '#up' do
     it "correctly removes duplicate tags from the same project" do
       expect(dup_releases.length).to eq 4
+      expect(valid_release).not_to be nil
       expect(releases.select(:project_id, :tag, 'MAX(released_at) as max')
                      .group(:project_id, :tag).having('COUNT(*) > 1').length).to eq 1
 
@@ -43,8 +44,7 @@ RSpec.describe RemoveDuplicateProjectTagReleases do
 
       expect(releases.select(:project_id, :tag, 'MAX(released_at) as max')
                      .group(:project_id, :tag).having('COUNT(*) > 1').length).to eq 0
-      expect(releases.find(valid_release.id)).to eq(valid_release)
-      expect(releases.find(dup_releases.last.id)).to eq(dup_releases.last)
+      expect(releases.all.map(&:tag)).to match_array ['valid tag', 'duplicate tag']
     end
   end
 end
