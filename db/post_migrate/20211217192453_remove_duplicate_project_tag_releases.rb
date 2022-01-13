@@ -4,7 +4,7 @@ class RemoveDuplicateProjectTagReleases < Gitlab::Database::Migration[1.0]
   disable_ddl_transaction!
 
   def up
-    Project.all.each_batch(of: 50) do |projects|
+    Project.all.each_batch(of: 17500) do |projects|
       execute(
         "SELECT project_id, tag, MAX(released_at) as max FROM releases WHERE project_id IN (#{projects.pluck(:id).join(",")}) GROUP BY project_id, tag HAVING COUNT(*) > 1"
       ).each do |result|
