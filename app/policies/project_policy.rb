@@ -30,6 +30,9 @@ class ProjectPolicy < BasePolicy
   desc "User has maintainer access"
   condition(:maintainer) { team_access_level >= Gitlab::Access::MAINTAINER }
 
+  desc "User has owner access"
+  condition(:owner) { team_access_level >= Gitlab::Access::OWNER }
+
   desc "User is a project bot"
   condition(:project_bot) { user.project_bot? && team_member? }
 

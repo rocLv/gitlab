@@ -44,7 +44,7 @@ RSpec.describe Ability do
         user2 = build(:user, external: true)
         users = [user1, user2]
 
-        expect(project).to receive(:owner).at_least(:once).and_return(user1)
+        expect(project).to receive(:default_owner).at_least(:once).and_return(user1)
 
         expect(described_class.users_that_can_read_project(users, project))
           .to eq([user1])

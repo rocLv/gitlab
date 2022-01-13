@@ -27,6 +27,15 @@ RSpec.describe Members::InviteService, :aggregate_failures, :clean_gitlab_redis_
       expect(TasksToBeDone::CreateWorker).not_to receive(:perform_async)
       expect { result }.not_to change { project.issues.count }
     end
+
+    context 'when access level is owner' do
+      let(:params) { { email: project_user.email, access_level: Gitlab::Access::OWNER } }
+
+      it 'returns an error' do
+        expect_to_create_members(count: 1)
+        expect(result[:status]).to eq(:success)
+      end
+    end
   end
 
   context 'when email belongs to an existing user as a secondary email' do

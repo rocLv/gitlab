@@ -74,7 +74,7 @@ class ProjectMember < Member
     end
 
     def access_level_roles
-      Gitlab::Access.options
+      Gitlab::Access.options_with_owner
     end
   end
 
@@ -83,7 +83,7 @@ class ProjectMember < Member
   end
 
   def owner?
-    project.owner == user
+    project.owners.include?(user)
   end
 
   def notifiable_options
@@ -94,7 +94,7 @@ class ProjectMember < Member
 
   override :access_level_inclusion
   def access_level_inclusion
-    return if access_level.in?(Gitlab::Access.values)
+    return if access_level.in?(Gitlab::Access.all_values)
 
     errors.add(:access_level, "is not included in the list")
   end
