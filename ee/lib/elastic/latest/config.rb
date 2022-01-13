@@ -18,9 +18,6 @@ module Elastic
 
       self.index_name = [Rails.application.class.module_parent_name.downcase, Rails.env].join('-')
 
-      # ES6 requires a single type per index
-      self.document_type = 'doc'
-
       settings \
         index: {
           number_of_shards: Elastic::AsJSON.new { Elastic::IndexSetting.default.number_of_shards },

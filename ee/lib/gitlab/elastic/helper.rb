@@ -338,13 +338,11 @@ module Gitlab
 
       def additional_index_options
         {}.tap do |options|
-          # include_type_name defaults to false in ES7. This will ensure ES7
-          # behaves like ES6 when creating mappings. See
+          # include_type_name defaults to false in ES7. This will ensure ES6
+          # behaves like ES7 when creating mappings. See
           # https://www.elastic.co/blog/moving-from-types-to-typeless-apis-in-elasticsearch-7-0
-          # for more information. We also can't set this for any versions before
-          # 6.8 as this parameter was not supported. Since it defaults to true in
-          # all 6.x it's safe to only set it for 7.x.
-          options[:include_type_name] = true if Gitlab::VersionInfo.parse(client.info['version']['number']).major == 7
+          # for more information.
+          options[:include_type_name] = false if Gitlab::VersionInfo.parse(client.info['version']['number']).major == 6
         end
       end
     end
