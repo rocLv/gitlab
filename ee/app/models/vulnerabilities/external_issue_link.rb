@@ -18,5 +18,7 @@ module Vulnerabilities
                 message: N_('already has a "created" issue link')
               },
               if: :created?
+
+    scope :created_for_vulnerability, -> (vulnerabiity) { where(vulnerabiity: vulnerabiity, link_type: created) }
   end
 end
