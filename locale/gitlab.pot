@@ -17682,7 +17682,7 @@ msgstr ""
 msgid "Housekeeping successfully started"
 msgstr ""
 
-msgid "Housekeeping, export, path, transfer, remove, archive."
+msgid "Housekeeping, export, archive, change path, transfer, and delete project."
 msgstr ""
 
 msgid "How do I configure Akismet?"
