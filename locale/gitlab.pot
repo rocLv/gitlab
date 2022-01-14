@@ -33592,9 +33592,6 @@ msgstr ""
 msgid "SortOptions|Type"
 msgstr ""
 
-msgid "SortOptions|Updated date"
-msgstr ""
-
 msgid "SortOptions|Version"
 msgstr ""
 
