@@ -5,14 +5,17 @@
     # Additional options for Kaniko executor.
     # For more details see https://github.com/GoogleContainerTools/kaniko/blob/master/README.md#additional-flags
     KANIKO_ARGS: ""
-    # The image tag defaults to the short commit sha
-    IMAGE_TAG: $CI_COMMIT_SHORT_SHA
   image:
     # For latest releases see https://github.com/GoogleContainerTools/kaniko/releases
     # Only debug/*-debug versions of the Kaniko image are known to work within Gitlab CI
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
+  # The image tag defaults to the short commit sha
+  - |
+    if [ -z "$IMAGE_TAG" ]; then
+      IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    fi
   - mkdir -p /kaniko/.docker
   # Write credentials to access Gitlab Container Registry within the runner/ci
   - |-
