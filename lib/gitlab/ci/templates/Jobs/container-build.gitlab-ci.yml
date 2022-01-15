@@ -37,3 +37,4 @@
       echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     # Build and push the container. To disable push add --no-push
     - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${DOCKERFILE}" --destination "${CI_REGISTRY_IMAGE}:${IMAGE_TAG}" $KANIKO_ARGS
+  cache: []
