@@ -19,6 +19,6 @@ module Vulnerabilities
               },
               if: :created?
 
-    scope :created_for_vulnerability, -> (vulnerabiity) { where(vulnerabiity: vulnerabiity, link_type: created) }
+    scope :created_for_vulnerability, -> (vulnerability) { where(vulnerability: vulnerability, link_type: 'created') }
   end
 end
