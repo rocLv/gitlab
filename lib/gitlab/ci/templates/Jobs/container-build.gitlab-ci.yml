@@ -5,6 +5,8 @@
     # Additional options for Kaniko executor.
     # For more details see https://github.com/GoogleContainerTools/kaniko/blob/master/README.md#additional-flags
     KANIKO_ARGS: ""
+    # The image name to use in the container registry
+    IMAGE_NAME: ""
   image:
     # For latest releases see https://github.com/GoogleContainerTools/kaniko/releases
     # Only debug/*-debug versions of the Kaniko image are known to work within Gitlab CI
@@ -36,5 +38,5 @@
     - |-
       echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     # Build and push the container. To disable push add --no-push
-    - /kaniko/executor --context "${CI_PROJECT_DIR}" --dockerfile "${DOCKERFILE}" --destination "${CI_REGISTRY_IMAGE}:${IMAGE_TAG}" $KANIKO_ARGS
+    - /kaniko/executor --context ${CI_PROJECT_DIR} --dockerfile ${DOCKERFILE} --destination ${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:$IMAGE_TAG $KANIKO_ARGS
   cache: []
