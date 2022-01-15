@@ -9,32 +9,13 @@
 kaniko-build:
   extends: [".kaniko-build"]
   variables:
+    # Specify the image tag, a sensible default is compiled in the `.kaniko-build` job if omitted
+    # IMAGE_TAG:
     # The Dockerfile to build
-    DOCKERFILE: Dockerfile
+    DOCKERFILE: ${CI_PROJECT_DIR}/Dockerfile
     # Additional options for Kaniko executor.
     # For more details see https://github.com/GoogleContainerTools/kaniko/blob/master/README.md#additional-flags
     KANIKO_ARGS: ""
-  before_script:
-    # Compose docker tag name
-    # Git Branch/Tag to Docker Image Tag Mapping
-    #   * Default Branch: main -> latest
-    #   * Branch: feature/my-feature -> branch-feature-my-feature
-    #   * Tag: v1.0.0/beta2 -> v1.0.0-beta2
-    - |
-      if [ -z "$IMAGE_TAG" ]; then
-        echo "Image tag is already set"
-      elif [ "$CI_COMMIT_REF_NAME" = $CI_DEFAULT_BRANCH ]; then
-        IMAGE_TAG="latest"
-      elif [ -n "$CI_COMMIT_TAG" ];then
-        NOSLASH=$(echo "$CI_COMMIT_TAG" | tr -s / - )
-        SANITIZED="${NOSLASH//[^a-zA-Z0-9\-\.]/}"
-        IMAGE_TAG="$SANITIZED"
-      else \
-        NOSLASH=$(echo "$CI_COMMIT_REF_NAME" | tr -s / - )
-        SANITIZED="${NOSLASH//[^a-zA-Z0-9\-]/}"
-        IMAGE_TAG="branch-$SANITIZED"
-      fi
-    - echo $IMAGE_TAG
   # Run this job in a branch/tag where a Dockerfile exists
   rules:
     - exists:
