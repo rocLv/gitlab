@@ -444,7 +444,7 @@ class Project < ApplicationRecord
   delegate :mr_default_target_self, :mr_default_target_self=, to: :project_setting
   delegate :previous_default_branch, :previous_default_branch=, to: :project_setting
   delegate :no_import?, to: :import_state, allow_nil: true
-  delegate :name, to: :owner, allow_nil: true, prefix: true
+  delegate :name, to: :default_owner, allow_nil: true, prefix: true
   delegate :members, to: :team, prefix: true
   delegate :add_user, :add_users, to: :team
   delegate :add_guest, :add_reporter, :add_developer, :add_maintainer, :add_role, :add_owner, to: :team
@@ -1514,15 +1514,15 @@ class Project < ApplicationRecord
   end
   # rubocop: enable CodeReuse/ServiceClass
 
-  def owner
-    group || namespace.try(:owner)
-  end
-
   def owners
     # make this more betterer
     return User.where(id: namespace.owner_id) if namespace&.user_namespace?
 
     team.owners
+  end
+
+  def has_owner?(user)
+    (owners.any? && owners.include?(user)) || project.group&.has_owner?(user)
   end
 
   # rubocop: disable CodeReuse/ServiceClass

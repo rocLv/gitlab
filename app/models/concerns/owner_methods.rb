@@ -10,8 +10,10 @@ module OwnerMethods
   def default_owner
     return owners.first if owners.any?
 
-    parent&.default_owner || owner
+    parent&.default_owner
   end
+
+
 
   # Check if user is a last owner of the group.
   def last_owner?(user)
