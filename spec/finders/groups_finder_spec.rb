@@ -235,9 +235,10 @@ RSpec.describe GroupsFinder do
       let_it_be(:user) { create(:user) }
       let_it_be(:parent_group) { create(:group, :public) }
       let_it_be(:public_subgroup) { create(:group, :public, parent: parent_group) }
-      let_it_be(:internal_sub_subgroup) { create(:group, :internal, parent: public_subgroup) }
-      let_it_be(:private_sub_subgroup) { create(:group, :private, parent: public_subgroup) }
       let_it_be(:public_sub_subgroup) { create(:group, :public, parent: public_subgroup) }
+      let_it_be(:project) { create(:project, :public, namespace: public_subgroup) }
+
+      let_it_be(:membership_group) { create(:group, :public) }
 
       let(:params) { { membership_groups: true } }
 
@@ -246,24 +247,20 @@ RSpec.describe GroupsFinder do
           expect(described_class.new(nil, params).execute).to contain_exactly(
             parent_group,
             public_subgroup,
-            public_sub_subgroup
+            public_sub_subgroup,
+            membership_group
           )
         end
       end
 
       context 'when an authenticated user is present' do
         before do
-          parent_group.add_developer(user)
+          project.add_developer(user)
+          membership_group.add_developer(user)
         end
 
-        it 'returns the groups and their descendants where the user is a member' do
-          expect(described_class.new(user, params).execute).to contain_exactly(
-            parent_group,
-            public_subgroup,
-            public_sub_subgroup,
-            internal_sub_subgroup,
-            private_sub_subgroup
-          )
+        it 'returns only the groups and their descendants where the user is a member' do
+          expect(described_class.new(user, params).execute).to contain_exactly(membership_group)
         end
       end
     end
