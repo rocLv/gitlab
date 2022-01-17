@@ -19,7 +19,7 @@
     #   * Branch: feature/my-feature -> branch-feature-my-feature
     #   * Tag: v1.0.0/beta2 -> v1.0.0-beta2
     - |
-      if [ -z "$IMAGE_TAG" ]; then
+      if [ ! -z "$IMAGE_TAG" ]; then
         echo "Image tag is already set"
       elif [ "$CI_COMMIT_REF_NAME" = $CI_DEFAULT_BRANCH ]; then
         IMAGE_TAG="latest"
