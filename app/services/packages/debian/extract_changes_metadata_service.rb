@@ -27,7 +27,7 @@ module Packages
 
       def metadata
         strong_memoize(:metadata) do
-          ::Packages::Debian::ExtractMetadataService.new(@package_file).execute
+          ::Packages::Debian::ExtractMetadataService.new(@package_file.id).execute
         end
       end
 

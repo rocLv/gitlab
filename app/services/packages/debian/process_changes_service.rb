@@ -42,23 +42,27 @@ module Packages
 
       def update_files_metadata
         files.each do |filename, entry|
-          entry.package_file.package = package
+          file_metadata = ::Packages::Debian::ExtractMetadataService.new(entry.package_file.id).execute
 
-          file_metadata = ::Packages::Debian::ExtractMetadataService.new(entry.package_file).execute
+          ::Packages::UpdatePackageFileService.new(entry.package_file, package_id: package.id)
+            .execute
 
           entry.package_file.debian_file_metadatum.update!(
+            validate_file_type: false,
             file_type: file_metadata[:file_type],
             component: files[filename].component,
             architecture: file_metadata[:architecture],
             fields: file_metadata[:fields]
           )
-          entry.package_file.save!
         end
       end
 
       def update_changes_metadata
-        package_file.update!(package: package)
+        ::Packages::UpdatePackageFileService.new(package_file, package_id: package.id)
+          .execute
+
         package_file.debian_file_metadatum.update!(
+          validate_file_type: false,
           file_type: metadata[:file_type],
           fields: metadata[:fields]
         )

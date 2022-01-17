@@ -7,8 +7,8 @@ module Packages
 
       ExtractionError = Class.new(StandardError)
 
-      def initialize(package_file)
-        @package_file = package_file
+      def initialize(package_file_id)
+        @package_file = Packages::PackageFile.find(package_file_id)
       end
 
       def execute
@@ -23,8 +23,7 @@ module Packages
 
       def valid_package_file?
         package_file &&
-          package_file.package&.debian? &&
-          package_file.file.size > 0 # rubocop:disable Style/ZeroLengthPredicate
+          package_file.size > 0 # rubocop:disable Style/ZeroLengthPredicate
       end
 
       def file_type_basic

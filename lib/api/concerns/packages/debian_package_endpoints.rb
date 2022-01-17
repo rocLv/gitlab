@@ -39,7 +39,7 @@ module API
 
               package_file = distribution_from!(user_project).package_files.with_file_name(params[:file_name]).last!
 
-              present_carrierwave_file!(package_file.file)
+              present_carrierwave_file!(package_file.file, supports_direct_download: false)
             end
           end
 
@@ -81,7 +81,7 @@ module API
 
             route_setting :authentication, authenticate_non_public: true
             get 'Release' do
-              present_carrierwave_file!(distribution_from!(project_or_group).file)
+              present_carrierwave_file!(distribution_from!(project_or_group).file, supports_direct_download: false)
             end
 
             # GET {projects|groups}/:id/packages/debian/dists/*distribution/InRelease
@@ -91,7 +91,7 @@ module API
 
             route_setting :authentication, authenticate_non_public: true
             get 'InRelease' do
-              present_carrierwave_file!(distribution_from!(project_or_group).signed_file)
+              present_carrierwave_file!(distribution_from!(project_or_group).signed_file, supports_direct_download: false)
             end
 
             params do
@@ -120,7 +120,7 @@ module API
                   .order_created_asc
                   .last!
 
-                present_carrierwave_file!(component_file.file)
+                present_carrierwave_file!(component_file.file, supports_direct_download: false)
               end
             end
           end

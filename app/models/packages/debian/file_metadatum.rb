@@ -13,10 +13,10 @@ class Packages::Debian::FileMetadatum < ApplicationRecord
   }
 
   validates :file_type, presence: true
-  validates :file_type, inclusion: { in: %w[unknown] }, if: -> { package_file&.package&.debian_incoming? }
+  validates :file_type, inclusion: { in: %w[unknown] }, if: -> { validate_file_type && package_file&.package&.debian_incoming? }
   validates :file_type,
     inclusion: { in: %w[source dsc deb udeb buildinfo changes] },
-    if: -> { package_file&.package&.debian_package? }
+    if: -> { validate_file_type && package_file&.package&.debian_package? }
 
   validates :component,
     presence: true,
@@ -35,6 +35,8 @@ class Packages::Debian::FileMetadatum < ApplicationRecord
     json_schema: { filename: "debian_fields" },
     if: :requires_fields?
   validates :fields, absence: true, unless: :requires_fields?
+
+  attribute :validate_file_type, default: true
 
   private
 
