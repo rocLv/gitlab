@@ -28,7 +28,7 @@ const groupsSelect = () => {
         const skipGroups = $select.data('skipGroups') || [];
         const parentGroupID = $select.data('parentId');
         const groupsFilter = $select.data('groupsFilter');
-        const membershipGroups = true;
+        const membershipGroups = $select.data('membershipGroups');
 
         $select.select2({
           placeholder: __('Search for a group'),
