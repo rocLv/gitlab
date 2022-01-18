@@ -7,10 +7,6 @@ info: To determine the technical writer assigned to the Stage/Group associated w
 
 # GitLab Security Dashboards and Security Center **(ULTIMATE)**
 
-INFO:
-Want to try out security scanning?
-[Try GitLab Ultimate free for 30 days](https://about.gitlab.com/free-trial/index.html?glm_source=docs.gitlab.com&glm_content=u-security-dashboard-docs).
-
 You can use Security Dashboards to view details about vulnerabilities
 detected by [security scanners](../index.md#security-scanning-tools).
 These details are shown in pipelines, projects, and groups.
@@ -132,7 +128,7 @@ To view vulnerabilities over time for a group:
 1. Select **Security > Security Dashboard**.
 1. Hover over the chart to get more details about vulnerabilities.
    - You can display the vulnerability trends over a 30, 60, or 90-day time frame (the default is 90 days).
-   - To view aggregated data beyond a 90-day time frame, use the 
+   - To view aggregated data beyond a 90-day time frame, use the
      [VulnerabilitiesCountByDay GraphQL API](../../../api/graphql/reference/index.md#vulnerabilitiescountbyday).
      GitLab retains the data for 365 days.
 

@@ -16,10 +16,6 @@ Dynamic Application Security Testing (DAST) examines applications for
 vulnerabilities like these in deployed environments. DAST uses the open source
 tool [OWASP Zed Attack Proxy](https://www.zaproxy.org/) for analysis.
 
-INFO:
-Want to try out security scanning?
-[Try GitLab Ultimate free for 30 days](https://about.gitlab.com/free-trial/index.html?glm_source=docs.gitlab.com&glm_content=u-dast-docs).
-
 After DAST creates its report, GitLab evaluates it for discovered
 vulnerabilities between the source and target branches. Relevant
 findings are noted in the merge request.
@@ -57,7 +53,7 @@ results. On failure, the analyzer outputs an
 - [GitLab Runner](../../../ci/runners/index.md) available, with the
 [`docker` executor](https://docs.gitlab.com/runner/executors/docker.html).
 - Target application deployed. For more details, read [Deployment options](#deployment-options).
-- GitLab CI/CD pipeline must include the `test` stage, which is available unless overridden with the [`stages`](../../../ci/yaml/index.md#stages) keyword.
+- DAST runs in the `test` stage, which is available by default. If you redefine the stages in the `.gitlab-ci.yml` file, the `test` stage is required.
 
 ### Deployment options
 
@@ -1039,10 +1035,8 @@ The on-demand DAST scan runs and the project's dashboard shows the results.
 To run a saved on-demand scan:
 
 1. On the top bar, select **Menu > Projects** and find your project.
-1. On the left sidebar, select **Security & Compliance > Configuration**.
-1. Select **Manage DAST scans**.
-1. In the **DAST Profiles** row, select **Manage**.
-1. Select the **Saved Scans** tab.
+1. On the left sidebar, select **Security & Compliance > On-demand Scans**.
+1. Select the **Scan library** tab.
 1. In the scan's row, select **Run scan**.
 
    If the branch saved in the scan no longer exists, you must first
@@ -1078,27 +1072,23 @@ To schedule a scan:
 
 To list saved on-demand scans:
 
-1. From your project's home page, go to **Security & Compliance > Configuration**.
-1. Select the **Saved Scans** tab.
+1. From your project's home page, go to **Security & Compliance > On-demand Scans**.
+1. Select the **Scan library** tab.
 
 #### View details of an on-demand scan
 
 To view details of an on-demand scan:
 
-1. From your project's home page, go to **Security & Compliance > Configuration**.
-1. Select **Manage DAST scans**.
-1. Select **Manage** in the **DAST Profiles** row.
-1. Select the **Saved Scans** tab.
+1. From your project's home page, go to **Security & Compliance > On-demand Scans**.
+1. Select the **Scan library** tab.
 1. In the saved scan's row select **More actions** (**{ellipsis_v}**), then select **Edit**.
 
 #### Edit an on-demand scan
 
 To edit an on-demand scan:
 
-1. From your project's home page, go to **Security & Compliance > Configuration**.
-1. Select **Manage DAST scans**.
-1. Select **Manage** in the **DAST Profiles** row.
-1. Select the **Saved Scans** tab.
+1. From your project's home page, go to **Security & Compliance > On-demand Scans**.
+1. Select the **Scan library** tab.
 1. In the saved scan's row select **More actions** (**{ellipsis_v}**), then select **Edit**.
 1. Edit the form.
 1. Select **Save scan**.
@@ -1107,10 +1097,8 @@ To edit an on-demand scan:
 
 To delete an on-demand scan:
 
-1. From your project's home page, go to **Security & Compliance > Configuration**.
-1. Select **Manage DAST scans**.
-1. Select **Manage** in the **DAST Profiles** row.
-1. Select the **Saved Scans** tab.
+1. From your project's home page, go to **Security & Compliance > On-demand Scans**.
+1. Select the **Scan library** tab.
 1. In the saved scan's row select **More actions** (**{ellipsis_v}**), then select **Delete**.
 1. Select **Delete** to confirm the deletion.
 
@@ -1134,6 +1122,9 @@ A site profile contains the following:
   - **Password form field**: The name of password field at the sign-in HTML form.
 
 When an API site type is selected, a [host override](#host-override) is used to ensure the API being scanned is on the same host as the target. This is done to reduce the risk of running an active scan against the wrong API.
+
+When configured, request headers and password fields are encrypted using [`aes-256-gcm`](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) before being stored in the database.
+This data can only be read and decrypted with a valid secrets file.
 
 #### Site profile validation
 

@@ -336,7 +336,7 @@ GEM
     ethon (0.15.0)
       ffi (>= 1.15.0)
     eventmachine (1.2.7)
-    excon (0.89.0)
+    excon (0.90.0)
     execjs (2.8.1)
     expression_parser (0.9.0)
     extended-markdown-filter (0.6.0)
@@ -561,7 +561,7 @@ GEM
     grape_logging (1.8.3)
       grape
       rack
-    graphiql-rails (1.4.10)
+    graphiql-rails (1.8.0)
       railties
       sprockets-rails
     graphlient (0.4.0)
@@ -1498,7 +1498,7 @@ DEPENDENCIES
   grape-entity (~> 0.10.0)
   grape-path-helpers (~> 1.7.0)
   grape_logging (~> 1.7)
-  graphiql-rails (~> 1.4.10)
+  graphiql-rails (~> 1.8)
   graphlient (~> 0.4.0)
   graphql (~> 1.11.10)
   graphql-docs (~> 1.6.0)

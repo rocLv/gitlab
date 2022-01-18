@@ -41,7 +41,7 @@ module Clusters
       end
 
       def prepare_uninstall
-        runner&.update!(active: false)
+        # No op, see https://gitlab.com/gitlab-org/gitlab/-/issues/350180.
       end
 
       def post_uninstall

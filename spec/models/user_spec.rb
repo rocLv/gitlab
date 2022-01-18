@@ -436,7 +436,7 @@ RSpec.describe User do
       subject { build(:user) }
     end
 
-    it_behaves_like 'an object with RFC3696 compliant email-formatted attributes', :public_email, :notification_email do
+    it_behaves_like 'an object with email-formatted attributes', :public_email, :notification_email do
       subject { create(:user).tap { |user| user.emails << build(:email, email: email_value, confirmed_at: Time.current) } }
     end
 
@@ -542,6 +542,13 @@ RSpec.describe User do
           expect(user).to be_invalid
           expect(user.errors.messages[:email].first).to eq(expected_error)
         end
+
+        it 'does not allow user to update email to a non-allowlisted domain' do
+          user = create(:user, email: "info@test.example.com")
+
+          expect { user.update!(email: "test@notexample.com") }
+            .to raise_error(StandardError, 'Validation failed: Email is not allowed. Check with your administrator.')
+        end
       end
 
       context 'when a signup domain is allowed and subdomains are not allowed' do
@@ -607,6 +614,13 @@ RSpec.describe User do
           it 'accepts info@example.com when added by another user' do
             user = build(:user, email: 'info@example.com', created_by_id: 1)
             expect(user).to be_valid
+          end
+
+          it 'does not allow user to update email to a denied domain' do
+            user = create(:user, email: 'info@test.com')
+
+            expect { user.update!(email: 'info@example.com') }
+              .to raise_error(StandardError, 'Validation failed: Email is not allowed. Check with your administrator.')
           end
         end
 
@@ -677,6 +691,13 @@ RSpec.describe User do
 
             expect(user).not_to be_valid
             expect(user.errors.messages[:email].first).to eq(expected_error)
+          end
+
+          it 'does not allow user to update email to a restricted domain' do
+            user = create(:user, email: 'info@test.com')
+
+            expect { user.update!(email: 'info@gitlab.com') }
+              .to raise_error(StandardError, 'Validation failed: Email is not allowed. Check with your administrator.')
           end
 
           it 'does accept a valid email address' do
@@ -1398,7 +1419,7 @@ RSpec.describe User do
   end
 
   describe '#update_tracked_fields!', :clean_gitlab_redis_shared_state do
-    let(:request) { OpenStruct.new(remote_ip: "127.0.0.1") }
+    let(:request) { double('request', remote_ip: "127.0.0.1") }
     let(:user) { create(:user) }
 
     it 'writes trackable attributes' do
@@ -5781,6 +5802,48 @@ RSpec.describe User do
       end
 
       it_behaves_like 'password expired not applicable'
+    end
+  end
+
+  describe '#can_log_in_with_non_expired_password?' do
+    let(:user) { build(:user) }
+
+    subject { user.can_log_in_with_non_expired_password? }
+
+    context 'when user can log in' do
+      it 'returns true' do
+        is_expected.to be_truthy
+      end
+
+      context 'when user with expired password' do
+        before do
+          user.password_expires_at = 2.minutes.ago
+        end
+
+        it 'returns false' do
+          is_expected.to be_falsey
+        end
+
+        context 'when password expiration is not applicable' do
+          context 'when ldap user' do
+            let(:user) { build(:omniauth_user, provider: 'ldap') }
+
+            it 'returns true' do
+              is_expected.to be_truthy
+            end
+          end
+        end
+      end
+    end
+
+    context 'when user cannot log in' do
+      context 'when user is blocked' do
+        let(:user) { build(:user, :blocked) }
+
+        it 'returns false' do
+          is_expected.to be_falsey
+        end
+      end
     end
   end
 

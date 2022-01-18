@@ -65,14 +65,7 @@ module Ci
         # Runner install help page is external, located at
         # https://gitlab.com/gitlab-org/gitlab-runner
         runner_install_help_page: 'https://docs.gitlab.com/runner/install/',
-        registration_token: Gitlab::CurrentSettings.runners_registration_token,
-
-        # All runner counts are returned as formatted strings
-        active_runners_count: Ci::Runner.online.count.to_s,
-        all_runners_count: limited_counter_with_delimiter(Ci::Runner),
-        instance_runners_count: limited_counter_with_delimiter(Ci::Runner.instance_type),
-        group_runners_count: limited_counter_with_delimiter(Ci::Runner.group_type),
-        project_runners_count: limited_counter_with_delimiter(Ci::Runner.project_type)
+        registration_token: Gitlab::CurrentSettings.runners_registration_token
       }
     end
 

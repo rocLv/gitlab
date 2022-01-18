@@ -104,7 +104,7 @@ export default {
       SITE_PROFILES_QUERY,
     ),
   },
-  inject: ['projectPath', 'profilesLibraryPath'],
+  inject: ['projectPath', 'onDemandScansPath'],
   props: {
     defaultBranch: {
       type: String,
@@ -145,8 +145,11 @@ export default {
     };
   },
   computed: {
+    dastScanId() {
+      return this.dastScan?.id ?? null;
+    },
     isEdit() {
-      return Boolean(this.dastScan?.id);
+      return Boolean(this.dastScanId);
     },
     title() {
       return this.isEdit
@@ -268,7 +271,7 @@ export default {
             this.showErrors(ERROR_RUN_SCAN, errors);
             this.loading = false;
           } else if (!runAfter) {
-            redirectTo(this.profilesLibraryPath);
+            redirectTo(this.onDemandScansPath);
             this.clearStorage = true;
           } else {
             this.clearStorage = true;
@@ -283,7 +286,7 @@ export default {
     },
     onCancelClicked() {
       this.clearStorage = true;
-      redirectTo(this.profilesLibraryPath);
+      redirectTo(this.onDemandScansPath);
     },
     showErrors(errorType, errors = []) {
       this.errorType = errorType;
@@ -330,7 +333,7 @@ export default {
     <header class="gl-mb-6">
       <div class="gl-mt-6 gl-display-flex">
         <h2 class="gl-flex-grow-1 gl-my-0">{{ title }}</h2>
-        <gl-button :href="profilesLibraryPath" data-testid="manage-profiles-link">
+        <gl-button :href="onDemandScansPath" data-testid="manage-profiles-link">
           {{ s__('OnDemandScans|Manage DAST scans') }}
         </gl-button>
       </div>
@@ -443,6 +446,7 @@ export default {
         :profiles="scannerProfiles"
         :selected-profile="selectedScannerProfile"
         :has-conflict="hasProfilesConflict"
+        :dast-scan-id="dastScanId"
       />
       <site-profile-selector
         v-model="selectedSiteProfileId"
@@ -450,6 +454,7 @@ export default {
         :profiles="siteProfiles"
         :selected-profile="selectedSiteProfile"
         :has-conflict="hasProfilesConflict"
+        :dast-scan-id="dastScanId"
       />
 
       <scan-schedule v-model="profileSchedule" class="gl-mb-5" />

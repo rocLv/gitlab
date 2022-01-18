@@ -24,14 +24,14 @@ RSpec.describe Mutations::Issues::SetEscalationPolicy do
     end
 
     context 'when the user can update the issue' do
-      before do
+      before_all do
         project.add_reporter(user)
       end
 
       it_behaves_like 'permission level for issue mutation is correctly verified', true
 
       context 'when the user can update the escalation status' do
-        before do
+        before_all do
           project.add_developer(user)
         end
 
@@ -45,6 +45,24 @@ RSpec.describe Mutations::Issues::SetEscalationPolicy do
           issue.update_column(:author_id, nil)
 
           expect(result[:errors]).not_to be_empty
+        end
+
+        context 'with non-incident issue is provided' do
+          let_it_be(:issue) { create(:issue, project: project) }
+
+          it 'raises an error' do
+            expect { result }.to raise_error(Gitlab::Graphql::Errors::ResourceNotAvailable, 'Feature unavailable for provided issue')
+          end
+        end
+
+        context 'with feature disabled' do
+          before do
+            stub_feature_flags(incident_escalations: false)
+          end
+
+          it 'raises an error' do
+            expect { result }.to raise_error(Gitlab::Graphql::Errors::ResourceNotAvailable, 'Feature unavailable for provided issue')
+          end
         end
 
         context 'when passing escalation_policy_id as nil' do

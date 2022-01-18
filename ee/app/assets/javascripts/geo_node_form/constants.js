@@ -17,7 +17,7 @@ export const NODE_NAME_MORE_INFO = helpPagePath('user/admin_area/geo_nodes.html'
 });
 
 export const NODE_INTERNAL_URL_MORE_INFO = helpPagePath('user/admin_area/geo_nodes.html', {
-  anchor: 'using-a-different-url-for-synchronization',
+  anchor: 'set-up-the-internal-urls',
 });
 
 export const SELECTIVE_SYNC_MORE_INFO = helpPagePath(
@@ -27,6 +27,11 @@ export const SELECTIVE_SYNC_MORE_INFO = helpPagePath(
 
 export const OBJECT_STORAGE_MORE_INFO = helpPagePath(
   'administration/geo/replication/object_storage.html',
+);
+
+export const OBJECT_STORAGE_BETA = helpPagePath(
+  'administration/geo/replication/object_storage.html',
+  { anchor: 'enabling-gitlab-managed-object-storage-replication' },
 );
 
 export const REVERIFICATION_MORE_INFO = helpPagePath(

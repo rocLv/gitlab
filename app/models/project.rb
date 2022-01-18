@@ -340,6 +340,7 @@ class Project < ApplicationRecord
   has_many :runners, through: :runner_projects, source: :runner, class_name: 'Ci::Runner'
   has_many :variables, class_name: 'Ci::Variable'
   has_many :triggers, class_name: 'Ci::Trigger'
+  has_many :secure_files, class_name: 'Ci::SecureFile'
   has_many :environments
   has_many :environments_for_dashboard, -> { from(with_rank.unfoldered.available, :environments).where('rank <= 3') }, class_name: 'Environment'
   has_many :deployments
@@ -453,7 +454,7 @@ class Project < ApplicationRecord
   delegate :job_token_scope_enabled, :job_token_scope_enabled=, to: :ci_cd_settings, prefix: :ci, allow_nil: true
   delegate :keep_latest_artifact, :keep_latest_artifact=, to: :ci_cd_settings, allow_nil: true
   delegate :restrict_user_defined_variables, :restrict_user_defined_variables=, to: :ci_cd_settings, allow_nil: true
-  delegate :actual_limits, :actual_plan_name, to: :namespace, allow_nil: true
+  delegate :actual_limits, :actual_plan_name, :actual_plan, to: :namespace, allow_nil: true
   delegate :allow_merge_on_skipped_pipeline, :allow_merge_on_skipped_pipeline?,
     :allow_merge_on_skipped_pipeline=, :has_confluence?, :has_shimo?,
     to: :project_setting
@@ -1774,17 +1775,12 @@ class Project < ApplicationRecord
 
   def all_runners
     Ci::Runner.from_union([runners, group_runners, shared_runners])
-      .allow_cross_joins_across_databases(url: 'https://gitlab.com/gitlab-org/gitlab/-/issues/339937')
   end
 
   def all_available_runners
     Ci::Runner.from_union([runners, group_runners, available_shared_runners])
-      .allow_cross_joins_across_databases(url: 'https://gitlab.com/gitlab-org/gitlab/-/issues/339937')
   end
 
-  # Once issue 339937 is fixed, please search for all mentioned of
-  # https://gitlab.com/gitlab-org/gitlab/-/issues/339937,
-  # and remove the allow_cross_joins_across_databases.
   def active_runners
     strong_memoize(:active_runners) do
       all_available_runners.active
@@ -1792,9 +1788,7 @@ class Project < ApplicationRecord
   end
 
   def any_online_runners?(&block)
-    ::Gitlab::Database.allow_cross_joins_across_databases(url: 'https://gitlab.com/gitlab-org/gitlab/-/issues/339937') do
-      online_runners_with_tags.any?(&block)
-    end
+    online_runners_with_tags.any?(&block)
   end
 
   def valid_runners_token?(token)

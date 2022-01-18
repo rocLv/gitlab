@@ -14,10 +14,6 @@ GitLab already offers [protected branches](../user/project/protected_branches.md
 cases when you need some specific rules. Some common scenarios: preventing Git tag removal, or
 enforcing a special format for commit messages.
 
-INFO:
-Get access to push rules and more with a
-[free 30-day trial of GitLab Ultimate](https://about.gitlab.com/free-trial/index.html?glm_source=docs.gitlab.com&glm_content=p-push-rules-docs).
-
 Push rules are [pre-receive Git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) you
 can enable in a user-friendly interface. They are defined either:
 
@@ -151,10 +147,10 @@ Secrets such as credential files, SSH private keys, and other files containing s
 GitLab enables you to turn on a predefined denylist of files which can't be
 pushed to a repository. The list stops those commits from reaching the remote repository.
 
-By selecting the checkbox *Prevent committing secrets to Git*, GitLab prevents
+By selecting the checkbox *Prevent pushing secret files*, GitLab prevents
 pushes to the repository when a file matches a regular expression as read from
 [`files_denylist.yml`](https://gitlab.com/gitlab-org/gitlab/-/blob/master/ee/lib/gitlab/checks/files_denylist.yml) (make sure you are at the right branch
-as your GitLab version when viewing this file).
+as your GitLab version when viewing this file). This checkbox is able to be set globally via **Admin Area > Push Rules**, or per-project via **Settings > Repository > Push Rules**.
 
 NOTE:
 Files already committed aren't restricted by this push rule.

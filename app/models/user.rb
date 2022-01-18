@@ -251,7 +251,7 @@ class User < ApplicationRecord
   validate :notification_email_verified, if: :notification_email_changed?
   validate :public_email_verified, if: :public_email_changed?
   validate :commit_email_verified, if: :commit_email_changed?
-  validate :signup_email_valid?, on: :create, if: ->(user) { !user.created_by_id }
+  validate :email_allowed_by_restrictions?, if: ->(user) { user.new_record? ? !user.created_by_id : user.email_changed? }
   validate :check_username_format, if: :username_changed?
 
   validates :theme_id, allow_nil: true, inclusion: { in: Gitlab::Themes.valid_ids,
@@ -1901,6 +1901,10 @@ class User < ApplicationRecord
     true
   end
 
+  def can_log_in_with_non_expired_password?
+    can?(:log_in) && !password_expired_if_applicable?
+  end
+
   def can_be_deactivated?
     active? && no_recent_activity? && !internal?
   end
@@ -2145,14 +2149,14 @@ class User < ApplicationRecord
     end
   end
 
-  def signup_email_valid?
+  def email_allowed_by_restrictions?
     error = validate_admin_signup_restrictions(email)
 
     errors.add(:email, error) if error
   end
 
   def signup_email_invalid_message
-    _('is not allowed for sign-up.')
+    self.new_record? ? _('is not allowed for sign-up.') : _('is not allowed.')
   end
 
   def check_username_format

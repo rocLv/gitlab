@@ -2,6 +2,8 @@
 
 module EE
   module TrialHelper
+    TRIAL_ONBOARDING_SOURCE_URLS = %w(about.gitlab.com docs.gitlab.com learn.gitlab.com).freeze
+
     def company_size_options_for_select(selected = '')
       options_for_select([
         [_('Please select'), ''],
@@ -13,8 +15,17 @@ module EE
       ], selected)
     end
 
+    def create_lead_form_data
+      {
+        submit_path: create_lead_trials_path(glm_params),
+        first_name: current_user.first_name,
+        last_name: current_user.last_name,
+        company_name: current_user.organization
+      }.merge(params.slice(:first_name, :last_name, :company_name, :company_size, :phone_number, :country).to_unsafe_h.symbolize_keys)
+    end
+
     def should_ask_company_question?
-      glm_params[:glm_source] != 'about.gitlab.com'
+      TRIAL_ONBOARDING_SOURCE_URLS.exclude?(glm_params[:glm_source])
     end
 
     def glm_params

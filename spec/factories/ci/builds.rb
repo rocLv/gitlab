@@ -5,6 +5,7 @@ FactoryBot.define do
     name { 'test' }
     add_attribute(:protected) { false }
     created_at { 'Di 29. Okt 09:50:00 CET 2013' }
+    scheduling_type { 'stage' }
     pending
 
     options do
@@ -33,6 +34,8 @@ FactoryBot.define do
     end
 
     trait :dependent do
+      scheduling_type { 'dag' }
+
       transient do
         sequence(:needed_name) { |n| "dependency #{n}" }
         needed { association(:ci_build, name: needed_name, pipeline: pipeline) }
@@ -595,6 +598,11 @@ FactoryBot.define do
     trait :forward_deployment_failure do
       failed
       failure_reason { 13 }
+    end
+
+    trait :deployment_rejected do
+      failed
+      failure_reason { 22 }
     end
 
     trait :with_runner_session do

@@ -306,6 +306,115 @@ Planned removal milestone: 15.0 (2022-05-22)
 
 ## 14.7
 
+### Container scanning schemas below 14.0.0
+
+[Container scanning report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+versions earlier than 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported in GitLab 15.0.
+
+Third-party tools that [integrate with GitLab by outputting a container scanning security report](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as a pipeline job artifact are affected. You must ensure that all output reports adhere to the correct schema with a minimum version of 14.0.0. Reports with a lower version or that fail to validate against the declared schema version will not be processed, and vulnerability findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will display a
+[warning](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### Coverage guided fuzzing schemas below 14.0.0
+
+[Coverage guided fuzzing report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+below version 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported in GitLab 15.0.
+
+Third-party tools that [integrate with GitLab by outputting a coverage guided fuzzing security report](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as a pipeline job artifact are affected. You must ensure that all output reports adhere to the correct
+schema with a minimum version of 14.0.0. Any reports with a lower version or that fail to validate
+against the declared schema version will not be processed, and vulnerability
+findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will display a
+[warning](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### DAST schemas below 14.0.0
+
+[DAST report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+versions earlier than 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported as of GitLab 15.0.
+
+Third-party tools that [integrate with GitLab by outputting a DAST security report](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as a pipeline job artifact are affected. You must ensure that all output reports adhere to the correct
+schema with a minimum version of 14.0.0. Reports with a lower version or that fail to validate
+against the declared schema version will not be processed, and vulnerability
+findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will cause a
+[warning to be displayed](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### Dependency scanning schemas below 14.0.0
+
+[Dependency scanning report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+versions earlier than 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported as of GitLab 15.0.
+
+Third-party tools that [integrate with GitLab by outputting a Dependency scanning security report](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as a pipeline job artifact are affected. You must ensure that all output reports adhere to the correct
+schema with a minimum version of 14.0.0. Reports with a lower version or that fail to validate
+against the declared schema version will not be processed, and vulnerability
+findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will cause a
+[warning to be displayed](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### Enforced validation of security report schemas
+
+[Security report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+versions earlier than 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported in GitLab 15.0.
+
+Security tools that [integrate with GitLab by outputting security reports](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as pipeline job artifacts are affected. You must ensure that all output reports adhere to the correct
+schema with a minimum version of 14.0.0. Reports with a lower version or that fail to validate
+against the declared schema version will not be processed, and vulnerability
+findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will display a
+[warning](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### Godep support in License Compliance
+
+The Godep dependency manager for Golang was deprecated in 2020 by Go and
+has been replaced with Go modules.
+To reduce our maintenance cost we are deprecating License Compliance for Godep projects as of 14.7
+and will remove it in GitLab 15.0
+
+Planned removal milestone: 15.0 (2022-05-22)
+
+### Logging in GitLab
+
+The logging features in GitLab allow users to install the ELK stack (Elasticsearch, Logstash, and Kibana) to aggregate and manage application logs. Users can search for relevant logs in GitLab. However, since deprecating certificate-based integration with Kubernetes clusters and GitLab Managed Apps, we don't have a recommended solution for logging within GitLab. For more information, you can follow the issue for [integrating Opstrace with GitLab](https://gitlab.com/groups/gitlab-org/-/epics/6976).
+
+Planned removal milestone: 15.0 (2022-05-22)
+
+### Monitor performance metrics through Prometheus
+
+By displaying data stored in a Prometheus instance, GitLab allows users to view performance metrics. GitLab also displays visualizations of these metrics in dashboards. The user can connect to a previously-configured external Prometheus instance, or set up Prometheus as a GitLab Managed App.
+However, since certificate-based integration with Kubernetes clusters is deprecated in GitLab, the metrics functionality in GitLab that relies on Prometheus is also deprecated. This includes the metrics visualizations in dashboards. GitLab is working to develop a single user experience based on [Opstrace](https://about.gitlab.com/press/releases/2021-12-14-gitlab-acquires-opstrace-to-expand-its-devops-platform-with-open-source-observability-solution.html). An [issue exists](https://gitlab.com/groups/gitlab-org/-/epics/6976) for you to follow work on the Opstrace integration.
+
+Planned removal milestone: 15.0 (2022-05-22)
+
 ### Pseudonymizer
 
 The Pseudonymizer feature is generally unused,
@@ -313,4 +422,85 @@ can cause production issues with large databases,
 and can interfere with object storage development.
 It is now considered deprecated, and will be removed in GitLab 15.0.
 
-Planned removal milestone: 15.0 (2021-06-22)
+Planned removal milestone: 15.0 (2022-05-22)
+
+### Removal of Static Site Editor
+
+The Static Site Editor will no longer be available starting in GitLab 15.0. Improvements to the Markdown editing experience across GitLab will deliver smiliar benefit but with a wider reach. Incoming requests to the Static Site Editor will be redirected to the Web IDE. Current users of the Static Site Editor can view the [documentation](https://docs.gitlab.com/ee/user/project/static_site_editor/) for more information, including how to remove the configuration files from existing projects.
+
+Planned removal milestone: 15.0 (2022-05-22)
+
+### Removal of `artifacts:report:cobertura` keyword
+
+Currently, test coverage visualizations in GitLab only support Cobertura reports. Starting 15.0, the
+`artifacts:report:cobertura` keyword will be replaced by
+[`artifacts:reports:coverage_report`](https://gitlab.com/gitlab-org/gitlab/-/issues/344533). Cobertura will be the
+only supported report file in 15.0, but this is the first step towards GitLab supporting other report types.
+
+Planned removal milestone: 15.0 (2022-05-22)
+
+### SAST schemas below 14.0.0
+
+[SAST report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+versions earlier than 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported as of GitLab 15.0.
+
+Third-party tools that [integrate with GitLab by outputting a SAST security report](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as a pipeline job artifact are affected. You must ensure that all output reports adhere to the correct
+schema with a minimum version of 14.0.0. Reports with a lower version or that fail to validate
+against the declared schema version will not be processed, and vulnerability
+findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will display a
+[warning](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### Secret detection schemas below 14.0.0
+
+[Secret detection report schemas](https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/releases)
+versions earlier than 14.0.0 will no longer be supported in GitLab 15.0. Reports that do not pass validation
+against the schema version declared in the report will also no longer be supported as of GitLab 15.0.
+
+Third-party tools that [integrate with GitLab by outputting a Secret detection security report](https://docs.gitlab.com/ee/development/integrations/secure.html#report)
+as a pipeline job artifact are affected. You must ensure that all output reports adhere to the correct
+schema with a minimum version of 14.0.0. Reports with a lower version or that fail to validate
+against the declared schema version will not be processed, and vulnerability
+findings will not display in MRs, pipelines, or Vulnerability Reports.
+
+To help with the transition, from GitLab 14.10, non-compliant reports will display a
+[warning](https://gitlab.com/gitlab-org/gitlab/-/issues/335789#note_672853791)
+in the Vulnerability Report.
+
+Planned removal milestone: 15.0 ()
+
+### Sidekiq metrics and health checks configuration
+
+Exporting Sidekiq metrics and health checks using a single process and port is deprecated.
+Support will be removed in 15.0.
+
+We have updated Sidekiq to export [metrics and health checks from two separate processes](https://gitlab.com/groups/gitlab-org/-/epics/6409)
+to improve stability and availability and prevent data loss in edge cases.
+As those are two separate servers, a configuration change will be required in 15.0
+to explicitly set separate ports for metrics and health-checks.
+The newly introduced settings for `sidekiq['health_checks_*']`
+should always be set in `gitlab.rb`.
+For more information, check the documentation for [configuring Sidekiq](https://docs.gitlab.com/ee/administration/sidekiq.html).
+
+These changes also require updates in either Prometheus to scrape the new endpoint or k8s health-checks to target the new
+health-check port to work properly, otherwise either metrics or health-checks will disappear.
+
+For the deprecation period those settings are optional
+and GitLab will default the Sidekiq health-checks port to the same port as `sidekiq_exporter`
+and only run one server (not changing the current behaviour).
+Only if they are both set and a different port is provided, a separate metrics server will spin up
+to serve the Sidekiq metrics, similar to the way Sidekiq will behave in 15.0.
+
+Planned removal milestone: 15.0 (2022-05-22)
+
+### Tracing in GitLab
+
+Tracing in GitLab is an integration with Jaeger, an open-source end-to-end distributed tracing system. GitLab users can navigate to their Jaeger instance to gain insight into the performance of a deployed application, tracking each function or microservice that handles a given request. Tracing in GitLab is deprecated in GitLab 14.7, and scheduled for removal in 15.0. To track work on a possible replacement, see the issue for [Opstrace integration with GitLab](https://gitlab.com/groups/gitlab-org/-/epics/6976).
+
+Planned removal milestone: 15.0 (2022-05-22)

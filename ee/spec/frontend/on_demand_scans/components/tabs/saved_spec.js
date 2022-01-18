@@ -7,14 +7,15 @@ import SavedTab from 'ee/on_demand_scans/components/tabs/saved.vue';
 import BaseTab from 'ee/on_demand_scans/components/tabs/base_tab.vue';
 import createMockApollo from 'helpers/mock_apollo_helper';
 import dastProfilesQuery from 'ee/on_demand_scans/graphql/dast_profiles.query.graphql';
-import dastProfileRunMutation from 'ee/security_configuration/dast_profiles/graphql/dast_profile_run.mutation.graphql';
-import dastProfileDeleteMutation from 'ee/security_configuration/dast_profiles/graphql/dast_profile_delete.mutation.graphql';
+import dastProfileRunMutation from 'ee/on_demand_scans/graphql/dast_profile_run.mutation.graphql';
+import dastProfileDeleteMutation from 'ee/on_demand_scans/graphql/dast_profile_delete.mutation.graphql';
 import { createRouter } from 'ee/on_demand_scans/router';
 import { SAVED_TAB_TABLE_FIELDS, LEARN_MORE_TEXT } from 'ee/on_demand_scans/constants';
 import { s__ } from '~/locale';
 import ScanTypeBadge from 'ee/security_configuration/dast_profiles/components/dast_scan_type_badge.vue';
 import flushPromises from 'helpers/flush_promises';
 import { redirectTo } from '~/lib/utils/url_utility';
+import { PROJECT_ON_DEMAND_SCAN_COUNTS_ETAG_MOCK } from '../../mocks';
 
 Vue.use(VueApollo);
 
@@ -86,6 +87,7 @@ describe('Saved tab', () => {
           },
           provide: {
             projectPath,
+            projectOnDemandScanCountsEtag: PROJECT_ON_DEMAND_SCAN_COUNTS_ETAG_MOCK,
           },
           stubs: {
             BaseTab,

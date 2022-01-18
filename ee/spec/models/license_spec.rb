@@ -807,6 +807,26 @@ RSpec.describe License do
     end
   end
 
+  describe '#normalized_data' do
+    it 'replaces carriage returns' do
+      other_license = build(:license, data: license.data.gsub("\n", "\r\n"))
+
+      expect(other_license.normalized_data).not_to include("\r\n")
+    end
+
+    it 'adds a trailing newline' do
+      other_license = build(:license, data: license.data.chomp)
+
+      expect(other_license.normalized_data).to end_with("\n")
+    end
+
+    it 'replaces multiple trailing newlines with a single trailing newline' do
+      other_license = build(:license, data: "#{license.data}\n\n\n")
+
+      expect(other_license.normalized_data).to end_with(/\n{1}$/)
+    end
+  end
+
   describe "#md5" do
     it "returns the same MD5 for licenses with carriage returns and those without" do
       other_license = build(:license, data: license.data.gsub("\n", "\r\n"))
@@ -1621,6 +1641,153 @@ RSpec.describe License do
       let(:activated_at) { nil }
 
       it { is_expected.to eq(license.created_at) }
+    end
+  end
+
+  describe '#notify_admins?', :freeze_time do
+    subject(:notify_admins?) { license.notify_admins? }
+
+    context 'when license has expired' do
+      before do
+        gl_license.expires_at = Date.yesterday
+      end
+
+      it { is_expected.to eq(true) }
+    end
+
+    context 'when license has no expiration' do
+      before do
+        gl_license.expires_at = nil
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context 'when license has not expired' do
+      context 'when license is a trial' do
+        before do
+          gl_license.restrictions = { trial: true }
+        end
+
+        context 'when license expiration is more than a week from today' do
+          before do
+            gl_license.expires_at = Date.current + 8.days
+          end
+
+          it { is_expected.to eq(false) }
+        end
+
+        context 'when license expiration is a week from today' do
+          before do
+            gl_license.expires_at = Date.current + 7.days
+          end
+
+          it { is_expected.to eq(true) }
+        end
+
+        context 'when license expiration is less than a week from today' do
+          before do
+            gl_license.expires_at = Date.current + 6.days
+          end
+
+          it { is_expected.to eq(true) }
+        end
+      end
+
+      context 'when license is not a trial' do
+        context 'when license expiration is more than 15 days from today' do
+          before do
+            gl_license.expires_at = Date.current + 16.days
+          end
+
+          it { is_expected.to eq(false) }
+        end
+
+        context 'when license expiration is 15 days from today' do
+          before do
+            gl_license.expires_at = Date.current + 15.days
+          end
+
+          it { is_expected.to eq(true) }
+        end
+
+        context 'when license expiration is less than 15 days from today' do
+          before do
+            gl_license.expires_at = Date.current + 14.days
+          end
+
+          it { is_expected.to eq(true) }
+        end
+      end
+    end
+  end
+
+  describe '#notify_users?', :freeze_time do
+    subject(:notify_users?) { license.notify_users? }
+
+    context 'when license has no expiration' do
+      before do
+        gl_license.expires_at = nil
+        gl_license.block_changes_at = nil
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context 'when license is a trial' do
+      before do
+        gl_license.restrictions = { trial: true }
+      end
+
+      context 'when license expiration is more than a week from today' do
+        before do
+          gl_license.expires_at = Date.current + 8.days
+        end
+
+        it { is_expected.to eq(false) }
+      end
+
+      context 'when license expiration is a week from today' do
+        before do
+          gl_license.expires_at = Date.current + 7.days
+        end
+
+        it { is_expected.to eq(true) }
+      end
+
+      context 'when license expiration is less than a week from today' do
+        before do
+          gl_license.expires_at = Date.current + 6.days
+        end
+
+        it { is_expected.to eq(true) }
+      end
+    end
+
+    context 'when license is not a trial' do
+      context 'when license block changes date is before today' do
+        before do
+          gl_license.block_changes_at = Date.current - 1.day
+        end
+
+        it { is_expected.to eq(true) }
+      end
+
+      context 'when license block changes date is today' do
+        before do
+          gl_license.block_changes_at = Date.current
+        end
+
+        it { is_expected.to eq(true) }
+      end
+
+      context 'when license block changes date is after today' do
+        before do
+          gl_license.block_changes_at = Date.current + 1.day
+        end
+
+        it { is_expected.to eq(false) }
+      end
     end
   end
 end

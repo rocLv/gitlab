@@ -14,13 +14,15 @@ class TrialsController < ApplicationController
   before_action :find_or_create_namespace, only: :apply
   before_action :find_namespace, only: [:extend_reactivate, :create_hand_raise_lead]
   before_action :authenticate_namespace_owner!, only: [:extend_reactivate]
+  before_action only: [:new, :select] do
+    push_frontend_feature_flag(:gitlab_gtm_datalayer, type: :ops)
+  end
 
   feature_category :purchase
 
   def new
     experiment(:trial_registration_with_reassurance, actor: current_user)
       .track(:render, label: 'trials:new', user: current_user)
-    push_frontend_feature_flag(:gitlab_gtm_datalayer, type: :ops)
   end
 
   def select
@@ -34,7 +36,7 @@ class TrialsController < ApplicationController
 
     render(:new) && return unless @result[:success]
 
-    if params[:glm_source] == 'about.gitlab.com'
+    if EE::TrialHelper::TRIAL_ONBOARDING_SOURCE_URLS.include?(params[:glm_source])
       redirect_to(new_users_sign_up_group_path(url_params.merge(trial_onboarding_flow: true)))
     elsif @namespace = helpers.only_trialable_group_namespace
       params[:namespace_id] = @namespace.id

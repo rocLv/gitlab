@@ -18,10 +18,6 @@ is an active in-cluster component for connecting Kubernetes clusters to GitLab s
 
 The Agent is installed into the cluster through code, providing you with a fast, safe, stable, and scalable solution.
 
-INFO:
-Get Network Security Alerts in GitLab by upgrading to Ultimate.
-[Try a free 30-day trial now](https://about.gitlab.com/free-trial/index.html?glm_source=docs.gitlab.com&glm_content=p-cluster-agent-docs).
-
 With GitOps, you can manage containerized clusters and applications from a Git repository that:
 
 - Is the single source of truth of your system.
@@ -146,8 +142,8 @@ To remove an agent from the UI:
 
 1. Go to your agent's configuration repository.
 1. From your project's sidebar, select **Infrastructure > Kubernetes clusters**.
-1. Select your agent from the table, and then in the **Options** column, click the vertical ellipsis 
-(**{ellipsis_v}**) button and select **Delete agent**. 
+1. Select your agent from the table, and then in the **Options** column, click the vertical ellipsis
+(**{ellipsis_v}**) button and select **Delete agent**.
 
 ### Remove an agent with the GitLab GraphQL API
 
@@ -204,6 +200,10 @@ For self-managed GitLab instances, go to `https://gitlab.example.com/-/graphql-e
    ```shell
    kubectl delete -n gitlab-kubernetes-agent -f ./resources.yml
    ```
+
+## Migrating to the GitLab Agent from the legacy certificate-based integration
+
+Find out how to [migrate to the GitLab Agent for Kubernetes](../../infrastructure/clusters/migrate_to_gitlab_agent.md) from the certificate-based integration depending on the features you use.
 
 ## Troubleshooting
 

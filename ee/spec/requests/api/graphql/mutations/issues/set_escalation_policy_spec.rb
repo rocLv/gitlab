@@ -41,7 +41,25 @@ RSpec.describe 'Setting the escalation policy of an issue' do
   context 'when user does not have permission to edit the escalation status' do
     let(:current_user) { create(:user) }
 
+    before_all do
+      project.add_reporter(user)
+    end
+
     it_behaves_like 'a mutation that returns a top-level access error'
+  end
+
+  context 'with non-incident issue is provided' do
+    let_it_be(:issue) { create(:issue, project: project) }
+
+    it_behaves_like 'a mutation that returns top-level errors', errors: ['Feature unavailable for provided issue']
+  end
+
+  context 'with feature disabled' do
+    before do
+      stub_feature_flags(incident_escalations: false)
+    end
+
+    it_behaves_like 'a mutation that returns top-level errors', errors: ['Feature unavailable for provided issue']
   end
 
   it 'sets given escalation_policy to the escalation status for the issue' do

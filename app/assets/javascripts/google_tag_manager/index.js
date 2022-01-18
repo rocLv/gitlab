@@ -60,10 +60,7 @@ export const trackSaasTrialSubmit = () => {
     return;
   }
 
-  const form = document.getElementById('new_trial');
-  form.addEventListener('submit', () => {
-    pushEvent('saasTrialSubmit');
-  });
+  pushEvent('saasTrialSubmit');
 };
 
 export const trackSaasTrialSkip = () => {
@@ -82,7 +79,7 @@ export const trackSaasTrialGroup = () => {
     return;
   }
 
-  const form = document.getElementById('new_group');
+  const form = document.querySelector('.js-saas-trial-group');
   form.addEventListener('submit', () => {
     pushEvent('saasTrialGroup');
   });

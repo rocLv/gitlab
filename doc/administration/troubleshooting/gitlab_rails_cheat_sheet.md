@@ -2,7 +2,6 @@
 stage: Enablement
 group: Distribution
 info: To determine the technical writer assigned to the Stage/Group associated with this page, see https://about.gitlab.com/handbook/engineering/ux/technical-writing/#assignments
-type: reference
 ---
 
 # GitLab Rails Console Cheat Sheet **(FREE SELF)**
@@ -1270,10 +1269,20 @@ registry = Geo::SnippetRepositoryRegistry.find(registry_id)
 registry.replicator.send(:sync_repository)
 ```
 
+## Gitaly
+
+### Find available and used space
+
+A Gitaly storage resource can be polled through Rails to determine the available and used space.
+
+```ruby
+Gitlab::GitalyClient::ServerService.new("default").storage_disk_statistics
+```
+
 ## Generate Service Ping
 
-The [Service Ping Guide](../../development/service_ping/index.md) in our developer documentation 
-has more information about Service Ping. 
+The [Service Ping Guide](../../development/service_ping/index.md) in our developer documentation
+has more information about Service Ping.
 
 ### Generate or get the cached Service Ping
 
@@ -1299,7 +1308,7 @@ rake gitlab:usage_data:generate
 
 Generates Service Ping data in YAML format:
 
-```shell 
+```shell
 rake gitlab:usage_data:dump_sql_in_yaml
 ```
 

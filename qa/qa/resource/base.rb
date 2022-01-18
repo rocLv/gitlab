@@ -71,7 +71,25 @@ module QA
           resource_web_url = yield
           resource.web_url = resource_web_url
 
+          QA::Tools::TestResourceDataProcessor.collect(resource, resource_identifier(resource))
+
           resource
+        end
+
+        def resource_identifier(resource)
+          if resource.respond_to?(:username) && resource.username
+            "with username '#{resource.username}'"
+          elsif resource.respond_to?(:full_path) && resource.full_path
+            "with full_path '#{resource.full_path}'"
+          elsif resource.respond_to?(:name) && resource.name
+            "with name '#{resource.name}'"
+          elsif resource.respond_to?(:id) && resource.id
+            "with id '#{resource.id}'"
+          elsif resource.respond_to?(:iid) && resource.iid
+            "with iid '#{resource.iid}'"
+          end
+        rescue QA::Resource::Base::NoValueError
+          nil
         end
 
         def log_fabrication(method, resource, parents, args)
@@ -80,25 +98,22 @@ module QA
           Support::FabricationTracker.start_fabrication
           result = yield.tap do
             fabrication_time = Time.now - start
-            resource_identifier = begin
-              if resource.respond_to?(:username) && resource.username
-                "with username '#{resource.username}'"
-              elsif resource.respond_to?(:full_path) && resource.full_path
-                "with full_path '#{resource.full_path}'"
-              elsif resource.respond_to?(:name) && resource.name
-                "with name '#{resource.name}'"
-              elsif resource.respond_to?(:id) && resource.id
-                "with id '#{resource.id}'"
-              end
-            rescue QA::Resource::Base::NoValueError
-              nil
-            end
+
+            fabrication_http_method = if resource.api_fabrication_http_method == :get
+                                        if self.include?(Reusable)
+                                          "Retrieved for reuse"
+                                        else
+                                          "Retrieved"
+                                        end
+                                      else
+                                        "Built"
+                                      end
 
             Support::FabricationTracker.save_fabrication(:"#{method}_fabrication", fabrication_time)
             Runtime::Logger.debug do
               msg = ["==#{'=' * parents.size}>"]
-              msg << "Built a #{name}"
-              msg << resource_identifier if resource_identifier
+              msg << "#{fabrication_http_method} a #{name}"
+              msg << resource_identifier(resource) if resource_identifier(resource)
               msg << "as a dependency of #{parents.last}" if parents.any?
               msg << "via #{method}"
               msg << "in #{fabrication_time} seconds"
@@ -156,11 +171,11 @@ module QA
         raise NotImplementedError
       end
 
-      def visit!
+      def visit!(skip_resp_code_check: false)
         Runtime::Logger.debug(%(Visiting #{self.class.name} at "#{web_url}"))
 
         # Just in case an async action is not yet complete
-        Support::WaitForRequests.wait_for_requests
+        Support::WaitForRequests.wait_for_requests(skip_resp_code_check: skip_resp_code_check)
 
         Support::Retrier.retry_until do
           visit(web_url)
@@ -168,7 +183,7 @@ module QA
         end
 
         # Wait until the new page is ready for us to interact with it
-        Support::WaitForRequests.wait_for_requests
+        Support::WaitForRequests.wait_for_requests(skip_resp_code_check: skip_resp_code_check)
       end
 
       def populate(*attribute_names)
