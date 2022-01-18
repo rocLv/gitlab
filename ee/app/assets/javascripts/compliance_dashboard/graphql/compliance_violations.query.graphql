@@ -1,5 +1,5 @@
-query getComplianceViolations($fullPath: ID!) {
-  group(fullPath: $fullPath) @client {
+query getComplianceViolations($fullPath: ID!, $filter: Object) {
+  group(fullPath: $fullPath, filter: $filter) @client {
     id
     mergeRequestViolations {
       nodes {
