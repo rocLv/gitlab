@@ -314,7 +314,7 @@ RSpec.describe API::Groups do
       end
     end
 
-    context "when using membership_groups in request" do
+    context "when using only_membership_groups in request" do
       let(:subgroup) { create(:group, :nested, name: 'subgroup') }
       let(:member_group) { create(:group)}
       let(:response_groups) { json_response.map { |group| group['name'] } }
@@ -325,7 +325,7 @@ RSpec.describe API::Groups do
       end
 
       it "return only groups where the user is a member" do
-        get api("/groups", user1), params: { membership_groups: true }
+        get api("/groups", user1), params: { only_membership_groups: true }
 
         expect(response).to have_gitlab_http_status(:ok)
         expect(response).to include_pagination_headers

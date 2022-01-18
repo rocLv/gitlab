@@ -28,7 +28,7 @@ const groupsSelect = () => {
         const skipGroups = $select.data('skipGroups') || [];
         const parentGroupID = $select.data('parentId');
         const groupsFilter = $select.data('groupsFilter');
-        const membershipGroups = $select.data('membershipGroups');
+        const onlyMembershipGroups = $select.data('onlyMembershipGroups');
 
         $select.select2({
           placeholder: __('Search for a group'),
@@ -45,7 +45,7 @@ const groupsSelect = () => {
                 search,
                 page,
                 per_page: window.GROUP_SELECT_PER_PAGE,
-                membership_groups: membershipGroups,
+                only_membership_groups: onlyMembershipGroups,
                 all_available: allAvailable,
               };
             },

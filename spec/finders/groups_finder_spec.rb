@@ -240,7 +240,7 @@ RSpec.describe GroupsFinder do
 
       let_it_be(:membership_group) { create(:group, :public) }
 
-      let(:params) { { membership_groups: true } }
+      let(:params) { { only_membership_groups: true } }
 
       context 'without an authenticated user' do
         it 'parameter is ignored and all public groups are returned' do
