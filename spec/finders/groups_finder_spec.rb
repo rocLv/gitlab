@@ -236,6 +236,7 @@ RSpec.describe GroupsFinder do
       let_it_be(:parent_group) { create(:group, :public) }
       let_it_be(:public_subgroup) { create(:group, :public, parent: parent_group) }
       let_it_be(:public_sub_subgroup) { create(:group, :public, parent: public_subgroup) }
+      let_it_be(:private_subgroup) { create(:group, :private, parent: parent_group) }
       let_it_be(:project) { create(:project, :public, namespace: public_subgroup) }
 
       let_it_be(:membership_group) { create(:group, :public) }
